@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
@@ -18,6 +19,7 @@ def main():
 
     pygame.quit()
     sys.exit()
+
 
 if __name__ == "__main__":
     main()
