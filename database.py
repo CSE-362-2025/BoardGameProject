@@ -1,0 +1,1 @@
+# file for storing player information we want later, along with the state of the game and the potential record of games past
