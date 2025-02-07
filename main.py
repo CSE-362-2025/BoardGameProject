@@ -5,6 +5,8 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     pygame.display.set_caption("Scarlets Forever")
+    icon = pygame.image.load("Resources\\RMC-ico.jpg")
+    pygame.display.set_icon(icon)
     img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(640,480))
 
     # Main loop
