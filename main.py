@@ -16,7 +16,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        screen.blit(img, (0,0))  # Fill screen with white
+        screen.blit(img, (0,0))  # Fill screen with image
         pygame.display.flip()
 
     pygame.quit()
