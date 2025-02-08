@@ -1,0 +1,84 @@
+@startuml
+title "Class Diagram"
+' skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+class Board {
+    +tiles: list[Tile]
+}
+Board "1" *-- "1..*" Tile: tiles: list[Tile]
+' GameManager *-- Player: players: Player[]
+
+abstract class Tile {
+    +id: int
+    +type: int
+    +actions(players: list[Player], player: Int): ???
+}
+
+class EventTile {
+    +EventID: int
+
+}
+
+class GoodTile {
+
+}
+
+class BadTile {
+
+}
+
+class StopTile {
+
+}
+
+
+Tile <|-- EventTile
+Tile <|-- StopTile
+Tile <|-- GoodTile
+Tile <|-- BadTile
+
+class Player {
+    +position: int
+    +stats: list[int]
+    +name: str
+    +characterID: int
+    +lore: list[int]
+
+    ' getter for Player:position
+    +where_am_i(): int
+}
+
+class Event {
+    +stats_required: list[int]
+    +event_id: int
+    +type: int
+    +prompt: str
+    ' check if already encountered this event
+    +check_if_possible(player: Player): bool
+    ' activate this event, return True if successful
+    +live_lore(): bool
+}
+note left of Event::check_if_possible
+return True if player
+stats and lore permit
+end note
+
+class GameManager {
+    +board: Board
+    +players: list[Player]
+    +turn_count: int
+    +current_player: int
+    +roll_dice(): int
+    +switch_turn(): Player
+    +game_start(): void
+    +game_end(): void
+}
+note left of GameManager::switch_turn
+returns the ???
+end note
+GameManager "1" o-- "1..4" Player: players: list[Player]
+GameManager "1" o-- "1" Board: board
+
+
+@enduml

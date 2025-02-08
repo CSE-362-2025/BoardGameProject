@@ -1,0 +1,9 @@
+@startuml
+title "Sequence Diagram:\nRoll Dice"
+
+participant GameManager
+participant Board
+actor Player
+
+
+@enduml

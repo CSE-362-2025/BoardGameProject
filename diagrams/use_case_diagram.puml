@@ -1,0 +1,14 @@
+@startuml
+
+skinparam shadowing false
+title "Use Case Diagram"
+
+!$includeStr = "<< include >>"
+!$extendStr = "<< extend >>"
+
+' actors
+"Player" as Player
+"Game Manager" as GM
+
+
+@enduml
