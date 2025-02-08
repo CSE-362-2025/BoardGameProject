@@ -7,7 +7,6 @@ class Board {
     +tiles: list[Tile]
 }
 Board "1" *-- "1..*" Tile: tiles: list[Tile]
-' GameManager *-- Player: players: Player[]
 
 abstract class Tile {
     +id: int
@@ -17,7 +16,6 @@ abstract class Tile {
 
 class EventTile {
     +EventID: int
-
 }
 
 class GoodTile {
@@ -31,7 +29,6 @@ class BadTile {
 class StopTile {
 
 }
-
 
 Tile <|-- EventTile
 Tile <|-- StopTile
@@ -75,7 +72,8 @@ class GameManager {
     +game_end(): void
 }
 note left of GameManager::switch_turn
-returns the ???
+returns the index
+of next player
 end note
 GameManager "1" o-- "1..4" Player: players: list[Player]
 GameManager "1" o-- "1" Board: board
