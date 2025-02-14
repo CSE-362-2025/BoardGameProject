@@ -1,5 +1,6 @@
 import pygame
 import sys
+import boardClass
 
 def main():
     pygame.init()
@@ -11,6 +12,10 @@ def main():
     pygame.display.set_icon(icon)
     img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(640,480))
     
+    #initialize board
+    tileList = ["Type1", "Type2", "Type1", "Type2", "Type3","Type1", "Type2", "Type1", "Type2", "Type3"]
+    board = boardClass.Board(tileList)
+    print(board.playerTile(4))
 
     # Main loop
     running = True
@@ -20,6 +25,7 @@ def main():
                 running = False
 
         screen.blit(img, (0,0))  # Fill screen with image
+        board.drawBoard(screen)
         pygame.display.flip()
 
     pygame.quit()
