@@ -4,11 +4,11 @@ from typing import Any
 DB_NAME = "database/game_data.db"
 
 
-class GameDataBase:
-    def __init__(self):
-        # TODO: make this singleton
-        # self.conn = self.get_connection()
-        pass
+class GameDataBase(object):
+    def __new__(cls):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(GameDataBase, cls).__new__(cls)
+            return cls.instance
 
     def get_connection(self):
         return sqlite3.connect(DB_NAME)
@@ -43,9 +43,7 @@ class GameDataBase:
     def get_player(self, player_id: int) -> Any:
         conn = self.get_connection()
         cursor = conn.cursor()
-        cursor.execute(
-            f"SELECT id, name, position FROM players WHERE id = {player_id}"
-        )
+        cursor.execute(f"SELECT id, name, position FROM players WHERE id = {player_id}")
         row = cursor.fetchone()
         conn.close()
 
