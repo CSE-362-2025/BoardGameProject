@@ -1,11 +1,18 @@
 import pygame
 import sys
+import database
+
 # Raymond was here :D!!
+
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     pygame.display.set_caption("Board Game Test")
+
+    # initialize DB
+    db = database.gamedb.GameDataBase()
+    db.initialize_db()
 
     # Main loop
     running = True
