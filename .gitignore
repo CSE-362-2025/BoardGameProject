@@ -1,5 +1,7 @@
 # db object
 game_data.db
+# ignoring vscode
+.vscode/
 
 # common names for virtual environments names
 .venv/
