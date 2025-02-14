@@ -1,11 +1,16 @@
 import pygame
 import sys
-# Raymond was here :D!!
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
-    pygame.display.set_caption("Board Game Test")
+
+    #Set title bar and prep images
+    pygame.display.set_caption("Scarlets Forever")
+    icon = pygame.image.load("Resources\\RMC-ico.jpg") 
+    pygame.display.set_icon(icon)
+    img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(640,480))
+    
 
     # Main loop
     running = True
@@ -14,7 +19,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        screen.fill((255, 255, 255))  # Fill screen with white
+        screen.blit(img, (0,0))  # Fill screen with image
         pygame.display.flip()
 
     pygame.quit()
