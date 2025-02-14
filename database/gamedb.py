@@ -1,7 +1,7 @@
 import sqlite3
 from typing import Any
 
-DB_NAME = "game_data.db"
+DB_NAME = "database/game_data.db"
 
 
 class GameDataBase:
@@ -19,7 +19,7 @@ class GameDataBase:
         cursor.execute(
             """
         CREATE TABLE iF NOT EXISTS players (
-            id INTEGER PRIMARY KEY AUTOINCREMENT
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             position INTEGER
             )
@@ -36,7 +36,7 @@ class GameDataBase:
             name (str): name of the players
         """
         conn = self.get_connection()
-        conn.cursor().execute(f"INSERT INTO players (name) VALUES {name}")
+        conn.cursor().execute(f"INSERT INTO players (name) VALUES ('{name}')")
         conn.commit()
         conn.close()
 
@@ -44,7 +44,7 @@ class GameDataBase:
         conn = self.get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            f"SELECT id, name, score, level FROM players WHERE id = {player_id}"
+            f"SELECT id, name, position FROM players WHERE id = {player_id}"
         )
         row = cursor.fetchone()
         conn.close()
