@@ -4,15 +4,18 @@ import boardClass
 import playerClass
 import ui
 
+windowWidth = 1080
+windowHeight = 720
+
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((640, 480))
+    screen = pygame.display.set_mode((windowWidth, windowHeight))
 
     #Set title bar and prep images
     pygame.display.set_caption("Scarlets Forever")
     icon = pygame.image.load("Resources\\RMC-ico.jpg") 
     pygame.display.set_icon(icon)
-    img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(640,480))
+    img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(windowWidth, windowHeight))
     
     #initialize board
     tileList = [("Type1", 5, 15), ("Type2", 15, 15), ("Type1", 25, 15), ("Type2", 35, 15), ("Type3", 45, 15),
