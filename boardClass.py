@@ -19,8 +19,9 @@ class Board:
     def __init__(self, tile_list):
         """Initializes a set of tiles of a given type based on the given list"""
         self.Players = []
-        self.Players.append(playerClass.Player(1, (255, 0, 255)))
-        self.currentPlayer = self.Players[0]
+        self.Players.append(playerClass.Player(0, (255, 0, 255)))
+        self.Players.append(playerClass.Player(1, (255, 255, 255)))
+        self.currentPlayer = 0
         self.TileList = []
         tile_num = 0
         for tile in tile_list:
@@ -28,7 +29,10 @@ class Board:
             tile_num += 1
 
     def movePlayer(self, dist):
-        self.currentPlayer.pos += dist
+        self.Players[self.currentPlayer].pos += dist
+        self.currentPlayer =+ 1
+        if self.currentPlayer >= len(self.Players):
+            self.currentPlayer = 0
     
     def drawBoard(self, surface):
         b = surface.get_width()/100

@@ -4,6 +4,8 @@ Last Edit: 2025/02/17
 Keeps track of the user interfact and runs event dependant on the results
 """
 import pygame 
+import random
+
 
 def diceClick(screen, board):
     dicePos = [90, 90, 100, 100]
