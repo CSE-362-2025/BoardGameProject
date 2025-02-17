@@ -3,11 +3,11 @@
 
 # common names for virtual environments names
 .venv/
-venv/	venv/
+venv/
 
 
 # Byte-compiled / optimized / DLL files
-__pycache__/	__pycache__/
+__pycache__/
 *.py[cod]
 *$py.class
 
