@@ -14,7 +14,7 @@ def diceClick(screen, board):
     c = screen.get_height()/100
     mouse = pygame.mouse.get_pos()
     if (diceLeft*b) <= mouse[0] <= (diceRight*b) and (diceTop*c) <= mouse[1] <= (diceBottom*c):
-        board.movePlayer(1)
+        board.movePlayer(random.randint(1,6))
 
 
 def diceButton(screen):

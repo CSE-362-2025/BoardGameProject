@@ -4,7 +4,6 @@ Last Edit: 2025/02/14
 Board Class sets up a list of tiles on a board to help determine tile type the player is on.
 """
 import pygame
-import math
 import playerClass
 
 class Tile:
@@ -30,9 +29,10 @@ class Board:
 
     def movePlayer(self, dist):
         self.Players[self.currentPlayer].pos += dist
-        self.currentPlayer =+ 1
-        if self.currentPlayer >= len(self.Players):
+        if self.currentPlayer == (len(self.Players)-1):
             self.currentPlayer = 0
+        else:
+            self.currentPlayer =+ 1
     
     def drawBoard(self, surface):
         b = surface.get_width()/100
