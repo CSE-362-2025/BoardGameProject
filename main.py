@@ -16,7 +16,10 @@ def main():
     
     #initialize board
     tileList = [("Type1", 5, 15), ("Type2", 15, 15), ("Type1", 25, 15), ("Type2", 35, 15), ("Type3", 45, 15),
-                ("Type1", 5, 25), ("Type2", 15, 25), ("Type1", 25, 25), ("Type2", 35, 25), ("Type3", 45, 25)]
+                ("Type1", 5, 25), ("Type2", 15, 25), ("Type1", 25, 25), ("Type2", 35, 25), ("Type3", 45, 25),
+                ("Type1", 5, 35), ("Type2", 15, 35), ("Type1", 25, 35), ("Type2", 35, 35), ("Type3", 45, 35), 
+                ("Type1", 5, 45), ("Type2", 15, 45), ("Type1", 25, 45), ("Type2", 35, 45), ("Type3", 45, 45), 
+                ("Type1", 5, 55), ("Type2", 15, 55), ("Type1", 25, 55), ("Type2", 35, 55), ("Type3", 45, 55)]
     board = boardClass.Board(tileList)
 
 

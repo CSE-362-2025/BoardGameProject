@@ -9,3 +9,7 @@ class Player:
         self.ID = ID
         self.pos = 0
         self.colour = colour
+        self.rank = 0
+    
+    def __lt__(self, other):
+        return self.pos < other.pos
