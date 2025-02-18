@@ -16,6 +16,8 @@ class Scene(Enum):
     event = 1
     title = 3
     mainMenu = 4
+    characterMenu = 5
+    endSceen = 6
 
 
 class GameManager:
