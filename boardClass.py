@@ -2,7 +2,7 @@
 Authors: Bottom Six
 Created: 2025/02/14
 Last Edited: 2025/02/17
-Board Class sets up a list of tiles on a board to help determine tile type the player is on.
+Board Class sets up the board and helps determine the tile type the player is on.
 """
 import pygame
 import playerClass
