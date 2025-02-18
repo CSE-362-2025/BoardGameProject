@@ -1,8 +1,13 @@
+"""
+Author: Bottom Six
+Created: 2025/01/24
+Last Edited: 2025/02/17
+Main function for game: in charge of running the game
+"""
+
 import pygame
 import sys
-import boardClass
-import playerClass
-import ui
+import gameManager
 
 windowWidth = 1080
 windowHeight = 720
@@ -10,21 +15,10 @@ windowHeight = 720
 def main():
     pygame.init()
     screen = pygame.display.set_mode((windowWidth, windowHeight))
-
-    #Set title bar and prep images
-    pygame.display.set_caption("Scarlets Forever")
-    icon = pygame.image.load("Resources\\RMC-ico.jpg") 
-    pygame.display.set_icon(icon)
-    img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(windowWidth, windowHeight))
-    
-    #initialize board
-    tileList = [("Type1", 5, 15), ("Type2", 15, 15), ("Type1", 25, 15), ("Type2", 35, 15), ("Type3", 45, 15),
-                ("Type1", 5, 25), ("Type2", 15, 25), ("Type1", 25, 25), ("Type2", 35, 25), ("Type3", 45, 25),
-                ("Type1", 5, 35), ("Type2", 15, 35), ("Type1", 25, 35), ("Type2", 35, 35), ("Type3", 45, 35), 
-                ("Type1", 5, 45), ("Type2", 15, 45), ("Type1", 25, 45), ("Type2", 35, 45), ("Type3", 45, 45), 
-                ("Type1", 5, 55), ("Type2", 15, 55), ("Type1", 25, 55), ("Type2", 35, 55), ("Type3", 45, 55)]
-    board = boardClass.Board(tileList)
-
+    manager = gameManager.GameManager(windowWidth, windowHeight)  
+    manager.prepGame()
+    manager.startGame()
+    display = pygame.time.Clock()
 
     # Main loop
     running = True
@@ -32,15 +26,12 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                ui.diceClick(screen, board)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                manager.onClick(screen)
 
-        screen.blit(img, (0,0))  # Fill screen with image
-        board.drawBoard(screen)
-        ui.diceButton(screen)
-        pygame.display.flip()
-
+        manager.render(screen)
+        display.tick(24)
+        print(display.get_fps())
     pygame.quit()
     sys.exit()
 

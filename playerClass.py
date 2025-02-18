@@ -1,6 +1,7 @@
 """
 Authors: Bottom Six
-Last Edit: 2025/02/17
+Created: 2025/02/17
+Last Edited: 2025/02/17
 Keeps track of player specific stats such as tile and board number
 """
 
