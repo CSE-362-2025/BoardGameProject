@@ -28,9 +28,7 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 manager.onClick(screen)
-            
-            manager.run()
-
+        manager.run()
         manager.render(screen)
         display.tick(60)
     pygame.quit()

@@ -30,6 +30,7 @@ class GameManager:
         self.winW = windowWidth
         self.winH = windowHeight
         self.count = pygame.time.get_ticks()+3000
+        self.prep_change = True
     
     def prepGame(self):
         #Set title bar and prep images        
@@ -53,23 +54,47 @@ class GameManager:
             case Scene.title:
                 if self.count <= pygame.time.get_ticks():
                     self.scene = Scene.board
+                    self.prep_change = False
             case Scene.board:
-                if self.board.gameOver():
+                if self.prep_change:
+                    if self.count <= pygame.time.get_ticks():
+                        self.scene = Scene.event
+                        self.prep_change = False
+                elif self.board.gameOver():
                     self.scene = Scene.endScreen
+            case Scene.event:
+                if self.prep_change:
+                    if self.count <= pygame.time.get_ticks():
+                        self.scene = Scene.board
+                        self.prep_change = False
+                        self.currentEvents = None
+                        self.board.nextPlayer()
+
 
     def onClick(self, screen):
         match self.scene:
             case Scene.title:
                 self.scene = Scene.board
+                self.prep_change = False
             case Scene.board:
-                result = ui.diceClick(screen, self.board)
-                if result != -1:
-                    self.currentEvents = eventClass.Events(result)
+                if not self.prep_change:
+                    result = ui.diceClick(screen, self.board)
+                    if result != -1:
+                        self.currentEvents = eventClass.Events(result)
+                        self.count = pygame.time.get_ticks()+1000
+                        self.prep_change = True
+                else:
                     self.scene = Scene.event
+                    self.prep_change = False
             case Scene.event:
-                result = self.currentEvents.click(screen)
-                if result != -1:
+                if not self.prep_change:
+                    result = self.currentEvents.click(screen)
+                    if result != -1:
+                        self.count = pygame.time.get_ticks()+3000
+                        self.prep_change = True
+                else:
                     self.scene = Scene.board
+                    self.prep_change = False
                     self.currentEvents = None
                     self.board.nextPlayer()
             case _:
@@ -87,9 +112,17 @@ class GameManager:
                 screen.blit(text, (screen.get_width()/2-x/2, y/2))
             case Scene.board:
                 self.board.drawBoard(screen)
-                ui.diceButton(screen)
+                if not self.prep_change:
+                    ui.diceButton(screen)
             case Scene.event:
                 self.currentEvents.drawEvents(screen)
+            case Scene.endScreen:
+                self.board.drawBoard(screen)
+                font = pygame.font.Font(size=64)
+                text = 'Game Over'
+                x, y = font.size(text)
+                text = font.render(text, True, (0,0,0), None)
+                screen.blit(text, (screen.get_width()/2-x/2, screen.get_height()/2-y/2))
             case _:
                 pass
         pygame.display.flip()
