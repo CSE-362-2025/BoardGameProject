@@ -1,4 +1,4 @@
-@startuml
+@startuml class_diagram
 title "Class Diagram"
 ' skinparam shadowing false
 skinparam classAttributeIconSize 0
@@ -58,7 +58,8 @@ class Event {
 }
 note left of Event::check_if_possible
 return True if player
-stats and lore permit
+has required stats and lore
+for the event to occur
 end note
 
 class GameManager {
@@ -67,7 +68,7 @@ class GameManager {
     +turn_count: int
     +current_player: int
     +roll_dice(): int
-    +switch_turn(): Player
+    +switch_turn(): int
     +game_start(): void
     +game_end(): void
 }
