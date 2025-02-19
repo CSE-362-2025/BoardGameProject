@@ -6,6 +6,7 @@ Manages the game and tracks when each event should occur
 """
 import pygame
 import boardClass
+import eventClass
 import ui
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -27,6 +28,7 @@ class GameManager:
         self.img = None
         self.winW = windowWidth
         self.winH = windowHeight
+        self.count = pygame.time.get_ticks()+3000
     
     def prepGame(self):
         #Set title bar and prep images        
@@ -45,15 +47,38 @@ class GameManager:
                 ("Type1", 5, 55), ("Type2", 15, 55), ("Type1", 25, 55), ("Type2", 35, 55), ("Type3", 45, 55)]
         self.board = boardClass.Board(tileList)
 
+    def run(self):
+        match self.scene:
+            case Scene.title:
+                if self.count <= pygame.time.get_ticks():
+                    self.scene = Scene.board
 
     def onClick(self, screen):
-        ui.diceClick(screen, self.board)
+        match self.scene:
+            case Scene.title:
+                self.scene = Scene.board
+            case Scene.board:
+                ui.diceClick(screen, self.board)
+            case _:
+                pass
 
 
     def render(self, screen):
         screen.blit(self.img, (0,0))  # Fill screen with image
-        self.board.drawBoard(screen)
-        ui.diceButton(screen)
+        match self.scene:
+            case Scene.title:
+                font = pygame.font.Font(size=32)
+                text = 'Bottom Six Presents: [Insert Name Here]'
+                x, y = font.size(text)
+                text = font.render(text, True, (0,0,0), None)
+                screen.blit(text, (screen.get_width()/2-x/2, y/2))
+            case Scene.board:
+                self.board.drawBoard(screen)
+                ui.diceButton(screen)
+            case Scene.event:
+                pass
+            case _:
+                pass
         pygame.display.flip()
 
 class Scenes(ABC):

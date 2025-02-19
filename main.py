@@ -14,11 +14,11 @@ windowHeight = 720
 
 def main():
     pygame.init()
+    display = pygame.time.Clock()
     screen = pygame.display.set_mode((windowWidth, windowHeight))
     manager = gameManager.GameManager(windowWidth, windowHeight)  
     manager.prepGame()
     manager.startGame()
-    display = pygame.time.Clock()
 
     # Main loop
     running = True
@@ -28,10 +28,11 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 manager.onClick(screen)
+            
+            manager.run()
 
         manager.render(screen)
-        display.tick(24)
-        print(display.get_fps())
+        display.tick(60)
     pygame.quit()
     sys.exit()
 
