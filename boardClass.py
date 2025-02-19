@@ -38,13 +38,20 @@ class Board:
                 player.rank = rank
                 rank += 1
             self.Players.sort(key=lambda p: p.ID)
-            if self.Players[self.currentPlayer].pos >= len(self.TileList):
-                self.finishedPlayers.append(self.Players.pop(self.currentPlayer))
-            if self.currentPlayer >= (len(self.Players)-1):
-                self.currentPlayer = 0
-            else:
-                self.currentPlayer =+ 1
+            
+
+    def nextPlayer(self):
+        if self.Players[self.currentPlayer].pos >= len(self.TileList):
+            self.finishedPlayers.append(self.Players.pop(self.currentPlayer))
+        if self.currentPlayer >= (len(self.Players)-1):
+            self.currentPlayer = 0
+        else:
+            self.currentPlayer =+ 1
         
+    def gameOver(self):
+        if self.Players == []:
+            return True
+        return False
     
     def drawBoard(self, surface):
         b = surface.get_width()/100

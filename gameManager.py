@@ -18,13 +18,14 @@ class Scene(Enum):
     title = 3
     mainMenu = 4
     characterMenu = 5
-    endSceen = 6
+    endScreen = 6
 
 
 class GameManager:
     def __init__(self, windowWidth, windowHeight):
         self.scene = None
         self.board = None
+        self.currentEvents = None
         self.img = None
         self.winW = windowWidth
         self.winH = windowHeight
@@ -52,13 +53,25 @@ class GameManager:
             case Scene.title:
                 if self.count <= pygame.time.get_ticks():
                     self.scene = Scene.board
+            case Scene.board:
+                if self.board.gameOver():
+                    self.scene = Scene.endScreen
 
     def onClick(self, screen):
         match self.scene:
             case Scene.title:
                 self.scene = Scene.board
             case Scene.board:
-                ui.diceClick(screen, self.board)
+                result = ui.diceClick(screen, self.board)
+                if result != -1:
+                    self.currentEvents = eventClass.Events(result)
+                    self.scene = Scene.event
+            case Scene.event:
+                result = self.currentEvents.click(screen)
+                if result != -1:
+                    self.scene = Scene.board
+                    self.currentEvents = None
+                    self.board.nextPlayer()
             case _:
                 pass
 
@@ -76,7 +89,7 @@ class GameManager:
                 self.board.drawBoard(screen)
                 ui.diceButton(screen)
             case Scene.event:
-                pass
+                self.currentEvents.drawEvents(screen)
             case _:
                 pass
         pygame.display.flip()
