@@ -19,7 +19,7 @@ class Board:
     def __init__(self, tile_list):
         """Initializes a set of tiles of a given type based on the given list"""
         self.Players = []
-        self.Players.append(playerClass.Player(0, (255, 255, 0)))
+        self.Players.append(playerClass.Player(0, (255, 255, 0), "John"))
         self.Players.append(playerClass.Player(1, (255, 255, 255)))
         self.currentPlayer = 0
         self.finishedPlayers = []
