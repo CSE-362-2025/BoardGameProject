@@ -69,6 +69,6 @@ class Board:
                 pygame.draw.rect(surface, type, (tile.x*b, tile.y*c, tileSize[0], tileSize[1]))
                 for player in self.Players:
                     if tile.ID == player.pos:
-                        pygame.draw.rect(surface, player.colour, ((tile.x*b)+(tileSize[0]/4), (tile.y*c)+(tileSize[1]/4), tileSize[0]/2, tileSize[1]/2))
+                        player.render(surface, tile, tileSize)
         for player in self.finishedPlayers:
             pygame.draw.rect(surface, player.colour, (90*b, 10*player.rank*c, tileSize[0]/2, tileSize[1]/2))

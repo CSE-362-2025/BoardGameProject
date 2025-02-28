@@ -66,3 +66,4 @@ class Events:
             x, y = font.size(text)
             text = font.render(text, True, (255,255,255), None)
             screen.blit(text, (screen.get_width()/2-x/2, 7.5*c))
+
