@@ -1,11 +1,24 @@
+"""
+Author: Bottom Six
+Created: 2025/01/24
+Last Edited: 2025/02/17
+Main function for game: in charge of running the game
+"""
+
 import pygame
 import sys
-# Raymond was here :D!!
+import gameManager
+
+windowWidth = 1080
+windowHeight = 720
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((640, 480))
-    pygame.display.set_caption("Board Game Test")
+    display = pygame.time.Clock()
+    screen = pygame.display.set_mode((windowWidth, windowHeight))
+    manager = gameManager.GameManager(windowWidth, windowHeight)  
+    manager.prepGame()
+    manager.startGame()
 
     # Main loop
     running = True
@@ -13,10 +26,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        screen.fill((255, 255, 255))  # Fill screen with white
-        pygame.display.flip()
-
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                manager.onClick(screen)
+        manager.run()
+        manager.render(screen)
+        display.tick(60)
     pygame.quit()
     sys.exit()
 
