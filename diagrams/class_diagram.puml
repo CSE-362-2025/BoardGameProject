@@ -1,0 +1,95 @@
+@startuml class_diagram
+title "Class Diagram"
+' skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+class GameDataBase {
+    get_connection()
+    +initialize_db()
+    +create_player(name: str)
+    +get_player(player_id: int)
+    +update_player_position(player_id: int, new_position: int)
+    +update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
+}
+note left of GameDataBase::get_connection
+private helper method only to be used by itself.
+end note
+
+class Board {
+    +tiles: list[Tile]
+}
+Board "1" *-- "1..*" Tile: tiles: list[Tile]
+
+abstract class Tile {
+    +id: int
+    +type: int
+    +actions(players: list[Player], player: Int): ???
+}
+
+class EventTile {
+    +EventID: int
+}
+
+class GoodTile {
+
+}
+
+class BadTile {
+
+}
+
+class StopTile {
+
+}
+
+Tile <|-- EventTile
+Tile <|-- StopTile
+Tile <|-- GoodTile
+Tile <|-- BadTile
+
+class Player {
+    +position: int
+    +stats: list[int]
+    +name: str
+    +characterID: int
+    +lore: list[int]
+
+    ' getter for Player:position
+    +where_am_i(): int
+}
+
+class Event {
+    +stats_required: list[int]
+    +event_id: int
+    +type: int
+    +prompt: str
+    ' check if already encountered this event
+    +check_if_possible(player: Player): bool
+    ' activate this event, return True if successful
+    +live_lore(): bool
+}
+note left of Event::check_if_possible
+return True if player
+has required stats and lore
+for the event to occur
+end note
+
+class GameManager {
+    +board: Board
+    +players: list[Player]
+    +turn_count: int
+    +current_player: int
+    +roll_dice(): int
+    +switch_turn(): int
+    +game_start(): void
+    +game_end(): void
+}
+note left of GameManager::switch_turn
+returns the index
+of next player
+end note
+GameManager "1" o-- "1..4" Player: players: list[Player]
+GameManager "1" o-- "1" Board: board
+
+
+@enduml
