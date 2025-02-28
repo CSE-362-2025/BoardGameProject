@@ -15,6 +15,7 @@ from enum import Enum
 class Scene(Enum):
     board = 0
     event = 1
+    pause = 2
     title = 3
     mainMenu = 4
     characterMenu = 5
@@ -27,6 +28,7 @@ class GameManager:
         self.board = None
         self.currentEvents = None
         self.img = None
+        self.pause = ui.PauseMenu()
         self.winW = windowWidth
         self.winH = windowHeight
         self.count = pygame.time.get_ticks()+3000
@@ -77,6 +79,18 @@ class GameManager:
             case Scene.title:
                 self.scene = Scene.board
                 self.prep_change = False
+            case Scene.pause:
+                result = self.pause.menuClick(screen)
+                if result != -1:
+                    match result:
+                        case 0:
+                            self.scene = Scene.board
+                        case 1:
+                            self.scene = Scene.characterMenu
+                        case 2:
+                            pygame.event.post(pygame.QUIT)
+                        case 3:
+                            self.scene = Scene.characterMenu
             case Scene.board:
                 if not self.prep_change:
                     result = ui.diceClick(screen, self.board)
@@ -84,6 +98,9 @@ class GameManager:
                         self.currentEvents = eventClass.Events(result)
                         self.count = pygame.time.get_ticks()+1000
                         self.prep_change = True
+                    result = ui.menuClick(screen)
+                    if result == 1:
+                        self.scene = Scene.pause
                 else:
                     self.scene = Scene.event
                     self.prep_change = False
@@ -115,6 +132,9 @@ class GameManager:
                 self.board.drawBoard(screen)
                 if not self.prep_change:
                     ui.diceButton(screen)
+                    ui.menuButton(screen)
+            case Scene.pause:
+                self.pause.menuDraw(screen)
             case Scene.event:
                 self.currentEvents.drawEvents(screen)
             case Scene.endScreen:

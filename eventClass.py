@@ -11,11 +11,11 @@ class Events:
     def __init__(self, result):
         match result:
             case 1:
-                self.type = "Type1"
+                self.type = "GoodTile"
             case 2:
-                self.type = "Type2"
+                self.type = "BadTile"
             case _:
-                self.type = "Type3"
+                self.type = "EventTile"
         #todo: read info for types from database
         self.query = "What do you do?"
         self.options = [("Option 1", "Outcome 1"), ("Option 2", "Outcome 2")]
