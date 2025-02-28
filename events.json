@@ -1,0 +1,56 @@
+[
+    {
+        "name" : "Non Decision Event Title",
+        "description" : "Event description",
+
+        "criteria" : {"bilingual" : 0, 
+                    "athletic" : 0, 
+                    "academic" : 0, 
+                    "military" : 0, 
+                    "social" : 0},
+
+        "result" : {"bilingual" : 0, 
+                    "athletic" : 0, 
+                    "academic" : 0, 
+                    "military" : 0, 
+                    "social" : 0}
+
+
+    },
+    {
+        "name" : "Decision Event Title",
+        "description" : "Event description",
+
+        "criteria" : {"bilingual" : 0, 
+                    "athletic" : 0, 
+                    "academic" : 0, 
+                    "military" : 0, 
+                    "social" : 0},
+
+        "choice" : [{"text" : "Choice 1",
+                    "result" : {"bilingual" : 0, 
+                                "athletic" : 0, 
+                                "academic" : 0, 
+                                "military" : 0, 
+                                "social" : 0}
+        },
+
+        {"text" : "Choice 2",
+                    "result" : {"bilingual" : 0, 
+                                "athletic" : 0, 
+                                "academic" : 0, 
+                                "military" : 0, 
+                                "social" : 0}
+        },
+
+        {"text" : "Choice 3",
+                    "result" : {"bilingual" : 0, 
+                                "athletic" : 0, 
+                                "academic" : 0, 
+                                "military" : 0, 
+                                "social" : 0}
+        }]
+
+    }
+
+]

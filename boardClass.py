@@ -14,6 +14,18 @@ class Tile:
         self.x = tile_details[1]
         self.y = tile_details[2]
 
+class GoodTile(Tile):
+    pass
+
+class BadTile(Tile):
+    pass
+
+class EventTile(Tile):
+    pass
+
+class StopTile(Tile):
+    pass
+
 
 class Board:
     def __init__(self, tile_list):
