@@ -60,12 +60,14 @@ class Board:
         if len(self.Players) != 0:
             for tile in self.TileList:
                 match tile.type:
-                    case "Type1":
+                    case "BadTile":
                         type = (255, 0, 0)
-                    case "Type2":
+                    case "GoodTile":
+                        type = (0, 255, 0)
+                    case "EventTile":
                         type = (0, 98, 255)
                     case _:
-                        type = (0, 0, 0)
+                        type = (0,0,0)
                 pygame.draw.rect(surface, type, (tile.x*b, tile.y*c, tileSize[0], tileSize[1]))
                 for player in self.Players:
                     if tile.ID == player.pos:
