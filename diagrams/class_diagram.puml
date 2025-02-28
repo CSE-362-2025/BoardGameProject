@@ -3,6 +3,18 @@ title "Class Diagram"
 ' skinparam shadowing false
 skinparam classAttributeIconSize 0
 
+class GameDataBase {
+    get_connection()
+    +initialize_db()
+    +create_player(name: str)
+    +get_player(player_id: int)
+    +update_player_position(player_id: int, new_position: int)
+    +update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
+}
+note left of GameDataBase::get_connection
+private helper method only to be used by itself.
+end note
+
 class Board {
     +tiles: list[Tile]
 }
