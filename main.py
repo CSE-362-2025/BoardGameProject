@@ -1,28 +1,38 @@
-from database import gamedb
+"""
+Author: Bottom Six
+Created: 2025/01/24
+Last Edited: 2025/02/17
+Main function for game: in charge of running the game
+"""
 
-# PoC of GameDataBase class
+import pygame
+import sys
+import gameManager
 
+windowWidth = 1080
+windowHeight = 720
 
 def main():
-    # initialize DB
-    db = gamedb.GameDataBase()
-    db.initialize_db()
+    pygame.init()
+    display = pygame.time.Clock()
+    screen = pygame.display.set_mode((windowWidth, windowHeight))
+    manager = gameManager.GameManager(windowWidth, windowHeight)  
+    manager.prepGame()
+    manager.startGame()
 
-    # create player
-    db.create_player("John")
-    print("Created a player")
-
-    # get player row
-    player = db.get_player(1)
-    print(f"Print player={player}")
-
-    # update position col
-    db.update_player_position(1, 999)
-    print("Updated the player's row into 999")
-
-    player = db.get_player(1)
-    print(f"Print player={player}")
-
+    # Main loop
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                manager.onClick(screen)
+        manager.run()
+        manager.render(screen)
+        display.tick(60)
+    pygame.quit()
+    sys.exit()
 
 
 if __name__ == "__main__":
