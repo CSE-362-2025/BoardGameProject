@@ -1,95 +1,134 @@
 @startuml class_diagram
 title "Class Diagram"
 ' skinparam shadowing false
-skinparam classAttributeIconSize 0
+' skinparam classAttributeIconSize 0
 
-class GameDataBase {
-    get_connection()
-    +initialize_db()
-    +create_player(name: str)
-    +get_player(player_id: int)
-    +update_player_position(player_id: int, new_position: int)
-    +update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
+class GameDatabase {
+    + get_connection()
+    + initialize_db()
+    + create_player(name: str)
+    + get_player(player_id: int)
+    + update_player_position(player_id: int, new_position: int)
+    + update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
 }
-note left of GameDataBase::get_connection
-private helper method only to be used by itself.
-end note
 
 class Board {
-    +tiles: list[Tile]
+
+    - tiles: list<Tile>
+    - size: int
+
+    + get_tile(position: int): Tile
+    + display(): void
+    + get_player_positions(players: list<Player>): dict<Player, int>
 }
-Board "1" *-- "1..*" Tile: tiles: list[Tile]
 
 abstract class Tile {
-    +id: int
-    +type: int
-    +actions(players: list[Player], player: Int): ???
-}
 
-class EventTile {
-    +EventID: int
+    - position: int
+    - tile_type: string
+
+    + get_position(): int
+    + get_type(): string
 }
 
 class GoodTile {
 
+    + apply_good_effect(player: Player): void
 }
 
 class BadTile {
 
+    + apply_bad_effect(player: Player): void
+}
+
+class EventTile {
+
+    + trigger_event(player: Player): void
 }
 
 class StopTile {
 
+    + stop_player(player: Player): void
 }
 
-Tile <|-- EventTile
-Tile <|-- StopTile
-Tile <|-- GoodTile
-Tile <|-- BadTile
-
 class Player {
-    +position: int
-    +stats: list[int]
-    +name: str
-    +characterID: int
-    +lore: list[int]
 
-    ' getter for Player:position
-    +where_am_i(): int
+    - name: string
+    - position: int
+    - stats: dict<string, int> {bilingual, athletic, academic, military, social}
+
+    + move(spaces: int): void
+    + change_stats(stats: dict<string, int>): void
+    + apply_event(event: Event): void
+    + choose_option(event: Event, choice_idx: int): void
+    + get_stats(): dict<string, int>
+
 }
 
 class Event {
-    +stats_required: list[int]
-    +event_id: int
-    +type: int
-    +prompt: str
-    ' check if already encountered this event
-    +check_if_possible(player: Player): bool
-    ' activate this event, return True if successful
-    +live_lore(): bool
+
+    - name: string
+    - description: string
+    - criteria: dict<string, int>
+    - result: dict<string, int>
+
+    + trigger(player: Player): void
 }
-note left of Event::check_if_possible
-return True if player
-has required stats and lore
-for the event to occur
-end note
+
+class NonDecisionEvent {
+
+    + apply_result(player: Player): void
+}
+
+class DecisionEvent {
+    - choices: list<string>
+
+    + apply_result(player: Player, choice_idx: int): void
+    + show_choices(): void
+}
+
 
 class GameManager {
-    +board: Board
-    +players: list[Player]
-    +turn_count: int
-    +current_player: int
-    +roll_dice(): int
-    +switch_turn(): int
-    +game_start(): void
-    +game_end(): void
+
+    - board: Board
+    - players: list<Player>
+    - turn_count: int
+
+    + game_start(): void
+    + game_end(): void
+    + switch_turn(): int
+    + roll_dice(): int
+    + is_game_over(): bool
 }
-note left of GameManager::switch_turn
-returns the index
-of next player
-end note
-GameManager "1" o-- "1..4" Player: players: list[Player]
-GameManager "1" o-- "1" Board: board
+
+class UI {
+
+    - game_manager: GameManager
+    - player: Player
+
+    + display_board(): void
+    + display_stats(): void
+    + display_event(event: Event): void
+    + prompt_choice(options: list<string>): int
+    + display_message(message: string): void
+}
+
+
+' Relationships
+
+Player "1" -- "0..*" Tile : "lands on"
+GameDatabase "1" -- "0..*" Player : "stores"
+GameDatabase "1" -- "1" GameManager : "saves/loads"
+GameManager "1" -- "0..*" Player : "manages"
+GameManager "1" -- "1" Board : "has"
+UI "1" -- "1" GameManager : "displays"
+UI "1" -- "0..1" Player : "shows stats"
+Tile <|-- GoodTile
+Tile <|-- BadTile
+Tile <|-- EventTile
+Tile <|-- StopTile
+Event <|-- NonDecisionEvent
+Event <|-- DecisionEvent
 
 
 @enduml
