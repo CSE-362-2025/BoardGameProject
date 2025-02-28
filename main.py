@@ -18,7 +18,6 @@ def main():
     screen = pygame.display.set_mode((windowWidth, windowHeight))
     manager = gameManager.GameManager(windowWidth, windowHeight)  
     manager.prepGame()
-    manager.startGame()
 
     # Main loop
     running = True

@@ -77,7 +77,7 @@ class GameDataBase(object):
 
 
         
-        curosor.execute()
+        cursor.execute()
 
 
     # get stat

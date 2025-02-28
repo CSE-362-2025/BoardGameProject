@@ -110,3 +110,87 @@ class PauseMenu():
             else:
                 i =+ 1
         return -1
+    
+
+
+
+
+def mainmenuClick(screen): 
+    buttonPos = [90, 0, 100, 10]
+    buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
+    b = screen.get_width()/100
+    c = screen.get_height()/100
+    mouse = pygame.mouse.get_pos()
+    if (buttonLeft*b) <= mouse[0] <= (buttonRight*b) and (buttonTop*c) <= mouse[1] <= (buttonBottom*c):
+        return 1
+    return -1
+
+
+def mainmenuButton(screen):
+    buttonPos = [90, 0, 100, 10]
+    buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
+    b = screen.get_width()/100
+    c = screen.get_height()/100
+    width = buttonRight-buttonLeft
+    height = buttonBottom-buttonTop
+    mouse = pygame.mouse.get_pos()
+    if (buttonLeft*b) <= mouse[0] <= (buttonRight*b) and (buttonTop*c) <= mouse[1] <= (buttonBottom*c):
+        pygame.draw.rect(screen, (255,255,0), (buttonLeft*b, buttonTop*c, width*b, height*c))
+    else:
+        pygame.draw.rect(screen, (255,255,255), (buttonLeft*b, buttonTop*c, width*b, height*c))
+
+
+class MainMenu():
+    def __init__(self):
+        self.options = [("New Game", 0), ("Settings", 1), ("Load Game", 2), ("Characters", 3)]
+
+    def mainmenuDraw(self, screen):
+        b = screen.get_width()/100
+        c = screen.get_height()/100
+        pygame.draw.rect(screen, (0, 20, 170), (3*b, 3*c, 94*b, 94*c))
+        pygame.draw.rect(screen, (234, 255, 0), (4.5*b, 4.5*c, 91*b, 91*c))
+        pygame.draw.rect(screen, (0, 20, 170), (5*b, 5*c, 90*b, 90*c))
+        font = pygame.font.Font(size=36)
+        text = "PAUSE"
+        x, y = font.size(text)            
+        text = font.render(text, True, (255,255,255), None)
+        screen.blit(text, (screen.get_width()/2-x/2, 7.5*c))
+        i = 0
+        j = 0
+        a = len(self.options)
+        buttonWidth=20
+        for option in self.options:
+            buttonLeft = buttonWidth*2*i + 20
+            buttonTop = buttonWidth*2*j + 20
+            text = option[0]
+            x, y = font.size(text)
+            text = font.render(text, True, (0,0,0), None)
+            pygame.draw.rect(screen, (255,255,255), (buttonLeft*b, buttonTop*c, (buttonWidth)*b, buttonWidth*c))
+            screen.blit(text, ((buttonLeft+10)*b-(x/2), (buttonTop+10)*c))
+            if i == 1:
+                i = 0
+                j =+ 1
+            else:
+                i =+ 1
+
+
+    def mainmenuClick(self, screen):
+        b = screen.get_width()/100
+        c = screen.get_height()/100
+        mouse = pygame.mouse.get_pos()
+        i = 0
+        j = 0
+        a = len(self.options)
+        buttonWidth=20
+        for option in self.options:
+            buttonLeft = buttonWidth*2*i + 20
+            buttonTop = buttonWidth*2*j + 20
+            if (buttonLeft*b) <= mouse[0] <= ((buttonLeft+(buttonWidth))*b) and (buttonTop*c) <= mouse[1] <= ((buttonTop+buttonWidth)*c):
+                result = option[1]
+                return result
+            if i == 1:
+                i = 0
+                j =+ 1
+            else:
+                i =+ 1
+        return -1

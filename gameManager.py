@@ -28,6 +28,7 @@ class GameManager:
         self.board = None
         self.currentEvents = None
         self.img = None
+        self.MainMenu = ui.MainMenu()
         self.pause = ui.PauseMenu()
         self.winW = windowWidth
         self.winH = windowHeight
@@ -56,7 +57,7 @@ class GameManager:
         match self.scene:
             case Scene.title:
                 if self.count <= pygame.time.get_ticks():
-                    self.scene = Scene.board
+                    self.scene = Scene.mainMenu
                     self.prep_change = False
             case Scene.board:
                 if self.prep_change:
@@ -72,13 +73,29 @@ class GameManager:
                         self.prep_change = False
                         self.currentEvents = None
                         self.board.nextPlayer()
+            case _:
+                pass
 
 
     def onClick(self, screen):
         match self.scene:
             case Scene.title:
-                self.scene = Scene.board
+                self.scene = Scene.mainMenu
                 self.prep_change = False
+            case Scene.mainMenu:
+                result = self.MainMenu.mainmenuClick(screen)
+                if result != -1:
+                    match result:
+                        case 0:
+                            self.startGame()
+                            self.scene = Scene.board
+                        case 1:
+                            self.scene = Scene.pause
+                        case 2:
+                            self.scene = Scene.board
+                        case 3:
+                            self.scene = Scene.characterMenu
+            
             case Scene.pause:
                 result = self.pause.menuClick(screen)
                 if result != -1:
@@ -123,11 +140,13 @@ class GameManager:
         screen.blit(self.img, (0,0))  # Fill screen with image
         match self.scene:
             case Scene.title:
-                font = pygame.font.Font(size=32)
+                font = pygame.font.Font(size=30)
                 text = 'Bottom Six Presents: [Insert Name Here]'
                 x, y = font.size(text)
                 text = font.render(text, True, (0,0,0), None)
                 screen.blit(text, (screen.get_width()/2-x/2, y/2))
+            case Scene.mainMenu:
+                self.MainMenu.mainmenuDraw(screen)
             case Scene.board:
                 self.board.drawBoard(screen)
                 if not self.prep_change:
