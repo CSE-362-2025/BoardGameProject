@@ -1,0 +1,19 @@
+@startuml
+
+skinparam shadowing false
+title "Use Case Diagram"
+
+!$includeStr = "<< include >>"
+!$extendStr = "<< extend >>"
+
+' actors
+"Player" as Player
+"Game Manager" as GM
+
+' * possible use cases
+' this will include: roll dice, move player, trigger event
+"Play Turn"
+"Create Player"
+"Load Game"
+
+@enduml
