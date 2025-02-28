@@ -7,26 +7,26 @@ import pygame
 import random
 
 
-def diceClick(screen, board):
-    dicePos = [90, 90, 100, 100]
-    diceLeft, diceTop, diceRight, diceBottom = dicePos
-    b = screen.get_width()/100
-    c = screen.get_height()/100
-    mouse = pygame.mouse.get_pos()
-    if (diceLeft*b) <= mouse[0] <= (diceRight*b) and (diceTop*c) <= mouse[1] <= (diceBottom*c):
-        return board.movePlayer(random.randint(1,6))
-    return -1
+class UI():
 
+    def __init__(self, game_manager, player=None):
+        self.game_manager = game_manager
+        self.player = player
 
-def diceButton(screen):
-    dicePos = [90, 90, 100, 100]
-    diceLeft, diceTop, diceRight, diceBottom = dicePos
-    b = screen.get_width()/100
-    c = screen.get_height()/100
-    width = diceRight-diceLeft
-    height = diceBottom-diceTop
-    mouse = pygame.mouse.get_pos()
-    if (diceLeft*b) <= mouse[0] <= (diceRight*b) and (diceTop*c) <= mouse[1] <= (diceBottom*c):
-        pygame.draw.rect(screen, (255,255,0), (diceLeft*b, diceTop*c, width*b, height*c))
-    else:
-        pygame.draw.rect(screen, (255,255,255), (diceLeft*b, diceTop*c, width*b, height*c))
+    def display_board():
+        pass
+
+    def display_stats():
+        pass
+
+    # Pass in event and display
+    def display_event(event):
+        pass
+
+    # Prompt the user to make a choice, returns int of index of choice
+    def prompt_choice():
+        pass
+
+    # Display game messages such as player turn, ect
+    def display_message():
+        pass

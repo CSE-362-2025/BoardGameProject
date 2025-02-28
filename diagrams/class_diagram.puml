@@ -4,12 +4,16 @@ title "Class Diagram"
 ' skinparam classAttributeIconSize 0
 
 class GameDatabase {
-    + get_connection()
-    + initialize_db()
-    + create_player(name: str)
-    + get_player(player_id: int)
-    + update_player_position(player_id: int, new_position: int)
-    + update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
+    
+    - connection: sqlite3.Connection
+    - cursor: sqlite3.Cursor
+
+    + connect(db_name: str): void
+    + save_game(game_manager: GameManager): void
+    + load_game(game_manager: GameManager): void
+    + clear_database(): void
+    + close_connection(): void
+
 }
 
 class Board {
@@ -32,23 +36,29 @@ abstract class Tile {
 }
 
 class GoodTile {
+    - message: string
+    - effect: dict<string, int>
 
     + apply_good_effect(player: Player): void
 }
 
 class BadTile {
+    - message: string
+    - effect: dict<string, int>
 
     + apply_bad_effect(player: Player): void
 }
 
 class EventTile {
+    - event: Event
 
     + trigger_event(player: Player): void
 }
 
 class StopTile {
+    - event: Event
 
-    + stop_player(player: Player): void
+    + trigger_event(player: Player): void
 }
 
 class Player {
@@ -57,7 +67,7 @@ class Player {
     - position: int
     - stats: dict<string, int> {bilingual, athletic, academic, military, social}
 
-    + move(spaces: int): void
+    + hop(): void
     + change_stats(stats: dict<string, int>): void
     + apply_event(event: Event): void
     + choose_option(event: Event, choice_idx: int): void
@@ -116,13 +126,15 @@ class UI {
 
 ' Relationships
 
-Player "1" -- "0..*" Tile : "lands on"
+Player "1" -- "1..1*" Tile : "lands on"
 GameDatabase "1" -- "0..*" Player : "stores"
 GameDatabase "1" -- "1" GameManager : "saves/loads"
 GameManager "1" -- "0..*" Player : "manages"
 GameManager "1" -- "1" Board : "has"
 UI "1" -- "1" GameManager : "displays"
 UI "1" -- "0..1" Player : "shows stats"
+EventTile "1" -- "1" Event : "triggers"
+StopTile "1" -- "1" Event : "triggers"
 Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
