@@ -58,7 +58,6 @@ class Player {
     + move(spaces: int): Tile
     + store_event(Event, choice_idx): void
     + change_stats(stats: dict<string, int>): void
-    + apply_event(event: Event): void
     + get_stats(): dict<string, int>
 
 }
@@ -99,6 +98,7 @@ class GameManager {
     - turn_count: int
     - events: list<Event>
     - ui: UI
+    - game_database: GameDatabase
 
     + play_turn(): void
     + play_computer_turn(): void
@@ -127,6 +127,7 @@ class UI {
     + display_non_decision_event(event: Event): void
     + display_computer_non_decision_event(event: Event): void
     + display_message(message: string): void
+    + change_current_player(player: Player): void
 }
 
 

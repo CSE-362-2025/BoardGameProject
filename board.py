@@ -22,7 +22,3 @@ class Board:
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):
         pass
-
-    # displays the board
-    def display(self):
-        pass

@@ -9,34 +9,35 @@ import pygame
 
 class Event:
 
-    def __init__(self, name, description, criteria, result):
+    def __init__(self, name, description, criteria, result, rarity):
         self.name = name
         self.description = description
         self.criteria = criteria
         self.result = result
+        self.rarity = rarity
     
-    def trigger(player):
+    def meet_criteria(player):
         pass
 
 
 class NonDecisionEvent(Event):
 
     def __init__(self, name, description, criteria, result):
-        super().__init__(name, description, criteria, result)
+        super().__init__(self, name, description, criteria, result)
 
-    def apply_result(player):
+    def apply_result(self, player):
         pass
 
 
 class DecisionEvent(Event):
 
     def __init__(self, name, description, criteria, result, choices):
-        super().__init__(name, description, criteria, result)\
+        super().__init__(self, name, description, criteria, result)\
         
         self.choices = choices
 
-    def apply_result(player, choice_idx):
+    def apply_result(self, player, choice_idx):
         pass
 
-    def show_choices():
+    def show_choices(self):
         pass

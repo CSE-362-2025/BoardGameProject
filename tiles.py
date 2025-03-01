@@ -13,32 +13,22 @@ class Tile:
 
 class GoodTile(Tile):
 
-    def __init__(self, position, tile_type, message, effect):
+    def __init__(self, position, tile_type):
         super().__init__(position, tile_type)
-        self.message = message
-        self.effect = effect
-
-    def apply_effect(player):
         pass
 
 
 class BadTile(Tile):
 
-    def __init__(self, position, tile_type, message, effect):
+    def __init__(self, position, tile_type):
         super().__init__(position, tile_type)
-        self.message = message
-        self.effect = effect
-
-    def apply_effect(player):
         pass
+
 
 class EventTile(Tile):
 
-    def __init__(self, position, tile_type, event):
+    def __init__(self, position, tile_type):
         super().__init__(position, tile_type)
-        self.event = event
-
-    def trigger_event(player):
         pass
 
 
@@ -47,6 +37,3 @@ class StopTile(Tile):
     def __init__(self, position, tile_type, event):
         super().__init__(position, tile_type)
         self.event = event
-
-    def trigger_event(player):
-        pass

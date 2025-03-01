@@ -12,6 +12,7 @@ class Player:
 
         self.name = name
         self.position = 0
+        self.events_played = []
 
         # can pass in stats to set them, otherwise default to 0 for now
         if stats is not None:
@@ -26,20 +27,16 @@ class Player:
                 "social": 0,
             }
 
-    def hop(self):
+    def move(self, spaces):
         pass
 
     def change_stats(self, stats):
         pass
 
-    def apply_event(self, event):
-        pass
-
-    def choose_option(self, event, choice_idx):
+    def store_event(self, event):
         pass
 
     def get_stats(self):
-
         return self.stats
     
 

@@ -10,7 +10,8 @@ class GameDatabase:
 
     def connect(db_name):
         pass
-
+    
+    # return true is success, false otherwise
     def save_game(self, game_manager):
         pass
 
