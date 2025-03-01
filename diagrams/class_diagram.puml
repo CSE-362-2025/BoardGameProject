@@ -75,6 +75,11 @@ class Player {
 
 }
 
+class ComputerPlayer {
+
+    + make_decision(event: Event): int
+}
+
 class Event {
 
     - name: string
@@ -141,6 +146,7 @@ Tile <|-- EventTile
 Tile <|-- StopTile
 Event <|-- NonDecisionEvent
 Event <|-- DecisionEvent
+Player <|-- ComputerPlayer
 
 
 @enduml

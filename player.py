@@ -7,6 +7,7 @@ Keeps track of player specific stats such as tile and board number
 import pygame
 
 class Player:
+
     def __init__(self, name, stats=None):
 
         self.name = name
@@ -38,8 +39,18 @@ class Player:
         pass
 
     def get_stats(self):
-        
+
         return self.stats
     
+
+class ComputerPlayer(Player): 
+
+    def __init__(self, name, stats=None):
+        super().__init__(name, stats)
+        pass
+
+    # Makes a decision based on the event, returns the index of the choice
+    def make_decision(self, event):
+        pass
 
 
