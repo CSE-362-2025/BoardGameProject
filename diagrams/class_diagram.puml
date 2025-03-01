@@ -136,10 +136,10 @@ GameDatabase "1" -- "0..*" Player : "stores"
 GameDatabase "1" -- "1" GameManager : "saves/loads"
 GameManager "1" -- "0..4*" Player : "manages"
 GameManager "1" -- "1" Board : "has"
+GameManager "1" -- "0.." Event : "has"
 UI "1" -- "1" GameManager : "displays"
 UI "1" -- "0..1" Player : "shows stats"
-EventTile "1" -- "1" Event : "triggers"
-StopTile "1" -- "1" Event : "triggers"
+StopTile "1" -- "1" Event : "has"
 Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
