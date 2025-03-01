@@ -17,7 +17,7 @@ class Board:
 
     # returns tile at position
     def get_tile(self, position):
-        pass
+        return self.tiles[position]
 
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):

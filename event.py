@@ -16,8 +16,8 @@ class Event:
         self.result = result
         self.rarity = rarity
     
-    def meet_criteria(player):
-        pass
+    def meet_criteria(player_stats, criteria):
+        return all(player_stats.get(key, 0) >= value for key, value in criteria.items())
 
 
 class NonDecisionEvent(Event):
@@ -26,18 +26,17 @@ class NonDecisionEvent(Event):
         super().__init__(self, name, description, criteria, result)
 
     def apply_result(self, player):
-        pass
+        player.update_stats(self.result)
 
 
 class DecisionEvent(Event):
 
     def __init__(self, name, description, criteria, result, choices):
-        super().__init__(self, name, description, criteria, result)\
+        super().__init__(self, name, description, criteria, result)
         
         self.choices = choices
 
     def apply_result(self, player, choice_idx):
-        pass
+        player.update_stats(self.choices[choice_idx].result)
 
-    def show_choices(self):
-        pass
+

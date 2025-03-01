@@ -13,7 +13,9 @@
                     "athletic" : 0, 
                     "academic" : 0, 
                     "military" : 0, 
-                    "social" : 0}
+                    "social" : 0},
+        
+        "rarity" : 0
 
 
     },
@@ -49,7 +51,10 @@
                                 "academic" : 0, 
                                 "military" : 0, 
                                 "social" : 0}
-        }]
+        }],
+
+        "rarity" : 0
+
 
     }
 

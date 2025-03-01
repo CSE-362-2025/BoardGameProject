@@ -5,6 +5,7 @@ Last Edited: 2025/02/17
 Keeps track of player specific stats such as tile and board number
 """
 import pygame
+import random
 
 class Player:
 
@@ -28,13 +29,14 @@ class Player:
             }
 
     def move(self, spaces):
-        pass
+        self.position += spaces
 
     def change_stats(self, stats):
-        pass
+        for key in stats:
+            self.stats[key] += stats[key]
 
     def store_event(self, event):
-        pass
+        self.events_played.append(event)
 
     def get_stats(self):
         return self.stats
@@ -44,10 +46,9 @@ class ComputerPlayer(Player):
 
     def __init__(self, name, stats=None):
         super().__init__(name, stats)
-        pass
 
     # Makes a decision based on the event, returns the index of the choice
     def make_decision(self, event):
-        pass
+        return random.randint(0, len(event.choices) - 1)
 
 

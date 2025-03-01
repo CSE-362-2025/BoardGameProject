@@ -128,6 +128,7 @@ class UI {
     + display_computer_non_decision_event(event: Event): void
     + display_message(message: string): void
     + change_current_player(player: Player): void
+    + display_roll(roll: int): void
 }
 
 
