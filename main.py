@@ -7,7 +7,7 @@ Main function for game: in charge of running the game
 
 import pygame
 import sys
-import gameManager
+import game_manager
 
 windowWidth = 1080
 windowHeight = 720
@@ -16,7 +16,7 @@ def main():
     pygame.init()
     display = pygame.time.Clock()
     screen = pygame.display.set_mode((windowWidth, windowHeight))
-    manager = gameManager.GameManager(windowWidth, windowHeight)  
+    manager = game_manager.GameManager(windowWidth, windowHeight)  
     manager.prepGame()
     manager.startGame()
 

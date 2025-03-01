@@ -1,0 +1,31 @@
+@startuml SequenceDiagram: Dice roll and movement for computer player
+participant GameManager
+participant Board
+participant EventTile
+participant StopTile
+participant Event
+participant ComputerPlayer
+
+GameManager -> ComputerPlayer: take_turn(game_manager)
+ComputerPlayer -> GameManager: roll_dice()
+GameManager -> ComputerPlayer: hop(dice_roll)
+
+loop Move Step-by-Step
+    ComputerPlayer -> Board: get_tile(position)
+    Board -> ComputerPlayer: Return Tile
+    alt Tile is StopTile
+        ComputerPlayer -> StopTile: trigger_event()
+        StopTile -> Event: trigger_event()
+    else Tile is EventTile
+        ComputerPlayer -> GameManager: get_random_event()
+        GameManager -> Event: Select and return event
+        ComputerPlayer -> Event: trigger_event()
+    end
+end
+
+GameManager -> GameManager: Process event effects
+GameManager -> ComputerPlayer: Apply event results
+GameManager -> GameManager: Switch turn
+@enduml
+
+

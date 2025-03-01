@@ -9,16 +9,20 @@ import player
 
 
 class Board:
+    
     def __init__(self, tiles, size):
 
         self.tiles = tiles
         self.size = size
 
+    # returns tile at position
     def get_tile(self, position):
         pass
 
+    # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):
         pass
 
+    # displays the board
     def display(self):
         pass

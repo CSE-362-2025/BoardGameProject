@@ -22,7 +22,6 @@ class Board {
     - size: int
 
     + get_tile(position: int): Tile
-    + display(): void
     + get_player_positions(players: list<Player>): dict<Player, int>
 }
 
@@ -39,26 +38,21 @@ class GoodTile {
     - message: string
     - effect: dict<string, int>
 
-    + apply_good_effect(player: Player): void
 }
 
 class BadTile {
     - message: string
     - effect: dict<string, int>
 
-    + apply_bad_effect(player: Player): void
 }
 
 class EventTile {
-    - event: Event
 
-    + trigger_event(player: Player): void
 }
 
 class StopTile {
     - event: Event
 
-    + trigger_event(player: Player): void
 }
 
 class Player {
@@ -66,11 +60,12 @@ class Player {
     - name: string
     - position: int
     - stats: dict<string, int> {bilingual, athletic, academic, military, social}
+    - events_played: list[Dict{<Event, choice_idx>}]
 
-    + hop(): void
+    + move(spaces: int): Tile
+    + store_event(Event, choice_idx): void
     + change_stats(stats: dict<string, int>): void
     + apply_event(event: Event): void
-    + choose_option(event: Event, choice_idx: int): void
     + get_stats(): dict<string, int>
 
 }
@@ -86,8 +81,9 @@ class Event {
     - description: string
     - criteria: dict<string, int>
     - result: dict<string, int>
+    - rarity: int
 
-    + trigger(player: Player): void
+    + meet_criteria(player: Player): bool
 }
 
 class NonDecisionEvent {
@@ -108,12 +104,19 @@ class GameManager {
     - board: Board
     - players: list<Player>
     - turn_count: int
+    - events: list<Event>
 
+    + play_turn(): void
     + game_start(): void
     + game_end(): void
     + switch_turn(): int
     + roll_dice(): int
+    + get_random_event(): Event
     + is_game_over(): bool
+    + event_choice(event: Event, choice_idx: int): void
+    + accept_event(event: Event): void
+    + generate_good_tile_effects(): Dict<string, int>
+    + generate_bad_tile_effects(): Dict<string, int>
 }
 
 class UI {
@@ -123,8 +126,9 @@ class UI {
 
     + display_board(): void
     + display_stats(): void
-    + display_event(event: Event): void
-    + prompt_choice(options: list<string>): int
+    + display_dice(): void
+    + display_decision_event(event: Event): void
+    + display_non_decision_event(event: Event): void
     + display_message(message: string): void
 }
 
@@ -134,7 +138,7 @@ class UI {
 Player "1" -- "1..1*" Tile : "lands on"
 GameDatabase "1" -- "0..*" Player : "stores"
 GameDatabase "1" -- "1" GameManager : "saves/loads"
-GameManager "1" -- "0..*" Player : "manages"
+GameManager "1" -- "0..4*" Player : "manages"
 GameManager "1" -- "1" Board : "has"
 UI "1" -- "1" GameManager : "displays"
 UI "1" -- "0..1" Player : "shows stats"

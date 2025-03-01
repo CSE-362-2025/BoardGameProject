@@ -11,10 +11,12 @@ import ui
 
 
 class GameManager:
-    def __init__(self, board, players):
+
+    def __init__(self, board, players, events):
         
         self.board = board
         self.players = players
+        self.events = events
 
         self.turn_count = 0
 
@@ -28,6 +30,9 @@ class GameManager:
         pass
 
     def roll_dice(self):
+        pass
+
+    def get_random_event(self):
         pass
 
     def is_game_over(self):
