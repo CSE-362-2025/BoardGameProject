@@ -1,4 +1,4 @@
-## Design Decisiosn
+## Design Decisions
 
 ### StopTile
 
@@ -8,4 +8,9 @@
 ### EventTile
 
 - Will have three tiers of rarity (2: common, 1: rare, 0: super rare)
+- Must produce an event so must grab an event then check the criteria and then pull another if fails
+
+### Player
+
+- for events_played, choice_idx will be 0 if it is a non-decision event
 

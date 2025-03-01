@@ -107,6 +107,7 @@ class GameManager {
     - events: list<Event>
 
     + play_turn(): void
+    + play_computer_turn(): void
     + game_start(): void
     + game_end(): void
     + switch_turn(): int
@@ -128,7 +129,9 @@ class UI {
     + display_stats(): void
     + display_dice(): void
     + display_decision_event(event: Event): void
+    + display_computer_decision(event: Event, choice_idx: int): void
     + display_non_decision_event(event: Event): void
+    + display_computer_non_decision_event(event: Event): void
     + display_message(message: string): void
 }
 

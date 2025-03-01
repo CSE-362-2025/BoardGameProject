@@ -8,7 +8,7 @@ participant Tile
 participant Event
 
 User -> UI: Click "Roll Dice"
-UI -> GameManager: roll_dice()
+UI -> GameManager: play_turn()
 GameManager -> GameManager: dice_roll()
 GameManager -> Player: move(dice_roll)
 
@@ -67,7 +67,6 @@ else No StopTile in the move
 
 
         else Player lands on Non-decision EventTile
-            Event --> GameManager: true
             GameManager -> UI: display_non_decision_event(Event)
             UI -> User: OK
             User -> UI: Click "OK"

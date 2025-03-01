@@ -1,31 +1,93 @@
 @startuml SequenceDiagram: Dice roll and movement for computer player
+
+actor User
+participant UI
 participant GameManager
-participant Board
-participant EventTile
-participant StopTile
-participant Event
 participant ComputerPlayer
+participant Board
+participant Tile
+participant Event
 
-GameManager -> ComputerPlayer: take_turn(game_manager)
-ComputerPlayer -> GameManager: roll_dice()
-GameManager -> ComputerPlayer: hop(dice_roll)
 
-loop Move Step-by-Step
-    ComputerPlayer -> Board: get_tile(position)
-    Board -> ComputerPlayer: Return Tile
-    alt Tile is StopTile
-        ComputerPlayer -> StopTile: trigger_event()
-        StopTile -> Event: trigger_event()
-    else Tile is EventTile
-        ComputerPlayer -> GameManager: get_random_event()
-        GameManager -> Event: Select and return event
-        ComputerPlayer -> Event: trigger_event()
+UI -> GameManager: play_computer_turn()
+GameManager -> GameManager: dice_roll()
+GameManager -> ComputerPlayer: move(dice_roll)
+
+alt There is a StopTile at some position in the move
+
+        GameManager -> Board: get_tile(position)
+        Board --> GameManager: StopTile
+        GameManager -> Event: meet_criteria(ComputerPlayer)
+        Event --> GameManager: true
+
+        alt ComputerPlayer meets criteria
+
+            alt StopTile has a decision Event
+                GameManager -> UI: display_decision_event(Event)
+                GameManager -> ComputerPlayer: make_decision(Event)
+                GameManager <-- ComputerPlayer: choice_idx: int
+                GameManager -> UI: display_computer_decision(Event, choice_idx)
+                UI -> UI: display_message(string)
+                GameManager -> Event: apply_result(ComputerPlayer, choice_idx)
+
+            else StopTile has a non-decision Event
+                GameManager -> UI: display_computer_non_decision_event(Event)
+                UI -> UI: display_message(string)
+                GameManager -> Event: apply_result(ComputerPlayer)
+            end
+
+            GameManager -> ComputerPlayer: store_event(Event, choice_idx)
+
+        else Player stats don't meet the criteria for the event
+            Event --> GameManager: false
+            GameManager -> UI: display_message("You don't meet the criteria for this event")
+        end
+
+else No StopTile in the move
+
+    alt ComputerPlayer lands on EventTile
+
+        loop Until the Player meets the criteria of the Event
+            GameManager -> GameManager: get_random_event()
+            GameManager -> Event: meet_criteria(ComputerPlayer)
+            Event --> GameManager: false
+        end
+    
+        Event --> GameManager: true
+
+        alt ComputerPlayer lands on Decision EventTile
+            GameManager -> UI: display_decision_event(Event)
+            GameManager -> ComputerPlayer: make_decision(Event)
+            GameManager <-- ComputerPlayer: choice_idx: int
+            GameManager -> UI: display_computer_decision(Event, choice_idx)
+            UI -> UI: display_message(string)
+            GameManager -> Event: apply_result(ComputerPlayer, choice_idx)
+
+        else ComputerPlayer lands on Non-decision EventTile
+            GameManager -> UI: display_computer_non_decision_event(Event)
+            GameManager -> Event: apply_result(ComputerPlayer)
+
+        end
+        
+        GameManager -> ComputerPlayer: store_event(Event, choice_idx)
+    
+    else ComputerPlayer lands on GoodTile or BadTile
+        GameManager -> UI: display_message(string)
+
+        alt ComputerPlayer lands on GoodTile
+            GameManager -> GameManager: generate_good_tile_effects()
+        else Player lands on BadTile
+            GameManager -> GameManager: generate_bad_tile_effects()
+        end
+
+        GameManager -> ComputerPlayer: change_stats(Dict<string, int>): void
+        GameManager -> UI: display_message("Stats changed...")
+
     end
 end
 
-GameManager -> GameManager: Process event effects
-GameManager -> ComputerPlayer: Apply event results
-GameManager -> GameManager: Switch turn
+GameManager -> GameManager: switch_turn()
+GameManager -> UI: display_board()
+GameManager -> UI: display_stats()
+
 @enduml
-
-
