@@ -8,10 +8,10 @@ class GameDatabase {
     - connection: sqlite3.Connection
     - cursor: sqlite3.Cursor
 
-    + connect(db_name: str): void
-    + save_game(game_manager: GameManager): void
-    + load_game(game_manager: GameManager): void
-    + clear_database(): void
+    + connect(db_name: str): bool
+    + save_game(game_manager: GameManager): bool
+    + load_game(game_manager: GameManager): bool
+    + clear_database(): bool
     + close_connection(): void
 
 }
