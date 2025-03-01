@@ -14,3 +14,7 @@
 
 - for events_played, choice_idx will be 0 if it is a non-decision event
 
+### Good/BadTile
+
+- I'm going with each tile generates a random effect
+

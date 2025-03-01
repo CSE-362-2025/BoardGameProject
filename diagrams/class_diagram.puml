@@ -35,19 +35,12 @@ abstract class Tile {
 }
 
 class GoodTile {
-    - message: string
-    - effect: dict<string, int>
-
 }
 
 class BadTile {
-    - message: string
-    - effect: dict<string, int>
-
 }
 
 class EventTile {
-
 }
 
 class StopTile {
