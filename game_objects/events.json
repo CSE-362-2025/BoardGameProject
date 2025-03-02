@@ -1,7 +1,8 @@
 [
     {
-        "name" : "Non Decision Event Title",
-        "description" : "Event description",
+        "type" : "Static",
+        "name" : "Static Event Title",
+        "description" : "Static Event description",
 
         "criteria" : {"bilingual" : 0, 
                     "athletic" : 0, 
@@ -13,13 +14,17 @@
                     "athletic" : 0, 
                     "academic" : 0, 
                     "military" : 0, 
-                    "social" : 0}
+                    "social" : 0},
+        
+        "rarity" : 0
 
 
     },
+
     {
+        "type" : "Decision",
         "name" : "Decision Event Title",
-        "description" : "Event description",
+        "description" : "Decision Event description",
 
         "criteria" : {"bilingual" : 0, 
                     "athletic" : 0, 
@@ -27,7 +32,7 @@
                     "military" : 0, 
                     "social" : 0},
 
-        "choice" : [{"text" : "Choice 1",
+        "choices" : [{"text" : "Choice 1",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
                                 "academic" : 0, 
@@ -49,7 +54,10 @@
                                 "academic" : 0, 
                                 "military" : 0, 
                                 "social" : 0}
-        }]
+        }],
+
+        "rarity" : 0
+
 
     }
 

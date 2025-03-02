@@ -4,12 +4,16 @@ title "Class Diagram"
 ' skinparam classAttributeIconSize 0
 
 class GameDatabase {
-    + get_connection()
-    + initialize_db()
-    + create_player(name: str)
-    + get_player(player_id: int)
-    + update_player_position(player_id: int, new_position: int)
-    + update_stats(player_id: int, military: int = 0, bilingualism: int = 0, military: int = 0, fitness: int = 0)
+    
+    - connection: sqlite3.Connection
+    - cursor: sqlite3.Cursor
+
+    + connect(db_name: str): bool
+    + save_game(game_manager: GameManager): bool
+    + load_game(game_manager: GameManager): bool
+    + clear_database(): bool
+    + close_connection(): void
+
 }
 
 class Board {
@@ -18,7 +22,6 @@ class Board {
     - size: int
 
     + get_tile(position: int): Tile
-    + display(): void
     + get_player_positions(players: list<Player>): dict<Player, int>
 }
 
@@ -32,23 +35,17 @@ abstract class Tile {
 }
 
 class GoodTile {
-
-    + apply_good_effect(player: Player): void
 }
 
 class BadTile {
-
-    + apply_bad_effect(player: Player): void
 }
 
 class EventTile {
-
-    + trigger_event(player: Player): void
 }
 
 class StopTile {
+    - event: Event
 
-    + stop_player(player: Player): void
 }
 
 class Player {
@@ -56,13 +53,18 @@ class Player {
     - name: string
     - position: int
     - stats: dict<string, int> {bilingual, athletic, academic, military, social}
+    - events_played: list[Dict{<Event, choice_idx>}]
 
-    + move(spaces: int): void
+    + move(spaces: int): Tile
+    + store_event(Event, choice_idx): void
     + change_stats(stats: dict<string, int>): void
-    + apply_event(event: Event): void
-    + choose_option(event: Event, choice_idx: int): void
     + get_stats(): dict<string, int>
 
+}
+
+class ComputerPlayer {
+
+    + make_decision(event: Event): int
 }
 
 class Event {
@@ -71,11 +73,14 @@ class Event {
     - description: string
     - criteria: dict<string, int>
     - result: dict<string, int>
+    - rarity: int
+    - event_type: string
 
-    + trigger(player: Player): void
+    + meet_criteria(player: Player): bool
+    + get_type(self): string
 }
 
-class NonDecisionEvent {
+class StaticEvent {
 
     + apply_result(player: Player): void
 }
@@ -93,12 +98,22 @@ class GameManager {
     - board: Board
     - players: list<Player>
     - turn_count: int
+    - events: list<Event>
+    - ui: UI
+    - game_database: GameDatabase
 
+    + play_turn(): void
+    + play_computer_turn(): void
     + game_start(): void
     + game_end(): void
     + switch_turn(): int
     + roll_dice(): int
+    + get_random_event(): Event
     + is_game_over(): bool
+    + event_choice(event: Event, choice_idx: int): void
+    + accept_event(event: Event): void
+    + generate_good_tile_effects(): Dict<string, int>
+    + generate_bad_tile_effects(): Dict<string, int>
 }
 
 class UI {
@@ -108,27 +123,32 @@ class UI {
 
     + display_board(): void
     + display_stats(): void
-    + display_event(event: Event): void
-    + prompt_choice(options: list<string>): int
+    + display_dice(): void
+    + display_decision_event(event: Event): void
+    + display_computer_decision(event: Event, choice_idx: int): void
+    + display_non_decision_event(event: Event): void
+    + display_computer_non_decision_event(event: Event): void
     + display_message(message: string): void
+    + change_current_player(player: Player): void
+    + display_roll(roll: int): void
 }
 
 
 ' Relationships
 
-Player "1" -- "0..*" Tile : "lands on"
-GameDatabase "1" -- "0..*" Player : "stores"
+Board "1" -- "0..*" Tile : "has"
 GameDatabase "1" -- "1" GameManager : "saves/loads"
-GameManager "1" -- "0..*" Player : "manages"
+GameManager "1" -- "0..4*" Player : "manages"
 GameManager "1" -- "1" Board : "has"
+GameManager "1" -- "0.." Event : "has"
 UI "1" -- "1" GameManager : "displays"
-UI "1" -- "0..1" Player : "shows stats"
 Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
 Event <|-- NonDecisionEvent
 Event <|-- DecisionEvent
+Player <|-- ComputerPlayer
 
 
 @enduml

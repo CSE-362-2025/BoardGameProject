@@ -1,0 +1,30 @@
+@startuml SequenceDiagram: Save and Load Game
+
+actor User
+participant UI
+participant GameManager
+participant GameDatabase
+participant Board
+participant Player
+participant Event
+
+== Save Game Sequence ==
+
+GameManager -> GameManager: switch_turn()
+
+alt If each player has played their turn for this round
+    GameManager -> GameDatabase: save_game(game_manager)
+    GameDatabase --> GameManager: true
+    GameManager -> UI: display_message("Game Saved")
+end
+
+== Load Game Sequence ==
+
+User -> UI: Click "Load Game"
+UI -> GameManager: load_existing_game()
+GameManager -> GameDatabase: load_game(game_manager)
+GameDatabase --> GameManager: true
+
+GameManager -> UI: display_message("Game Loaded")
+
+@enduml
