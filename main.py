@@ -3,7 +3,7 @@ from game_manager import GameManager
 from board import Board
 from player import Player
 from ui import UI
-from event import Event, DecisionEvent, StaticEvent
+from event import DecisionEvent, StaticEvent
 from tiles import GoodTile, BadTile, EventTile, StopTile
 import json
 

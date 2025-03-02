@@ -81,11 +81,11 @@ class UI():
             player_x = (player.position % GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
             player_y = (player.position // GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
             
-            pygame.draw.circle(self.screen, player.color, (player_x, player_y), PLAYER_RADIUS)
+            pygame.draw.circle(self.screen, player.color, (player_x-50, player_y-50), PLAYER_RADIUS)
 
             # Draw player name or symbol above the circle
-            player_text = self.font.render(player.name[0], True, FONT_COLOR)
-            player_text_rect = player_text.get_rect(center=(player_x, player_y - PLAYER_RADIUS - 5))
+            player_text = self.font.render(player.name[-1], True, FONT_COLOR)
+            player_text_rect = player_text.get_rect(center=(player_x-50, player_y - PLAYER_RADIUS - 55))
             self.screen.blit(player_text, player_text_rect)
 
         pygame.display.flip()  # Update display

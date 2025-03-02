@@ -89,7 +89,6 @@ class DecisionEvent {
     - choices: list<string>
 
     + apply_result(player: Player, choice_idx: int): void
-    + show_choices(): void
 }
 
 
