@@ -1,38 +1,37 @@
-"""
-Authors: Bottom Six
-Created: 2025/02/18
-Last Edited: 2025/02/18
-Classes surrounding the in-game events that occur following a landing on a space.
-"""
+
 import pygame
 
 
 class Event:
 
-    def __init__(self, name, description, criteria, result, rarity):
+    def __init__(self, name, description, criteria, result, rarity, type):
         self.name = name
         self.description = description
         self.criteria = criteria
         self.result = result
         self.rarity = rarity
+        self.type = type  # "Decision" or "Static"
     
-    def meet_criteria(player_stats, criteria):
-        return all(player_stats.get(key, 0) >= value for key, value in criteria.items())
+
+    def meet_criteria(self, player_stats):
+        return all(player_stats.get(key, 0) >= value for key, value in self.criteria.items())
+    
+    def get_type(self):
+        return self.type
 
 
-class NonDecisionEvent(Event):
+class StaticEvent(Event):
 
-    def __init__(self, name, description, criteria, result):
-        super().__init__(self, name, description, criteria, result)
+    def __init__(self, name, description, criteria, result, rarity):
+        super().__init__(name, description, criteria, result, rarity, type="Static")
 
     def apply_result(self, player):
         player.update_stats(self.result)
 
-
 class DecisionEvent(Event):
 
-    def __init__(self, name, description, criteria, result, choices):
-        super().__init__(self, name, description, criteria, result)
+    def __init__(self, name, description, criteria, choices, rarity):
+        super().__init__(name, description, criteria, None, rarity, type="Decision")
         
         self.choices = choices
 

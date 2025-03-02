@@ -1,19 +1,16 @@
-"""
-Authors: Bottom Six
-Created: 2025/02/17
-Last Edited: 2025/02/17
-Keeps track of player specific stats such as tile and board number
-"""
+
 import pygame
 import random
 
 class Player:
 
-    def __init__(self, name, stats=None):
+    def __init__(self, name, color, stats=None):
 
         self.name = name
+        self.color = color
         self.position = 0
         self.events_played = []
+        self.has_moved = True
 
         # can pass in stats to set them, otherwise default to 0 for now
         if stats is not None:
@@ -35,8 +32,11 @@ class Player:
         for key in stats:
             self.stats[key] += stats[key]
 
-    def store_event(self, event):
-        self.events_played.append(event)
+    def store_event(self, event, choice_idx=None):
+        if choice_idx is not None:
+            self.events_played.append((event, choice_idx))
+        else:
+            self.events_played.append((event, None))
 
     def get_stats(self):
         return self.stats

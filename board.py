@@ -10,10 +10,10 @@ import player
 
 class Board:
     
-    def __init__(self, tiles, size):
+    def __init__(self, tiles):
 
         self.tiles = tiles
-        self.size = size
+        self.size = len(tiles)
 
     # returns tile at position
     def get_tile(self, position):

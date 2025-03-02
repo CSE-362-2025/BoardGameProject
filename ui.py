@@ -1,9 +1,4 @@
-"""
-Authors: Bottom Six
-Last Edit: 2025/02/17
-Keeps track of the user interfact and runs event dependant on the results
-"""
-import pygame 
+import pygame
 import random
 
 # Constants
@@ -12,6 +7,13 @@ GRID_SIZE = 6  # Assuming a 6x6 board
 WINDOW_SIZE = TILE_SIZE * GRID_SIZE
 BG_COLOR = (30, 30, 30)  # Dark gray background
 FONT_COLOR = (255, 255, 255)  # White text
+PLAYER_RADIUS = 20  # Radius of player circle
+
+DICE_SIZE = 80
+DICE_POS = (300, 300)  # Adjust this based on your UI layout
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 
 # Colors for different tile types
 TILE_COLORS = {
@@ -24,57 +26,130 @@ TILE_COLORS = {
 class UI():
 
     # player is current player, changes during switch_turn()
-    def __init__(self, game_manager, player=None):
+    def __init__(self, game_manager=None, player=None):
         self.game_manager = game_manager
         self.player = player
         self.screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font(None, 16)
+        self.dice_value = 0
+
+        self.message = None  # Variable to store the current message
+        self.message_duration = 0  # Number of frames the message will stay on screen
+
+    def update(self, board, players):
+        """Updates and draws all necessary UI components."""
+        # Draw the board, dice, and stats
+        self.screen.fill((0, 0, 0))  # Clear the screen first
+        self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
+        self.display_dice()   # Call a method to display the dice
+        self.display_stats()  # Call a method to display player stats, if any
+
+        # If there's a message to display, show it
+        if self.message_duration > 0:
+            text_surface = self.font.render(self.message, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=self.screen.get_rect().center)
+            self.screen.blit(text_surface, text_rect)
+            self.message_duration -= 1
+
+        pygame.display.flip()  # Update the display
+
 
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
 
+        # Draw tiles
         for i in range(GRID_SIZE):
             for j in range(GRID_SIZE):
-                tile = board.tiles[i * GRID_SIZE + j]  # Get tile object
-                tile_color = TILE_COLORS.get(tile.get_type(), (100, 100, 100))  # Default gray if unknown
-                
-                # Draw tile rectangle
-                rect = pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                pygame.draw.rect(self.screen, tile_color, rect)
-                pygame.draw.rect(self.screen, (0, 0, 0), rect, 2)  # Black border
+                tile_index = i * GRID_SIZE + j
+                if tile_index < len(board.tiles):
+                    tile = board.tiles[tile_index]  # Get tile object
+                    tile_color = TILE_COLORS.get(tile.get_type(), (100, 100, 100))  # Default gray if unknown
+                    
+                    # Draw tile rectangle
+                    rect = pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                    pygame.draw.rect(self.screen, tile_color, rect)
+                    pygame.draw.rect(self.screen, (0, 0, 0), rect, 2)  # Black border
 
-                # Draw tile type letter in center
-                text_surface = self.font.render(tile.get_type()[0], True, FONT_COLOR)
-                text_rect = text_surface.get_rect(center=rect.center)
-                self.screen.blit(text_surface, text_rect)
+                    # Draw tile type letter in center
+                    text_surface = self.font.render(tile.get_type()[:], True, FONT_COLOR)
+                    text_rect = text_surface.get_rect(center=rect.center)
+                    self.screen.blit(text_surface, text_rect)
+
+        # Draw players
+        for player in players:
+            player_x = (player.position % GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
+            player_y = (player.position // GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
+            
+            pygame.draw.circle(self.screen, player.color, (player_x, player_y), PLAYER_RADIUS)
+
+            # Draw player name or symbol above the circle
+            player_text = self.font.render(player.name[0], True, FONT_COLOR)
+            player_text_rect = player_text.get_rect(center=(player_x, player_y - PLAYER_RADIUS - 5))
+            self.screen.blit(player_text, player_text_rect)
 
         pygame.display.flip()  # Update display
 
     def display_stats(self):
-        pass
+        # Example of displaying player stats in the top-right corner
+        self.font = pygame.font.Font(None, 16)
+        if self.player:
+            stats_text = f"{self.player.name}'s Stats: {self.player.stats}"  # You can customize this to show actual stats
+            stats_surface = self.font.render(stats_text, True, FONT_COLOR)
+            stats_rect = stats_surface.get_rect(topright=(WINDOW_SIZE - 10, 10))
+            self.screen.blit(stats_surface, stats_rect)
+            pygame.display.flip()
 
     def display_dice(self):
-        pass
+        # Draw dice background (square)
+        dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
+        pygame.draw.rect(self.screen, WHITE, dice_rect)  # Background of the dice
+        pygame.draw.rect(self.screen, BLACK, dice_rect, 3)  # Border for the dice
 
-    # Pass in event and display
+        # Draw dice value (centered in the dice square)
+        text_surface = self.font.render(str(self.dice_value), True, BLACK)
+        text_rect = text_surface.get_rect(center=dice_rect.center)  # Center the text inside the dice square
+        self.screen.blit(text_surface, text_rect)  # Draw the text on the screen
+
+        # Update the display to reflect changes
+        pygame.display.update()  # Update display after drawing the dice
+
+    def roll_dice(self):
+        self.dice_value = random.randint(1, 6)  # Roll dice
+        self.display_dice()  # Update display after rolling
+        self.game_manager.play_turn(self.dice_value)
+
+    def handle_click(self, pos):
+        # Check if the click was inside the dice area
+        dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
+        if dice_rect.collidepoint(pos):
+            self.roll_dice()
+
+    # Pass in event and display decision choices
     def display_decision_event(self, event):
-        pass
+        self.display_message(f"Event: {event.name}: Choices: {', '.join([choice['text'] for choice in event.choices])}")
 
     def display_computer_decision(self, event, choice_idx):
-        pass
-
+        # Display the result of the computer's decision
+        self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
+    
     def display_non_decision_event(self, event):
-        pass
+        # Display the non-decision event
+        self.display_message(f"Event: {event.name}")
 
     def display_computer_non_decision_event(self, event):
-        pass
+        # Display the result of the computer's non-decision event
+        self.display_message(f"Computer: {event.name} | Result: {event.result}")
 
-    # Display game messages such as player turn, ect
-    def display_message(self, message):
-        pass
+    # Display game messages such as player turn, etc.
+    def display_message(self, message, duration=200):
+        # Set background color for the message area (optional)
+        self.message = message
+        self.message_duration = duration
 
     def change_current_player(self, player):
-        pass
+        self.player = player
+        # self.display_message(f"{player.name}'s turn")
 
     def display_roll(self, roll):
-        pass
+        # Display the roll value
+        self.display_message(f"Rolled: {roll}")

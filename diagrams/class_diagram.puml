@@ -74,11 +74,13 @@ class Event {
     - criteria: dict<string, int>
     - result: dict<string, int>
     - rarity: int
+    - event_type: string
 
     + meet_criteria(player: Player): bool
+    + get_type(self): string
 }
 
-class NonDecisionEvent {
+class StaticEvent {
 
     + apply_result(player: Player): void
 }
