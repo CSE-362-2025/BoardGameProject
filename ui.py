@@ -2,15 +2,15 @@ import pygame
 import random
 
 # Constants
-TILE_SIZE = 80  # Size of each square
-GRID_SIZE = 6  # Assuming a 6x6 board
+TILE_SIZE = 200  # Size of each square
+GRID_SIZE = 5  # Assuming a 6x6 board
 WINDOW_SIZE = TILE_SIZE * GRID_SIZE
 BG_COLOR = (30, 30, 30)  # Dark gray background
 FONT_COLOR = (255, 255, 255)  # White text
 PLAYER_RADIUS = 20  # Radius of player circle
 
 DICE_SIZE = 80
-DICE_POS = (300, 300)  # Adjust this based on your UI layout
+DICE_POS = (450, 900)  # Adjust this based on your UI layout
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -43,11 +43,12 @@ class UI():
         self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
         self.display_dice()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
+        self.display_current_turn()
 
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(center=self.screen.get_rect().center)
+            text_rect = text_surface.get_rect(bottomleft=(200, 900))
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -145,6 +146,16 @@ class UI():
         # Set background color for the message area (optional)
         self.message = message
         self.message_duration = duration
+
+    def display_current_turn(self):
+        # Example of displaying player stats in the top-right corner
+        self.font = pygame.font.Font(None, 16)
+        if self.player:
+            stats_text = f"{self.player.name}'s Turn"  # 
+            stats_surface = self.font.render(stats_text, True, FONT_COLOR)
+            stats_rect = stats_surface.get_rect(bottomright=(WINDOW_SIZE - 100, 900))
+            self.screen.blit(stats_surface, stats_rect)
+            pygame.display.flip()
 
     def change_current_player(self, player):
         self.player = player
