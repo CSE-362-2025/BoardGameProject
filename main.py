@@ -7,9 +7,6 @@ from event import DecisionEvent, StaticEvent
 from tiles import GoodTile, BadTile, EventTile, StopTile
 import json
 
-# Constants
-SCREEN_WIDTH = 2000
-SCREEN_HEIGHT = 2000
 
 def main():
     # Initialize pygame
