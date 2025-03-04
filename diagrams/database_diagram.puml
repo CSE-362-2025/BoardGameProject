@@ -1,60 +1,44 @@
+' help from https://jassielof.github.io/ERAssistantPlantUML/
 @startuml Database
 
 title "Entity-Relationship Diagram"
 
-' an entry under the table `Players`
+' an entry in the table `Players`
 entity player {
-    id: int
+    player_id: int
     --
     *name: str
     *position: int
+    *bilingual: int
+    *athletic: int
+    *military: int
+    *social: int
 }
 
-' an entry under the table `Stats`
-entity stat {
-    **player_id: int** <<FK>>
-    --
-    ' each stat and their value
-    military: int
-    bilingualism: int
-    fitness: int
-    academics: int
-}
-
-' each player has a set of stats
-player ||--|| stat: "1..1\nhas"
-
-' an entry under the table `GameSaves`
-' each entry represent a game state
-entity game_save {
-    id: int
-    --
-    **player_id: int <<FK>>**
-}
-
-' a player can create one or more game_saves
-player ||--|{ game_save: "1..*\ncreates"
-
-
-' an entry under the table `GameEvents`
-' each entry is an event that occurred during a game in order
-entity game_event {
+' an entry in the table `Events`
+' each entry is added when a player completes an event during the game
+entity event {
     id: int
     --
     *event_id: int
-    **game_save_id: int <<FK>>**
-    **player_id: int <<FK>>**
+    player_id: int <<FK>>
+    response: int
 }
-note left of game_event::game_save_id
-FK to indicate which game_save
-this event belongs to.
-end note
-note left of game_event::player_id
-FK to indicate which player
-this event belongs to.
+note right of event::response
+Optional, not all events require
+player's response.
 end note
 
-' one `game_save` has zero or more entries of `game_event`
-game_save ||--o{ game_event: "1..*\nhas"
+player ||--o{ event: plays\n1..*
+
+
+' an entry in the table `GameInfo`
+' this stores other miscellaneous game info of `GameManager`
+' Ideally keep overwriting one row to only store the most recent game state.
+entity game_info {
+    game_info_id: int
+    --
+    turn_count: int
+}
 
 @enduml
