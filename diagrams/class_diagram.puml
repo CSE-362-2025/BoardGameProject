@@ -89,7 +89,6 @@ class DecisionEvent {
     - choices: list<string>
 
     + apply_result(player: Player, choice_idx: int): void
-    + show_choices(): void
 }
 
 
@@ -146,7 +145,7 @@ Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
-Event <|-- NonDecisionEvent
+Event <|-- StaticEvent
 Event <|-- DecisionEvent
 Player <|-- ComputerPlayer
 

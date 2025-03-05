@@ -2,7 +2,7 @@ import pygame
 import random
 
 # Constants
-TILE_SIZE = 200  # Size of each square
+TILE_SIZE = 100  # Size of each square
 GRID_SIZE = 5  # Assuming a 6x6 board
 WINDOW_SIZE = TILE_SIZE * GRID_SIZE
 BG_COLOR = (30, 30, 30)  # Dark gray background
@@ -10,7 +10,7 @@ FONT_COLOR = (255, 255, 255)  # White text
 PLAYER_RADIUS = 20  # Radius of player circle
 
 DICE_SIZE = 80
-DICE_POS = (450, 900)  # Adjust this based on your UI layout
+DICE_POS = (225, 400)  # Adjust this based on your UI layout
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -48,7 +48,7 @@ class UI():
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(bottomleft=(200, 900))
+            text_rect = text_surface.get_rect(bottomleft=(100, 500))
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -81,11 +81,11 @@ class UI():
             player_x = (player.position % GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
             player_y = (player.position // GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
             
-            pygame.draw.circle(self.screen, player.color, (player_x, player_y), PLAYER_RADIUS)
+            pygame.draw.circle(self.screen, player.color, (player_x-25, player_y-25), PLAYER_RADIUS)
 
             # Draw player name or symbol above the circle
-            player_text = self.font.render(player.name[0], True, FONT_COLOR)
-            player_text_rect = player_text.get_rect(center=(player_x, player_y - PLAYER_RADIUS - 5))
+            player_text = self.font.render(player.name[-1], True, FONT_COLOR)
+            player_text_rect = player_text.get_rect(center=(player_x-25, player_y - PLAYER_RADIUS - 25))
             self.screen.blit(player_text, player_text_rect)
 
         pygame.display.flip()  # Update display
@@ -153,7 +153,7 @@ class UI():
         if self.player:
             stats_text = f"{self.player.name}'s Turn"  # 
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
-            stats_rect = stats_surface.get_rect(bottomright=(WINDOW_SIZE - 100, 900))
+            stats_rect = stats_surface.get_rect(bottomright=(450, 450))
             self.screen.blit(stats_surface, stats_rect)
             pygame.display.flip()
 

@@ -116,7 +116,7 @@ class GameManager:
         return random.choice(self.events)
 
     def is_game_over(self):
-        return self.turn_count >= 20
+        return self.turn_count >= 40
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
