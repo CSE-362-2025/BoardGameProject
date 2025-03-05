@@ -145,7 +145,7 @@ Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
-Event <|-- NonDecisionEvent
+Event <|-- StaticEvent
 Event <|-- DecisionEvent
 Player <|-- ComputerPlayer
 
