@@ -2,7 +2,7 @@
 
 ### StopTile
 
-- Can be either a decision event or a non-decision event
+- Can be either a decision event or a static event
 - Can fail the criteria which displays a message 
 
 ### EventTile

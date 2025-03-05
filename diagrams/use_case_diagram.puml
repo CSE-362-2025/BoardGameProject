@@ -1,19 +1,20 @@
-@startuml
+@startuml Use Case Diagram
 
-skinparam shadowing false
-title "Use Case Diagram"
+:Player: as p
+:Computer Player: as cp
 
-!$includeStr = "<< include >>"
-!$extendStr = "<< extend >>"
+(Play Turn) as pt
+(Save Game) as sg
+(Load Game) as lg
+(Event Decision) as ed
 
-' actors
-"Player" as Player
-"Game Manager" as GM
+p --> pt
+p --> ed
+p --> lg
+p --> sg
 
-' * possible use cases
-' this will include: roll dice, move player, trigger event
-"Play Turn"
-"Create Player"
-"Load Game"
+cp --> ed
+cp --> pt
+
 
 @enduml
