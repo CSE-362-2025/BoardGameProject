@@ -52,7 +52,7 @@ class UI():
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(bottomleft=(100, 500))
+            text_rect = text_surface.get_rect(bottomleft=(25, 500))
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -148,7 +148,7 @@ class UI():
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
-        self.display_message(f"Event: {event.name}: Choices: {', '.join([choice['text'] for choice in event.choices])}")
+        self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -156,11 +156,13 @@ class UI():
     
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"Event: {event.name}")
+        self.display_message(f"{event.name}: {event.description}")
+        self.game_manager.accept_event(event)
 
     def display_computer_non_decision_event(self, event):
         # Display the result of the computer's non-decision event
         self.display_message(f"Computer: {event.name} | Result: {event.result}")
+        self.game_manager.accept_event(event)
 
     # Display game messages such as player turn, etc.
     def display_message(self, message, duration=200):

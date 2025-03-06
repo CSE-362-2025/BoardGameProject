@@ -18,3 +18,6 @@
 
 - I'm going with each tile generates a random effect
 
+## To-do
+
+- Need to add a way for an event to have the criteria and then display another result and message if failes the criteria for the event. This will need some restructuring of the event class.
