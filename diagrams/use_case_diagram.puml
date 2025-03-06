@@ -3,10 +3,13 @@
 :Player: as p
 :Computer Player: as cp
 
-(Play Turn) as pt
-(Save Game) as sg
-(Load Game) as lg
-(Event Decision) as ed
+package GamePlay{
+    (Play Turn) as pt
+    (Save Game) as sg
+    (Load Game) as lg
+    (Event Decision) as ed
+}
+
 
 p --> pt
 p --> ed
