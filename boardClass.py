@@ -13,6 +13,20 @@ class Tile:
         self.ID = tile_num
         self.x = tile_details[1]
         self.y = tile_details[2]
+        match self.type:
+            case "BadTile":
+                self.colour = (255, 0, 0)
+            case "GoodTile":
+                self.colour = (0, 255, 0)
+            case "EventTile":
+                self.colour = (0, 98, 255)
+            case _:
+                self.colour = (0,0,0)
+
+    def draw(self, screen):
+        b = screen.get_width()/100
+        c = screen.get_height()/100
+        pygame.draw.rect(screen, self.colour, (self.x*b, self.y*c, 5*b, 5*c))
 
 class GoodTile(Tile):
     pass
@@ -71,18 +85,9 @@ class Board:
         tileSize = [5*b, 5*c]
         if len(self.Players) != 0:
             for tile in self.TileList:
-                match tile.type:
-                    case "BadTile":
-                        type = (255, 0, 0)
-                    case "GoodTile":
-                        type = (0, 255, 0)
-                    case "EventTile":
-                        type = (0, 98, 255)
-                    case _:
-                        type = (0,0,0)
-                pygame.draw.rect(surface, type, (tile.x*b, tile.y*c, tileSize[0], tileSize[1]))
+                tile.draw(surface)
                 for player in self.Players:
                     if tile.ID == player.pos:
-                        player.render(surface, tile, tileSize)
+                        player.render(surface, tile, True)
         for player in self.finishedPlayers:
-            pygame.draw.rect(surface, player.colour, (90*b, 10*player.rank*c, tileSize[0]/2, tileSize[1]/2))
+            player.render(surface, (90, 10*player.rank), False)

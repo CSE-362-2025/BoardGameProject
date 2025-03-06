@@ -30,8 +30,11 @@ class Player:
     def __lt__(self, other):
         return self.pos < other.pos
     
-    def render(self, screen, tile, tileSize):
+    def render(self, screen, position, tile):
         b = screen.get_width()/100
         c = screen.get_height()/100
-        pygame.draw.rect(screen, self.colour, ((tile.x*b)+(tileSize[0]/4), (tile.y*c)+(tileSize[1]/4), tileSize[0]/2, tileSize[1]/2))
+        if tile == False:
+            pygame.draw.rect(screen, self.colour, ((position[0]*b)+(5/4*b), (position[1]*c)+(5/4*c), 2.5*b, 2.5*c))
+        else:
+            pygame.draw.rect(screen, self.colour, ((position.x*b)+(5/4*b), (position.y*c)+(5/4*c), 2.5*b, 2.5*c))
 

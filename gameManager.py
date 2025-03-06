@@ -155,6 +155,7 @@ class GameManager:
             case Scene.pause:
                 self.pause.menuDraw(screen)
             case Scene.event:
+                self.board.drawBoard(screen)
                 self.currentEvents.drawEvents(screen)
             case Scene.endScreen:
                 self.board.drawBoard(screen)
