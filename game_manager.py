@@ -66,8 +66,6 @@ class GameManager:
             raise Exception("Invalid tile type")
         
         
-        self.switch_turn()
-
     def handle_event(self, event):
         """Handles the logic for processing an event, such as displaying the appropriate UI for decision or non-decision events."""
         if event.get_type() == "Decision":
@@ -93,6 +91,8 @@ class GameManager:
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
         self.ui.change_current_player(self.current_player)
+        self.ui.update(self.board, self.players)
+        print(self.current_player.name)
 
     def roll_dice(self):
         return random.randint(1, 6)

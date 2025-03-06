@@ -14,6 +14,9 @@ DICE_POS = (225, 400)  # Adjust this based on your UI layout
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+TURN_SIZE = 80
+TURN_POS = (100, 400)  # Adjust this based on your UI layout
+
 
 # Colors for different tile types
 TILE_COLORS = {
@@ -44,6 +47,7 @@ class UI():
         self.display_dice()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
+        self.display_turn()
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -114,6 +118,19 @@ class UI():
         # Update the display to reflect changes
         pygame.display.update()  # Update display after drawing the dice
 
+
+    def display_turn(self):
+        turn_rect = pygame.Rect(TURN_POS[0], TURN_POS[1], TURN_SIZE, TURN_SIZE)
+        pygame.draw.rect(self.screen, WHITE, turn_rect)  # 
+        pygame.draw.rect(self.screen, BLACK, turn_rect, 3)  # 
+
+        text_surface = self.font.render("Next Turn", True, BLACK)
+        text_rect = text_surface.get_rect(center=turn_rect.center)  # Center the text inside the dice square
+        self.screen.blit(text_surface, text_rect)  # Draw the text on the screen
+        
+        pygame.display.update()  # Update display
+
+
     def roll_dice(self):
         self.dice_value = random.randint(1, 6)  # Roll dice
         self.display_dice()  # Update display after rolling
@@ -124,6 +141,10 @@ class UI():
         dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
         if dice_rect.collidepoint(pos):
             self.roll_dice()
+
+        turn_rect = pygame.Rect(TURN_POS[0], TURN_POS[1], TURN_SIZE, TURN_SIZE)
+        if turn_rect.collidepoint(pos):
+            self.game_manager.switch_turn()
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
