@@ -61,6 +61,17 @@ class GameDatabase(object):
         )
         self.connection.commit()
 
+        # CREATE `GameInfo` table
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS GameInfo (
+                game_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                turn_count INTEGER,
+            );
+        """
+        )
+        self.connection.commit()
+
     def connect(self, db_name: str) -> bool:
         """Connect to the given DB file.
 
