@@ -66,7 +66,7 @@ class GameDatabase(object):
             """
             CREATE TABLE IF NOT EXISTS GameInfo (
                 game_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                turn_count INTEGER,
+                turn_count INTEGER NOT NULL
             );
         """
         )
