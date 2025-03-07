@@ -20,6 +20,7 @@ class Scene(Enum):
     mainMenu = 4
     characterMenu = 5
     endScreen = 6
+    settings = 7
 
 
 class GameManager:
@@ -99,7 +100,7 @@ class GameManager:
                             self.startGame()
                             self.scene = Scene.board
                         case 1:
-                            self.scene = Scene.pause
+                            self.scene = Scene.settings
                         case 2:
                             self.startGame()
                             self.scene = Scene.board
@@ -113,7 +114,7 @@ class GameManager:
                         case 0:
                             self.scene = Scene.board
                         case 1:
-                            self.scene = Scene.characterMenu
+                            self.scene = Scene.settings
                         case 2:
                             pygame.event.post(pygame.event.Event(pygame.QUIT))
                         case 3:

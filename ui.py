@@ -155,6 +155,7 @@ class MainMenu():
     def __init__(self):
         self.options = [("New Game", 0), ("Settings", 1), ("Load Game", 2), ("Characters", 3)]
 
+
     def mainmenuDraw(self, screen):
         """Tracks what menu looks like"""
         b = screen.get_width()/100
@@ -168,22 +169,17 @@ class MainMenu():
         text = font.render(text, True, (255,255,255), None)
         screen.blit(text, (screen.get_width()/2-x/2, 7.5*c))
         i = 0
-        j = 0
-        a = len(self.options)
-        buttonWidth=20
+        buttonWidth=14
         for option in self.options:
-            buttonLeft = buttonWidth*2*i + 20
-            buttonTop = buttonWidth*2*j + 20
+            buttonLeft = (buttonWidth+10)*i + 7
+            i = i + 1
+            buttonTop = 80
             text = option[0]
             x, y = font.size(text)
             text = font.render(text, True, (0,0,0), None)
             pygame.draw.rect(screen, (255,255,255), (buttonLeft*b, buttonTop*c, (buttonWidth)*b, buttonWidth*c))
-            screen.blit(text, ((buttonLeft+10)*b-(x/2), (buttonTop+10)*c))
-            if i == 1:
-                i = 0
-                j =+ 1
-            else:
-                i =+ 1
+            screen.blit(text, ((buttonLeft+7)*b-(x/2), (buttonTop+6)*c))
+            
 
 
     def mainmenuClick(self, screen):
@@ -192,18 +188,12 @@ class MainMenu():
         c = screen.get_height()/100
         mouse = pygame.mouse.get_pos()
         i = 0
-        j = 0
-        a = len(self.options)
-        buttonWidth=20
+        buttonWidth=15
         for option in self.options:
-            buttonLeft = buttonWidth*2*i + 20
-            buttonTop = buttonWidth*2*j + 20
+            buttonLeft = (buttonWidth+10)*i + 5
+            buttonTop = 80
             if (buttonLeft*b) <= mouse[0] <= ((buttonLeft+(buttonWidth))*b) and (buttonTop*c) <= mouse[1] <= ((buttonTop+buttonWidth)*c):
                 result = option[1]
                 return result
-            if i == 1:
-                i = 0
-                j =+ 1
-            else:
-                i =+ 1
+            i =+ 1
         return -1
