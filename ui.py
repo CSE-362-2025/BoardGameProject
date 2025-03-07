@@ -188,12 +188,12 @@ class MainMenu():
         c = screen.get_height()/100
         mouse = pygame.mouse.get_pos()
         i = 0
-        buttonWidth=15
+        buttonWidth=14
         for option in self.options:
-            buttonLeft = (buttonWidth+10)*i + 5
+            buttonLeft = (buttonWidth+10)*i + 7
             buttonTop = 80
             if (buttonLeft*b) <= mouse[0] <= ((buttonLeft+(buttonWidth))*b) and (buttonTop*c) <= mouse[1] <= ((buttonTop+buttonWidth)*c):
                 result = option[1]
                 return result
-            i =+ 1
+            i = i + 1
         return -1
