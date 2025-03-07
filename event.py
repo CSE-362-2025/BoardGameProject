@@ -26,7 +26,7 @@ class StaticEvent(Event):
         super().__init__(name, description, criteria, result, rarity, type="Static")
 
     def apply_result(self, player):
-        player.update_stats(self.result)
+        player.change_stats(self.result)
 
 class DecisionEvent(Event):
 

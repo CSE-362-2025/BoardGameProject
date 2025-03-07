@@ -39,7 +39,6 @@ class GameManager:
                 self.current_player.move(steps)
                 # self.ui.display_board(self.board, self.players)
                 self.handle_event(tile.event)  # Handle event for stop tile
-                self.switch_turn()
                 return  # Exit after stop tile processing
 
         # Move the player if not a stop tile
@@ -66,8 +65,6 @@ class GameManager:
             raise Exception("Invalid tile type")
         
         
-        self.switch_turn()
-
     def handle_event(self, event):
         """Handles the logic for processing an event, such as displaying the appropriate UI for decision or non-decision events."""
         if event.get_type() == "Decision":
@@ -93,6 +90,8 @@ class GameManager:
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
         self.ui.change_current_player(self.current_player)
+        self.ui.update(self.board, self.players)
+        print(self.current_player.name)
 
     def roll_dice(self):
         return random.randint(1, 6)
@@ -121,21 +120,101 @@ class GameManager:
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
 
-        return ["GoodTile!", {
+        number = random.randint(1,5)
+
+        if number == 1:
+            return ["French Lessons! (+1 Bilingual)", {
             "bilingual": 1,
+            "athletic": 0,
+            "academic": 0,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 2:
+            return ["Gym! (+1 Athletic)", {
+            "bilingual": 0,
             "athletic": 1,
+            "academic": 0,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 3:
+            return ["Study! (+1 Academic)", {
+            "bilingual": 0,
+            "athletic": 0,
             "academic": 1,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 4:
+            return ["Inspection! (+1 Military)", {
+            "bilingual": 0,
+            "athletic": 0,
+            "academic": 0,
             "military": 1,
+            "social": 0
+        }]
+
+        else:
+            return ["Hang out with friends! (+1 Social)", {
+            "bilingual": 0,
+            "athletic": 0,
+            "academic": 0,
+            "military": 0,
             "social": 1
         }]
 
+        
+
     def generate_bad_tile_effects(self):
 
-        return ["BadTile!",{
+        number = random.randint(1,5)
+
+        if number == 1:
+            return ["Failed French Test. (-1 Bilingual)", {
             "bilingual": -1,
+            "athletic": 0,
+            "academic": 0,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 2:
+            return ["Failed PPT Run. (-1 Athletic)", {
+            "bilingual": 0,
             "athletic": -1,
+            "academic": 0,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 3:
+            return ["Failed Math Test. (-1 Academic)", {
+            "bilingual": 0,
+            "athletic": 0,
             "academic": -1,
+            "military": 0,
+            "social": 0
+        }]
+
+        elif number == 4:
+            return ["5s and Gs. (-1 Military)", {
+            "bilingual": 0,
+            "athletic": 0,
+            "academic": 0,
             "military": -1,
+            "social": 0
+        }]
+
+        else:
+            return ["Said Something Dumb in Class. (-1 Social)", {
+            "bilingual": 0,
+            "athletic": 0,
+            "academic": 0,
+            "military": 0,
             "social": -1
         }]
 

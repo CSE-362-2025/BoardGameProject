@@ -1,8 +1,8 @@
 [
     {
         "type" : "Static",
-        "name" : "Static Event Title",
-        "description" : "Static Event description",
+        "name" : "Event 1: Static",
+        "description" : "Dunked in Gym Class. (+1 Athletic)",
 
         "criteria" : {"bilingual" : 0, 
                     "athletic" : 0, 
@@ -11,7 +11,7 @@
                     "social" : 0},
 
         "result" : {"bilingual" : 0, 
-                    "athletic" : 0, 
+                    "athletic" : 1, 
                     "academic" : 0, 
                     "military" : 0, 
                     "social" : 0},
@@ -23,8 +23,8 @@
 
     {
         "type" : "Decision",
-        "name" : "Decision Event Title",
-        "description" : "Decision Event description",
+        "name" : "Event 1: Decision",
+        "description" : "Exam coming up",
 
         "criteria" : {"bilingual" : 0, 
                     "athletic" : 0, 
@@ -32,28 +32,20 @@
                     "military" : 0, 
                     "social" : 0},
 
-        "choices" : [{"text" : "Choice 1",
+        "choices" : [{"text" : "Study (+1 Academic)",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
-                                "academic" : 0, 
+                                "academic" : 1, 
                                 "military" : 0, 
                                 "social" : 0}
         },
 
-        {"text" : "Choice 2",
+        {"text" : "Go out with friends. (+2 Social -1 Academic)",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
-                                "academic" : 0, 
+                                "academic" : -1, 
                                 "military" : 0, 
-                                "social" : 0}
-        },
-
-        {"text" : "Choice 3",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
-                                "social" : 0}
+                                "social" : 2}
         }],
 
         "rarity" : 0

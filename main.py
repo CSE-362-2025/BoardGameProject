@@ -35,16 +35,27 @@ def main():
                                         event['criteria'], event['result'],
                                         event['rarity']))
             
-    event_stoptile = StaticEvent("StopTile Event", "...", None, None, 0)
-    print(event_stoptile.get_type())
-
+    event_stoptile_1 = StaticEvent("StopTile 1", "PPT! (+2 Athletic)", None, {
+                "bilingual": 0,
+                "athletic": 2,
+                "military": 0,
+                "academic": 0,
+                "social": 0,
+            }, 0)
+    event_stoptile_2 = StaticEvent("StopTile 2", "Exams! (+3 Academic)", None, {
+                "bilingual": 0,
+                "athletic": 0,
+                "military": 0,
+                "academic": 3,
+                "social": 0,
+            }, 0)
 
     # Create board with tiles
     tiles = [
         GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
-        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), EventTile(9),
-        GoodTile(10), BadTile(11), GoodTile(12), BadTile(13), StopTile(14, event_stoptile),
-        GoodTile(15), BadTile(16), GoodTile(17), BadTile(18), EventTile(19),
+        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile_1),
+        GoodTile(10), BadTile(11), EventTile(12), BadTile(13), StopTile(14, event_stoptile_2),
+        GoodTile(15), BadTile(16), EventTile(17), BadTile(18), EventTile(19),
         
     ]
     board = Board(tiles)

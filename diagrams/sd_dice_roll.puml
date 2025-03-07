@@ -92,8 +92,6 @@ else No StopTile in the move
     end
 end
 
-GameManager -> GameManager: switch_turn()
-GameManager -> UI: display_board()
-GameManager -> UI: display_stats()
+GameManager -> UI: update(board, players)
 
 @enduml
