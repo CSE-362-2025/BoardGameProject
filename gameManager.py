@@ -2,7 +2,7 @@
 Authors: Bottom Six
 Created: 2025/02/17
 Last Edited: 2025/02/17
-Manages the game and tracks when each event should occur
+Manages the game and tracks when each game scene should be changed between, to provide better modular design
 """
 import pygame
 import boardClass

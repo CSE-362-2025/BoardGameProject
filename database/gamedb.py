@@ -67,19 +67,6 @@ class GameDataBase(object):
         conn.commit()
         conn.close()
 
-    # update stat
-    def update_stats (self, player_id: int, military=0, bilingualism=0, fintess=0, academics=0): 
-        conn = self._get_connection()
-        cursor = conn.cursor()
-
-        curr_stat = get_stat()
-
-
-
-        
-        cursor.execute()
-
-
     # get stat
     def get_stat(self, player_id: int):
         """
@@ -98,3 +85,16 @@ class GameDataBase(object):
 
         return row
         
+
+    # update stat
+    def update_stats (self, player_id: int, military=0, bilingualism=0, fintess=0, academics=0): 
+        conn = self._get_connection()
+        cursor = conn.cursor()
+
+        curr_stat = self.get_stat(player_id)
+
+
+
+        
+        cursor.execute()
+

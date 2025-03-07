@@ -2,7 +2,8 @@
 Authors: Bottom Six
 Created: 2025/02/17
 Last Edited: 2025/02/17
-Keeps track of player specific stats such as tile and board number
+Keeps track of player specific stats such as the tile they're on, and their current position on the leaderboard. 
+Also draws the player to allow customizability.
 """
 import pygame
 

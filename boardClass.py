@@ -2,7 +2,7 @@
 Authors: Bottom Six
 Created: 2025/02/14
 Last Edited: 2025/02/17
-Board Class sets up the board and helps determine the tile type the player is on.
+Board Class sets up, tracks, and runs the board and helps determine the event the player has landed on.
 """
 import pygame
 import playerClass
