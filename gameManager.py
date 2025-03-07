@@ -37,11 +37,11 @@ class GameManager:
         self.prep_change = True
     
     def prepGame(self):
-        #Set title bar and prep images        
-        icon = pygame.image.load("Resources\\RMC-ico.jpg") 
+        #Set title bar and prep images      
+        icon = pygame.image.load("Resources/RMC-ico.jpg") 
         pygame.display.set_icon(icon)
         pygame.display.set_caption("Scarlets Forever")
-        self.img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(self.winW, self.winH))
+        self.img = pygame.transform.scale(pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg"),(self.winW, self.winH))
         self.scene = Scene.title
 
     def startGame(self):
@@ -152,7 +152,7 @@ class GameManager:
     def render(self, screen):
         """Manages rendering of the game depending on scene"""
         if ((self.img.get_width() != screen.get_width()) or (self.img.get_height() != screen.get_height())):
-            self.img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(screen.get_width(), screen.get_height()))
+            self.img = pygame.transform.scale(pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg"),(screen.get_width(), screen.get_height()))
         screen.blit(self.img, (0,0)) 
         match self.scene:
             case Scene.title:
