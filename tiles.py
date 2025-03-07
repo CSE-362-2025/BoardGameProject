@@ -34,6 +34,7 @@ class EventTile(Tile):
 
 class StopTile(Tile):
     
-    def __init__(self, position, event):
+    def __init__(self, position, event, paths):
         super().__init__(position, tile_type="StopTile")
         self.event = event
+        self.paths = paths

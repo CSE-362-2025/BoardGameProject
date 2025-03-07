@@ -149,6 +149,11 @@ class UI():
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+        return random.randint(1, len(event.choices))
+
+    def display_stoptile_event(self, event):
+        self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+        return random.randint(1, len(event.choices))
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision

@@ -21,8 +21,6 @@
 
 ## To-do
 
-- Need to add a way for an event to have the criteria and then display another result and message if failes the criteria for the event. This will need some restructuring of the event class.
-
 - Add a way to move in a different direction after a stop tile.
 
 - Add "summer" events that can only happen when waiting for other players to finish the board. (not priority)

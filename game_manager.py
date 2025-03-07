@@ -54,7 +54,7 @@ class GameManager:
         if tile.get_type() == "EventTile":
             event = self.get_random_event()
             self.ui.display_decision_event(event)
-            
+
         elif tile.get_type() in ["GoodTile", "BadTile"]:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
             self.current_player.change_stats(effects[1])
@@ -102,12 +102,18 @@ class GameManager:
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
-
-    # after event is acknowledged by user
-    def accept_event(self, event):
-        event.apply_result(self.current_player)
-        self.current_player.store_event(event)  # store event in player's history
+    def branching_event_choice(self, event, choice_idx):
+        event.apply_result(self.current_player, choice_idx)
+        pos = self.current_player.position
+        self.current_player.position = (self.board.tiles[pos].paths[choice_idx]) - 1
+        self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
+
+    # # after event is acknowledged by user
+    # def accept_event(self, event):
+    #     event.apply_result(self.current_player)
+    #     self.current_player.store_event(event)  # store event in player's history
+    #     self.ui.display_board(self.board, self.players)
 
     # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity

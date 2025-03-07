@@ -30,7 +30,7 @@ def main():
                                     event['phase']))
 
             
-    event_stoptile = Event("StopTile 1", "PPT! (+2 Athletic)", [{"text" : "Study (+1 Academic)",
+    event_stoptile = Event("StopTile 1", "PPT! (+2 Athletic)", [{"text" : "Same path",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
                                 "academic" : 1, 
@@ -44,7 +44,7 @@ def main():
                                 "social" : 0}
         },
 
-        {"text" : "Go out with friends. (+2 Social -1 Academic)",
+        {"text" : "Jump path",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
                                 "academic" : 1, 
@@ -62,20 +62,21 @@ def main():
     # Create board with tiles
     tiles = [
         GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
-        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile),
-        GoodTile(10), BadTile(11), EventTile(12), BadTile(13), StopTile(14, event_stoptile),
-        GoodTile(15), BadTile(16), EventTile(17), BadTile(18), EventTile(19),
+        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 100]),
+        GoodTile(10), BadTile(11), EventTile(12), BadTile(13), EventTile(14),
+        GoodTile(100), BadTile(101), EventTile(102), BadTile(103), EventTile(104),
+        GoodTile(15), BadTile(16), GoodTile(17), BadTile(18)
     ]
 
     board = Board(tiles)
 
     # Create players
     players = [
-        Player("Player 1", (50, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 2", (50, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 3", (200, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 4", (200, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-    ]
+        Player("Player 1", (50, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5})
+    #     Player("Player 2", (50, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+    #     Player("Player 3", (200, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+    #     Player("Player 4", (200, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+     ]
 
 
     # Initialize GameManager
