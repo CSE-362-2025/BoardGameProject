@@ -1,0 +1,44 @@
+' help from https://jassielof.github.io/ERAssistantPlantUML/
+@startuml Database
+
+title "Entity-Relationship Diagram"
+
+' an entry in the table `Players`
+entity player {
+    player_id: int
+    --
+    *name: str
+    *position: int
+    *bilingual: int
+    *athletic: int
+    *military: int
+    *social: int
+}
+
+' an entry in the table `Events`
+' each entry is added when a player completes an event during the game
+entity event {
+    id: int
+    --
+    *event_id: int
+    player_id: int <<FK>>
+    response: int
+}
+note right of event::response
+Optional, not all events require
+player's response.
+end note
+
+player ||--o{ event: plays\n1..*
+
+
+' an entry in the table `GameInfo`
+' this stores other miscellaneous game info of `GameManager`
+' Ideally keep overwriting one row to only store the most recent game state.
+entity game_info {
+    game_info_id: int
+    --
+    turn_count: int
+}
+
+@enduml

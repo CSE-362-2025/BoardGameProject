@@ -1,0 +1,23 @@
+@startuml Use Case Diagram
+
+:Player: as p
+:Computer Player: as cp
+
+package GamePlay{
+    (Play Turn) as pt
+    (Save Game) as sg
+    (Load Game) as lg
+    (Event Decision) as ed
+}
+
+
+p --> pt
+p --> ed
+p --> lg
+p --> sg
+
+cp --> ed
+cp --> pt
+
+
+@enduml
