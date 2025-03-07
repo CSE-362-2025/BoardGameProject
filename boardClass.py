@@ -75,7 +75,10 @@ class Board:
                 player.rank = rank
                 rank += 1
             self.Players.sort(key=lambda p: p.ID)
-            return self.TileList[self.Players[self.currentPlayer].pos].type
+            try:
+                return self.TileList[self.Players[self.currentPlayer].pos].type
+            finally:
+                return self.TileList[-1].type
             
 
     def nextPlayer(self):

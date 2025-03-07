@@ -45,12 +45,14 @@ class GameManager:
 
     def startGame(self):
         #initialize board
-        tileList = [("BadTile", 5, 15), ("GoodTile", 15, 15), ("BadTile", 25, 15), ("GoodTile", 35, 15), ("EventTile", 45, 15),
-                ("BadTile", 5, 25), ("GoodTile", 15, 25), ("BadTile", 25, 25), ("GoodTile", 35, 25), ("EventTile", 45, 25),
-                ("BadTile", 5, 35), ("GoodTile", 15, 35), ("BadTile", 25, 35), ("GoodTile", 35, 35), ("EventTile", 45, 35), 
-                ("BadTile", 5, 45), ("GoodTile", 15, 45), ("BadTile", 25, 45), ("GoodTile", 35, 45), ("EventTile", 45, 45), 
-                ("BadTile", 5, 55), ("GoodTile", 15, 55), ("BadTile", 25, 55), ("GoodTile", 35, 55), ("EventTile", 45, 55),
-                ("EndSquare", 5, 65)]
+        tileList = [("GoodTile", 10, 15), ("BadTile", 20, 15), ("GoodTile", 30, 15), ("EventTile", 40, 15), ("BadTile", 50, 15),  
+                    ("GoodTile", 60, 15), ("BadTile", 70, 15), ("BadTile", 80, 15), ("GoodTile", 80, 25), ("EventTile", 80, 35),
+                    ("BadTile", 80, 45), ("GoodTile", 80, 55), ("BadTile", 80, 65), ("GoodTile", 80, 75), ("EventTile", 80, 85), 
+                    ("BadTile", 70, 85), ("GoodTile", 60, 85), ("BadTile", 50, 85), ("GoodTile", 40, 85), ("EventTile", 30, 85), 
+                    ("BadTile", 20, 85), ("GoodTile", 20, 75), ("BadTile", 20, 65), ("GoodTile", 20, 55), ("EventTile", 20, 45),
+                    ("BadTile", 20, 35), ("GoodTile", 30, 35), ("BadTile", 40, 35), ("GoodTile", 50, 35), ("EventTile", 60, 35),
+                    ("BadTile", 60, 45), ("GoodTile", 60, 55), ("BadTile", 60, 65), ("GoodTile", 50, 65), ("EventTile", 40, 65),
+                    ("EndSquare", 40, 55)]
         self.board = boardClass.Board(tileList)
 
     def run(self):
