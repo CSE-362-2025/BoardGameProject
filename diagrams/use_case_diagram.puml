@@ -3,11 +3,13 @@
 :Player: as p
 :Computer Player: as cp
 
-package GamePlay{
+package Game{
     (Play Turn) as pt
     (Save Game) as sg
     (Load Game) as lg
-    (Event Decision) as ed
+    (Made Event Decision) as ed
+    (New Game) as ng
+
 }
 
 
@@ -15,9 +17,12 @@ p --> pt
 p --> ed
 p --> lg
 p --> sg
+p --> ng
 
 cp --> ed
 cp --> pt
 
+pt ..> sg: <<extend>>
+ng ..> lg: <<extend>>
 
 @enduml
