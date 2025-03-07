@@ -163,7 +163,7 @@ class MainMenu():
         pygame.draw.rect(screen, (234, 255, 0), (4.5*b, 4.5*c, 91*b, 91*c))
         pygame.draw.rect(screen, (0, 20, 170), (5*b, 5*c, 90*b, 90*c))
         font = pygame.font.Font(size=36)
-        text = "PAUSE"
+        text = "Main Menu"
         x, y = font.size(text)            
         text = font.render(text, True, (255,255,255), None)
         screen.blit(text, (screen.get_width()/2-x/2, 7.5*c))
