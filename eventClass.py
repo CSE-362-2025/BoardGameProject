@@ -11,20 +11,15 @@ class Events:
     """Tracks events - Need to grab code from Gallant who decided to redo everything else instead of the bit they monopolized the first meeting talking about"""
     def __init__(self, result):
         """Preps the event"""
-        match result:
-            case 1:
-                self.type = "GoodTile"
-            case 2:
-                self.type = "BadTile"
-            case _:
-                self.type = "EventTile"
+        self.type = result
         #todo: read info for types from database - will be read from database, no reaction even - just remove outcomes
-        self.query = "What do you do?"
+        self.result = None
         self.options = []
         if self.type == "EventTile":
-            self.result = None
+            self.query = "What do you do? - To be grabbed from database"
+            self.options = [("This is option 1", "This is what happens if you choose option 1"),("This is option 2", "This is what happens if you choose option 2")]
         else: 
-            self.result = "Temporary hold"
+            self.query = "An event occurs! "+self.type
 
     def click(self, screen):
         """Reacts on a click"""
@@ -40,6 +35,7 @@ class Events:
                 if (buttonLeft*b) <= mouse[0] <= ((buttonLeft+(buttonWidth-2))*b) and (72*c) <= mouse[1] <= (88*c):
                     #todo: insert event logic because someone decided only to do work the weekend before sdd was due
                     self.result = option[1]
+                    #call changes to player stats
                     return self.result
                 i =+ 1
             return -1
@@ -48,9 +44,10 @@ class Events:
         """Reacts if nothing occurs"""
         if (len(self.options)==0):
             self.result = self.query
+            return 1
+            #call changes to players stats
+        return -1
     
-
-
     def drawEvents(self, screen):
         """Draws the event"""
         b = screen.get_width()/100

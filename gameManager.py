@@ -74,6 +74,11 @@ class GameManager:
                         self.prep_change = False
                         self.currentEvents = None
                         self.board.nextPlayer()
+                else:
+                    results = self.currentEvents.run()
+                    if results != -1:
+                        self.count = pygame.time.get_ticks()+3000
+                        self.prep_change = True
             case _:
                 pass
 
@@ -94,6 +99,7 @@ class GameManager:
                         case 1:
                             self.scene = Scene.pause
                         case 2:
+                            self.startGame()
                             self.scene = Scene.board
                         case 3:
                             self.scene = Scene.characterMenu
@@ -107,9 +113,10 @@ class GameManager:
                         case 1:
                             self.scene = Scene.characterMenu
                         case 2:
-                            pygame.event.post(pygame.QUIT)
+                            pygame.event.post(pygame.event.Event(pygame.QUIT))
                         case 3:
                             self.scene = Scene.characterMenu
+
             case Scene.board:
                 if not self.prep_change:
                     result = ui.diceClick(screen, self.board)
@@ -123,6 +130,7 @@ class GameManager:
                 else:
                     self.scene = Scene.event
                     self.prep_change = False
+
             case Scene.event:
                 if not self.prep_change:
                     result = self.currentEvents.click(screen)
