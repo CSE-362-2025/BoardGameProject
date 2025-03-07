@@ -148,3 +148,73 @@ class GameDatabase(object):
         """Close connection to DB."""
         self.cursor.close()
         self.connection.close()
+
+
+# PoC
+if __name__ == "__main__":
+    db = GameDatabase()
+    db.connect("")
+
+    # simulate players
+    db.cursor.execute(
+        """INSERT INTO Players (name, position, military, bilingualism, fitness, academics) VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        ("Player1", 1, 1, 1, 1, 1),
+    )
+    db.connection.commit()
+    db.cursor.execute(
+        """INSERT INTO Players (name, position, military, bilingualism, fitness, academics) VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        ("Player2", 1, 2, 2, 2, 2),
+    )
+    db.connection.commit()
+
+    # simulate GameInfo
+    db.cursor.execute(
+        """INSERT INTO GameInfo (turn_count) VALUES (2)
+        """,
+    )
+
+    # simulate events
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (1, 1),
+    )
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (2, 1),
+    )
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (3, 1),
+    )
+    db.connection.commit()
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (4, 2),
+    )
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (5, 2),
+    )
+    db.cursor.execute(
+        """INSERT INTO Events (event_id, player_id) VALUES (?, ?)
+        """,
+        (6, 2),
+    )
+    db.connection.commit()
+
+    # list all events played by Player1
+    res = db.cursor.execute(
+        """SELECT event_id FROM Events WHERE player_id=1
+        """
+    )
+    rows = res.fetchall()
+    print(f"all events played by Player1 = {rows}")
+
+    db.close_connection()
