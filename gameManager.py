@@ -54,6 +54,7 @@ class GameManager:
         self.board = boardClass.Board(tileList)
 
     def run(self):
+        """Tracks what happens each round depending on scene"""
         match self.scene:
             case Scene.title:
                 if self.count <= pygame.time.get_ticks():
@@ -78,6 +79,7 @@ class GameManager:
 
 
     def onClick(self, screen):
+        """Tracks what happens depending on scene when a click occurs"""
         match self.scene:
             case Scene.title:
                 self.scene = Scene.mainMenu
@@ -137,7 +139,10 @@ class GameManager:
 
 
     def render(self, screen):
-        screen.blit(self.img, (0,0))  # Fill screen with image
+        """Manages rendering of the game depending on scene"""
+        if ((self.img.get_width() != screen.get_width()) or (self.img.get_height() != screen.get_height())):
+            self.img = pygame.transform.scale(pygame.image.load("Resources\\gunsalute-scarlets-mckenzie.jpg"),(screen.get_width(), screen.get_height()))
+        screen.blit(self.img, (0,0)) 
         match self.scene:
             case Scene.title:
                 font = pygame.font.Font(size=30)

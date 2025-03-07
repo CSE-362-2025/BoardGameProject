@@ -2,12 +2,14 @@
 Authors: Bottom Six
 Last Edit: 2025/02/17
 Keeps track of the user interfact and runs event dependant on the results
+A variety of buttons and other useful helper codes - could be refactored to improve readability
 """
 import pygame 
 import random
 
 
 def diceClick(screen, board):
+    """Tracks what happens if dice is clicked"""
     dicePos = [90, 90, 100, 100]
     diceLeft, diceTop, diceRight, diceBottom = dicePos
     b = screen.get_width()/100
@@ -19,6 +21,7 @@ def diceClick(screen, board):
 
 
 def diceButton(screen):
+    """Tracks what dice botton looks like (mouseover and not mouseover)"""
     dicePos = [90, 90, 100, 100]
     diceLeft, diceTop, diceRight, diceBottom = dicePos
     b = screen.get_width()/100
@@ -33,6 +36,7 @@ def diceButton(screen):
 
 
 def menuClick(screen): 
+    """Tracks if pause menu button is clicked"""
     buttonPos = [90, 0, 100, 10]
     buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
     b = screen.get_width()/100
@@ -44,6 +48,7 @@ def menuClick(screen):
 
 
 def menuButton(screen):
+    """Tracks what pause menu button looks like"""
     buttonPos = [90, 0, 100, 10]
     buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
     b = screen.get_width()/100
@@ -57,10 +62,12 @@ def menuButton(screen):
         pygame.draw.rect(screen, (255,255,255), (buttonLeft*b, buttonTop*c, width*b, height*c))
 
 class PauseMenu():
+    """The Pause Menu. Currently has minimal options as a. DB was not yet done and b. higher priority items"""
     def __init__(self):
         self.options = [("Resume", 0), ("Settings", 1), ("Save & Quit", 2), ("Characters", 3)]
 
     def menuDraw(self, screen):
+        """Tracks what the menu looks like"""
         b = screen.get_width()/100
         c = screen.get_height()/100
         pygame.draw.rect(screen, (0, 20, 170), (3*b, 3*c, 94*b, 94*c))
@@ -91,6 +98,7 @@ class PauseMenu():
 
 
     def menuClick(self, screen):
+        """Tracks what menu button is clicked (if any)"""
         b = screen.get_width()/100
         c = screen.get_height()/100
         mouse = pygame.mouse.get_pos()
@@ -116,6 +124,7 @@ class PauseMenu():
 
 
 def mainmenuClick(screen): 
+    """Tracks if main menu button is clicked"""
     buttonPos = [90, 0, 100, 10]
     buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
     b = screen.get_width()/100
@@ -127,6 +136,7 @@ def mainmenuClick(screen):
 
 
 def mainmenuButton(screen):
+    """Tracks what main menu button looks like"""
     buttonPos = [90, 0, 100, 10]
     buttonLeft, buttonTop, buttonRight, buttonBottom = buttonPos
     b = screen.get_width()/100
@@ -141,10 +151,12 @@ def mainmenuButton(screen):
 
 
 class MainMenu():
+    """The Main Menu - Same as with pause menu, was waiting on DB and high priority features"""
     def __init__(self):
         self.options = [("New Game", 0), ("Settings", 1), ("Load Game", 2), ("Characters", 3)]
 
     def mainmenuDraw(self, screen):
+        """Tracks what menu looks like"""
         b = screen.get_width()/100
         c = screen.get_height()/100
         pygame.draw.rect(screen, (0, 20, 170), (3*b, 3*c, 94*b, 94*c))
@@ -175,6 +187,7 @@ class MainMenu():
 
 
     def mainmenuClick(self, screen):
+        """Tracks which button is pressed (if any)"""
         b = screen.get_width()/100
         c = screen.get_height()/100
         mouse = pygame.mouse.get_pos()

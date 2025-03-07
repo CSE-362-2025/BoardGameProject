@@ -9,27 +9,29 @@ import pygame
 import sys
 import gameManager
 
-windowWidth = 1080
+#sets what window size is rather than doing something dumb like hardcoding it everywhere (that would be annoying)
+windowWidth = 1080 
 windowHeight = 720
 
 def main():
     pygame.init()
     display = pygame.time.Clock()
-    screen = pygame.display.set_mode((windowWidth, windowHeight))
+    screen = pygame.display.set_mode((windowWidth, windowHeight), pygame.RESIZABLE)
     manager = gameManager.GameManager(windowWidth, windowHeight)  
-    manager.prepGame()
+    manager.prepGame() #calls the prep game seperately rather than hardcoding all the prep in the main loop where it doesn't belong.
 
-    # Main loop
+    # Runs the Main loop
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                running = False #stops the game
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                manager.onClick(screen)
-        manager.run()
-        manager.render(screen)
-        display.tick(60)
+                #Reacts to button clicks
+                manager.onClick(screen) 
+        manager.run() #Reacts as normal regardless of events
+        manager.render(screen) #Draws things
+        display.tick(60) #sets the tick and frame rate
     pygame.quit()
     sys.exit()
 
