@@ -38,7 +38,7 @@ class GameManager:
                 steps = tile.position - self.current_player.position
                 self.current_player.move(steps)
                 # self.ui.display_board(self.board, self.players)
-                self.handle_event(tile.event)  # Handle event for stop tile
+                self.ui.display_decision_event(tile.event)
                 return  # Exit after stop tile processing
 
         # Move the player if not a stop tile
@@ -53,8 +53,8 @@ class GameManager:
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
             event = self.get_random_event()
-            self.handle_event(event)  # Handle event for event tile
-
+            self.ui.display_decision_event(event)
+            
         elif tile.get_type() in ["GoodTile", "BadTile"]:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
             self.current_player.change_stats(effects[1])
@@ -65,15 +65,15 @@ class GameManager:
             raise Exception("Invalid tile type")
         
         
-    def handle_event(self, event):
-        """Handles the logic for processing an event, such as displaying the appropriate UI for decision or non-decision events."""
-        if event.get_type() == "Decision":
-            self.ui.display_decision_event(event)
-        elif event.get_type() == "Static":
-            self.ui.display_non_decision_event(event)
-        else:
-            print(event.get_type())
-            raise Exception("Invalid event type")
+    # def handle_event(self, event):
+    #     """Handles the logic for processing an event, such as displaying the appropriate UI for decision or non-decision events."""
+    #     if event.get_type() == "Decision":
+    #         self.ui.display_decision_event(event)
+    #     elif event.get_type() == "Static":
+    #         self.ui.display_non_decision_event(event)
+    #     else:
+    #         print(event.get_type())
+    #         raise Exception("Invalid event type")
 
 
     def play_computer_turn(self):
@@ -123,7 +123,7 @@ class GameManager:
         number = random.randint(1,5)
 
         if number == 1:
-            return ["French Lessons! (+1 Bilingual)", {
+            return ["French Lessons! ( )", {
             "bilingual": 1,
             "athletic": 0,
             "academic": 0,

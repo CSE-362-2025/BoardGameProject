@@ -71,23 +71,12 @@ class Event {
 
     - name: string
     - description: string
-    - criteria: dict<string, int>
-    - result: dict<string, int>
+    - choices: list<text, result, criteria>
     - rarity: int
-    - event_type: string
+    - phase: string
 
     + meet_criteria(player: Player): bool
     + get_type(self): string
-}
-
-class StaticEvent {
-
-    + apply_result(player: Player): void
-}
-
-class DecisionEvent {
-    - choices: list<string>
-
     + apply_result(player: Player, choice_idx: int): void
 }
 
@@ -145,8 +134,6 @@ Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
-Event <|-- StaticEvent
-Event <|-- DecisionEvent
 Player <|-- ComputerPlayer
 
 

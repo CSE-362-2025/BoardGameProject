@@ -153,16 +153,6 @@ class UI():
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
-    
-    def display_non_decision_event(self, event):
-        # Display the non-decision event
-        self.display_message(f"{event.name}: {event.description}")
-        self.game_manager.accept_event(event)
-
-    def display_computer_non_decision_event(self, event):
-        # Display the result of the computer's non-decision event
-        self.display_message(f"Computer: {event.name} | Result: {event.result}")
-        self.game_manager.accept_event(event)
 
     # Display game messages such as player turn, etc.
     def display_message(self, message, duration=200):
