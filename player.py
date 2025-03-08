@@ -12,6 +12,11 @@ class Player:
         self.events_played = []
         self.has_moved = True
 
+        # For branching
+        self.branch = False
+        self.next_pos = None
+        self.on_alt_path = False
+
         # can pass in stats to set them, otherwise default to 0 for now
         if stats is not None:
             self.stats = stats

@@ -29,7 +29,11 @@ class GameManager:
 
         roll = dice_value
 
-        print(roll)
+        if self.current_player.branch:
+            self.current_player.branch = False
+            self.current_player.position = self.current_player.next_pos
+            self.current_player.on_alt_path = True
+            
 
         # Checking if hitting a stop tile
         for tile in self.board.tiles[self.current_player.position + 1: self.current_player.position + roll + 1]:
@@ -38,15 +42,27 @@ class GameManager:
                 steps = tile.position - self.current_player.position
                 self.current_player.move(steps)
                 # self.ui.display_board(self.board, self.players)
-                self.ui.display_decision_event(tile.event)
+                if len(tile.paths) > 1:
+                    self.current_player.branch = True
+
+                self.ui.display_stoptile_event(tile.event)
                 return  # Exit after stop tile processing
 
         # Move the player if not a stop tile
         self.current_player.move(roll)
         # self.ui.display_board(self.board, self.players)
-        try:
-            tile = self.board.tiles[self.current_player.position]
-        except Exception as e:
+
+        print(f"Current Player Position: {self.current_player.position}")
+
+        tile = self.board.get_tile(self.current_player.position)
+
+        if not tile and self.current_player.on_alt_path:
+            self.current_player.on_alt_path = False
+            self.current_player.position -= 100  # Puts the position back on "main" path
+            tile = self.board.get_tile(self.current_player.position)
+            print(tile.position, self.current_player.position)
+
+        if not tile:          
             tile = self.board.tiles[self.board.size-1]
             self.current_player.position = self.board.size-1
 
@@ -105,7 +121,7 @@ class GameManager:
     def branching_event_choice(self, event, choice_idx):
         event.apply_result(self.current_player, choice_idx)
         pos = self.current_player.position
-        self.current_player.position = (self.board.tiles[pos].paths[choice_idx]) - 1
+        self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 

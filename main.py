@@ -30,10 +30,10 @@ def main():
                                     event['phase']))
 
             
-    event_stoptile = Event("StopTile 1", "PPT! (+2 Athletic)", [{"text" : "Same path",
+    event_stoptile = Event("StopTile 1", "", [{"text" : "Same path",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
-                                "academic" : 1, 
+                                "academic" : -1, 
                                 "military" : 0, 
                                 "social" : 0},
 
@@ -62,9 +62,9 @@ def main():
     # Create board with tiles
     tiles = [
         GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
-        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 100]),
+        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 110]),
         GoodTile(10), BadTile(11), EventTile(12), BadTile(13), EventTile(14),
-        GoodTile(100), BadTile(101), EventTile(102), BadTile(103), EventTile(104),
+        GoodTile(110), BadTile(111), EventTile(112), BadTile(113), EventTile(114),
         GoodTile(15), BadTile(16), GoodTile(17), BadTile(18)
     ]
 

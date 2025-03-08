@@ -58,7 +58,7 @@ class UI():
 
         pygame.display.flip()  # Update the display
 
-
+    # This will have to be completely redone
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
 
@@ -76,7 +76,7 @@ class UI():
                     pygame.draw.rect(self.screen, (0, 0, 0), rect, 2)  # Black border
 
                     # Draw tile type letter in center
-                    text_surface = self.font.render(tile.get_type()[:], True, FONT_COLOR)
+                    text_surface = self.font.render(f"{tile.get_type()[:]} {tile.position}", True, FONT_COLOR)
                     text_rect = text_surface.get_rect(center=rect.center)
                     self.screen.blit(text_surface, text_rect)
 
@@ -130,9 +130,9 @@ class UI():
         
         pygame.display.update()  # Update display
 
-
+    # Rolling 1 only for testing
     def roll_dice(self):
-        self.dice_value = random.randint(1, 6)  # Roll dice
+        self.dice_value = random.randint(1, 1)  # Roll dice
         self.display_dice()  # Update display after rolling
         self.game_manager.play_turn(self.dice_value)
 
@@ -149,11 +149,16 @@ class UI():
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
-        return random.randint(1, len(event.choices))
+        choice_idx = random.randint(1, len(event.choices))
+        print(f"Chose: {choice_idx}")
+        self.game_manager.event_choice(event, choice_idx)
 
     def display_stoptile_event(self, event):
         self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
-        return random.randint(1, len(event.choices))
+        choice_idx = 2
+        # choice_idx = random.randint(1, len(event.choices))
+        print(f"Chose: {choice_idx}, {event.choices[choice_idx-1]['text']}")
+        self.game_manager.branching_event_choice(event, choice_idx)
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision

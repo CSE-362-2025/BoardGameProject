@@ -2,8 +2,16 @@
 
 ### StopTile
 
-- Can be either a decision event or a static event
-- Can fail the criteria which displays a message 
+- Is a decision event with two paths
+- Player can choose which path to take
+
+- Switching paths:
+    - The "main" path will follow the same 5 -> 6 -> ... -> 11 ect
+    - The "alt" path will add 100 to the position 5 -> 106 -> 107 -> ... -> 111 -> 12
+    - The player's position will be at 105 after the decision
+    - If the 
+    - CAN NO LONGER USE THE INDEX OF TILES IN BOARD TO DETERMINE POSITION, MUST ALWAYS ITERATE THROUGH AND SEARCH POSITIONS
+
 
 ### EventTile
 
@@ -21,7 +29,7 @@
 
 ## To-do
 
-- Add a way to move in a different direction after a stop tile.
+- Add a way to move in a different direction after a stop tile. (in progress)
 
 - Add "summer" events that can only happen when waiting for other players to finish the board. (not priority)
 
@@ -32,3 +40,5 @@
 - Make interaction between players for event choices.
 
 - Some character customization regarding stats and player image. (not priority)
+
+- Drawing the board will have to completely be redone for player branching
