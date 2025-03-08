@@ -29,16 +29,14 @@
 
 ## To-do
 
-- Add a way to move in a different direction after a stop tile. (in progress)
+- Add a way to move in a different direction after a stop tile. (done ish)
 
 - Add "summer" events that can only happen when waiting for other players to finish the board. (not priority)
 
 - Make a way for different boards to be in the game.
 
-- Make it so all options are shown but only the options you can do based on your stats can be chosen
-
 - Make interaction between players for event choices.
 
 - Some character customization regarding stats and player image. (not priority)
 
-- Drawing the board will have to completely be redone for player branching
+- Drawing the board will have to completely be redone for player branching. Actually all UI functions will need to be redone

@@ -1,8 +1,8 @@
-
-import pygame
-
+import itertools
 
 class Event:
+
+    id_iter = itertools.count()
 
     def __init__(self, name, description, choices, rarity, phase):
         self.name = name
@@ -10,6 +10,7 @@ class Event:
         self.choices = choices
         self.rarity = rarity
         self.phase = phase
+        self.id = next(self.id_iter)
     
 
     def meet_criteria(self, player_stats):

@@ -39,9 +39,9 @@ class Player:
 
     def store_event(self, event, choice_idx=None):
         if choice_idx is not None:
-            self.events_played.append((event, choice_idx))
+            self.events_played.append((event.id, choice_idx))
         else:
-            self.events_played.append((event, None))
+            self.events_played.append((event.id, None))
 
     def get_stats(self):
         return self.stats
