@@ -52,11 +52,10 @@ def main():
 
     # Create board with tiles
     tiles = [
-        GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
-        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile_1),
-        GoodTile(10), BadTile(11), EventTile(12), BadTile(13), StopTile(14, event_stoptile_2),
-        GoodTile(15), BadTile(16), EventTile(17), BadTile(18), EventTile(19),
-        
+        GoodTile((5, 5)), BadTile((10, 10)), GoodTile((15, 15)), BadTile((20, 20)), EventTile((25, 25)),
+        GoodTile((30, 30)), BadTile((35, 35)), GoodTile((40, 40)), BadTile((45, 45)), StopTile((50, 50), event_stoptile_1),
+        GoodTile((55, 55)), BadTile((60, 60)), EventTile((65, 65)), BadTile((70, 70)), StopTile((75, 75), event_stoptile_2),
+        GoodTile((80, 80)), BadTile((85, 85)), EventTile((90, 90)), BadTile((95, 95)), EventTile((100, 100)),
     ]
     board = Board(tiles)
 

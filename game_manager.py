@@ -35,7 +35,7 @@ class GameManager:
         for tile in self.board.tiles[self.current_player.position + 1: self.current_player.position + roll + 1]:
             if tile.get_type() == "StopTile":
                 print("Found StopTile")
-                steps = tile.position - self.current_player.position
+                steps = self.board.tiles.index(tile) - self.current_player.position
                 self.current_player.move(steps)
                 # self.ui.display_board(self.board, self.players)
                 self.handle_event(tile.event)  # Handle event for stop tile

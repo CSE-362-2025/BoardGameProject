@@ -2,6 +2,9 @@
 import pygame
 import random
 
+PLAYER_RADIUS = 25
+FONT_COLOR = (255, 255, 255)  # White text
+
 class Player:
 
     def __init__(self, name, color, stats=None):
@@ -41,6 +44,19 @@ class Player:
     def get_stats(self):
         return self.stats
     
+    def draw(self, screen, position):   
+        screen_width = screen.get_width()/100
+        screen_height = screen.get_height()/100
+        font = pygame.font.Font(None, 16)
+        mid = position[2]
+        pygame.draw.circle(screen, self.color, ((position[0]+mid)*screen_width, (position[1]+mid)*screen_height), PLAYER_RADIUS)
+
+        # Draw player name or symbol above the circle
+        player_text = font.render(self.name[-1], True, FONT_COLOR)
+        player_text_rect = player_text.get_rect(center=((position[0]-mid)*screen_width, (position[1] - mid)*screen_height))
+        screen.blit(player_text, player_text_rect)
+
+    
 
 class ComputerPlayer(Player): 
 
@@ -50,5 +66,3 @@ class ComputerPlayer(Player):
     # Makes a decision based on the event, returns the index of the choice
     def make_decision(self, event):
         return random.randint(0, len(event.choices) - 1)
-
-
