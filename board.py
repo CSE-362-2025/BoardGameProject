@@ -7,7 +7,6 @@ Board Class sets up the board and helps determine the tile type the player is on
 import pygame
 import player
 
-
 class Board:
     
     def __init__(self, tiles):
@@ -22,3 +21,6 @@ class Board:
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):
         pass
+
+
+     

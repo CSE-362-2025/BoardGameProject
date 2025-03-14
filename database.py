@@ -1,6 +1,7 @@
 import sqlite3
 import pathlib
 from os import path
+from game_manager import GameManager
 
 DB_NAME_DEFAULT = "game_data.db"
 DB_DIR_PATH = pathlib.Path("database")
@@ -54,7 +55,6 @@ class GameDatabase(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 event_id INTEGER,
                 player_id INTEGER,
-
                 FOREIGN KEY (player_id) REFERENCES Players(player_id)
             );
         """
@@ -120,7 +120,25 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        pass
+        db = GameDatabase()
+        db.connect("")
+
+        gm = game_manager
+        try:
+            print("TRYING TO SAVE TURNCOUNT")
+            
+            db.cursor.execute(
+                """
+                INSERT INTO GameInfo (turn_count) VALUES (?)
+                """,(gm.turn_count,)
+            )
+            db.connection.commit() 
+            print('TRUE')
+            return True
+        except:
+            print('FALSE')
+            return False
+         
 
     def load_game(self, game_manager) -> bool:
         """Load game from the connected DB.
@@ -131,7 +149,7 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        pass
+        
 
     def clear_database(self) -> bool:
         """Clear any saved game states from the connected DB.
@@ -154,7 +172,6 @@ class GameDatabase(object):
 if __name__ == "__main__":
     db = GameDatabase()
     db.connect("")
-
     # simulate players
     db.cursor.execute(
         """INSERT INTO Players (name, position, military, bilingualism, fitness, academics) VALUES (?, ?, ?, ?, ?, ?)

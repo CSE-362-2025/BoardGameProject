@@ -22,11 +22,10 @@ entity event {
     --
     *event_id: int
     player_id: int <<FK>>
-    response: int
+    *response: int
 }
 note right of event::response
-Optional, not all events require
-player's response.
+Required, all events will have a response.
 end note
 
 player ||--o{ event: plays\n1..*
