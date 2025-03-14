@@ -49,13 +49,20 @@ def main():
                 "academic": 3,
                 "social": 0,
             }, 0)
+    event_stoptile_3 = StaticEvent("StopTile 2", "Exams! (+3 Academic)", None, {
+                "bilingual": 0,
+                "athletic": 0,
+                "military": 0,
+                "academic": 3,
+                "social": 0,
+            }, 0)
 
     # Create board with tiles
     tiles = [
         GoodTile((5, 5)), BadTile((10, 10)), GoodTile((15, 15)), BadTile((20, 20)), EventTile((25, 25)),
         GoodTile((30, 30)), BadTile((35, 35)), GoodTile((40, 40)), BadTile((45, 45)), StopTile((50, 50), event_stoptile_1),
         GoodTile((55, 55)), BadTile((60, 60)), EventTile((65, 65)), BadTile((70, 70)), StopTile((75, 75), event_stoptile_2),
-        GoodTile((80, 80)), BadTile((85, 85)), EventTile((90, 90)), BadTile((95, 95)), EventTile((100, 100)),
+        GoodTile((80, 80)), BadTile((85, 85)), EventTile((90, 90)), StopTile((95, 95), event_stoptile_3),
     ]
     board = Board(tiles)
 
@@ -90,7 +97,7 @@ def main():
                 ui.handle_click(event.pos)  # Check if dice was clicked
 
         # Display the current state
-        # ui.update(board, players)
+        ui.update(board, players)
 
         # Check if the game is over
         if game_manager.is_game_over():
@@ -98,12 +105,7 @@ def main():
             pygame.display.update()  # Ensure the last message is displayed
             pygame.time.wait(2000)  # Wait for a couple of seconds before quitting
             running = False
-
-        # Display the current state
-        if game_manager.current_player.has_moved:
-            ui.update(board, players)
-            game_manager.current_player.has_moved = False
-
+        
         # Update the screen (can be flipped to update only parts of the screen)
         pygame.display.flip()  # Update the entire screen
         clock.tick(60)

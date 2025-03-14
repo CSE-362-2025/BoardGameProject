@@ -26,7 +26,6 @@ class GameManager:
     def play_turn(self, dice_value):
 
         self.current_player.has_moved = True
-
         roll = dice_value
 
         print(roll)
@@ -43,7 +42,6 @@ class GameManager:
 
         # Move the player if not a stop tile
         self.current_player.move(roll)
-        # self.ui.display_board(self.board, self.players)
         try:
             tile = self.board.tiles[self.current_player.position]
         except Exception as e:

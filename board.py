@@ -25,7 +25,6 @@ class Board:
         pass
 
     def draw(self, screen, players):
-
         screen_width = screen.get_width()/100
         screen_height = screen.get_height()/100
         font = pygame.font.Font(None, 16)

@@ -7,8 +7,10 @@ WINDOW_SIZE_Y= 720
 BG_COLOR = (30, 30, 30)  # Dark gray background
 FONT_COLOR = (255, 255, 255)  # White text
 
-DICE_SIZE = 80
-DICE_POS = (225, 400)  # Adjust this based on your UI layout
+BUTTON_SIZE = 80 
+# Adjust this based on your UI layout (percentage based)
+DICE_POS = (60, 100) 
+NEXT_POS = (40,100)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -24,8 +26,8 @@ class UI():
         self.player = player
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 16)
+        self.Buttons = [Buttons(DICE_POS, (BUTTON_SIZE,BUTTON_SIZE), "Dice"), Buttons(NEXT_POS, (BUTTON_SIZE,BUTTON_SIZE), "Next Turn")]
         self.dice_value = 0
-
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
 
@@ -34,10 +36,9 @@ class UI():
         # Draw the board, dice, and stats
         self.screen.fill((0, 0, 0))  # Clear the screen first
         self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
-        self.display_dice()   # Call a method to display the dice
+        self.display_buttons()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
-        self.display_turn()
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -46,13 +47,10 @@ class UI():
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
-        pygame.display.flip()  # Update the display
-
 
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
         board.draw(self.screen, players)
-        pygame.display.flip()  # Update display
 
     def display_stats(self):
         # Example of displaying player stats in the top-right corner
@@ -62,49 +60,16 @@ class UI():
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
             stats_rect = stats_surface.get_rect(topright=(self.screen.get_width() - 10, 10))
             self.screen.blit(stats_surface, stats_rect)
-            pygame.display.flip()
-
-    def display_dice(self):
-        # Draw dice background (square)
-        dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
-        pygame.draw.rect(self.screen, WHITE, dice_rect)  # Background of the dice
-        pygame.draw.rect(self.screen, BLACK, dice_rect, 3)  # Border for the dice
-
-        # Draw dice value (centered in the dice square)
-        text_surface = self.font.render(str(self.dice_value), True, BLACK)
-        text_rect = text_surface.get_rect(center=dice_rect.center)  # Center the text inside the dice square
-        self.screen.blit(text_surface, text_rect)  # Draw the text on the screen
-
-        # Update the display to reflect changes
-        pygame.display.update()  # Update display after drawing the dice
-
-
-    def display_turn(self):
-        turn_rect = pygame.Rect(TURN_POS[0], TURN_POS[1], TURN_SIZE, TURN_SIZE)
-        pygame.draw.rect(self.screen, WHITE, turn_rect)  # 
-        pygame.draw.rect(self.screen, BLACK, turn_rect, 3)  # 
-
-        text_surface = self.font.render("Next Turn", True, BLACK)
-        text_rect = text_surface.get_rect(center=turn_rect.center)  # Center the text inside the dice square
-        self.screen.blit(text_surface, text_rect)  # Draw the text on the screen
-        
-        pygame.display.update()  # Update display
-
 
     def roll_dice(self):
         self.dice_value = random.randint(1, 6)  # Roll dice
         self.display_dice()  # Update display after rolling
         self.game_manager.play_turn(self.dice_value)
 
-    def handle_click(self, pos):
-        # Check if the click was inside the dice area
-        dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
-        if dice_rect.collidepoint(pos):
-            self.roll_dice()
-
-        turn_rect = pygame.Rect(TURN_POS[0], TURN_POS[1], TURN_SIZE, TURN_SIZE)
-        if turn_rect.collidepoint(pos):
-            self.game_manager.switch_turn()
+    def display_buttons(self):
+        for button in self.Buttons:
+            if button.visible:
+                button.display(self.screen)
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
@@ -138,7 +103,6 @@ class UI():
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
             stats_rect = stats_surface.get_rect(bottomright=(450, 450))
             self.screen.blit(stats_surface, stats_rect)
-            pygame.display.flip()
 
     def change_current_player(self, player):
         self.player = player
@@ -147,3 +111,51 @@ class UI():
     def display_roll(self, roll):
         # Display the roll value
         self.display_message(f"Rolled: {roll}")
+
+    def handle_click(self, pos):
+        events = []
+        for button in self.Buttons:
+            if button.visible:
+                result = button.handle_click(self.screen, pos)
+                if result:
+                    events.append(result)
+        print(events)
+
+
+
+class Buttons:
+    """Creates a button that tracks visuals and events"""
+    def __init__(self, centre, size, type):
+        self.visible = True
+        self.position = centre
+        self.size = size
+        self.type = type
+
+    def turn_on(self):
+        self.visible = True
+    
+    def turn_off(self):
+        self.visible = False
+
+    def display(self, screen):
+        screen_width = screen.get_width()/100
+        screen_height = screen.get_height()/100
+        font = pygame.font.Font(None, 16)
+        # Draw dice background (square)
+        button_rect = pygame.Rect((self.position[0])*screen_width-self.size[0]/2,(self.position[1])*screen_height-self.size[1], self.size[0], self.size[1])
+        pygame.draw.rect(screen, WHITE, button_rect)  # Background of the dice
+        pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the dice
+
+        # Draw dice value (centered in the dice square)
+        text_surface = font.render(str(self.type), True, BLACK)
+        text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
+        screen.blit(text_surface, text_rect)  # Draw the text on the screen
+
+    def handle_click(self, screen, pos):
+        screen_width = screen.get_width()/100
+        screen_height = screen.get_height()/100
+        font = pygame.font.Font(None, 16)
+        # Check if the click was inside the dice area
+        button_rect = pygame.Rect((self.position[0])*screen_width-self.size[0]/2,(self.position[1])*screen_height-self.size[1], self.size[0], self.size[1])
+        if button_rect.collidepoint(pos):
+            return self.type
