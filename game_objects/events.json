@@ -1,4 +1,4 @@
-    [
+[
     {
         "name" : "Event",
         "description" : "Exam coming up",
@@ -36,9 +36,7 @@
         }],
 
         "rarity" : 0,
-        "phase" : "1"
-
-
+        "phase" : [1, 2, 3, 4],
+        "positive_event" : true
     }
-
 ]

@@ -9,7 +9,7 @@ class Event:
         self.description = description
         self.choices = choices
         self.rarity = rarity
-        self.phase = phase
+        self.phase = phase  # list
         self.id = next(self.id_iter)
     
 

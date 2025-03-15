@@ -9,7 +9,6 @@
     - The "main" path will follow the same 5 -> 6 -> ... -> 11 ect
     - The "alt" path will add 100 to the position 5 -> 106 -> 107 -> ... -> 111 -> 12
     - The player's position will be at 105 after the decision
-    - If the 
     - CAN NO LONGER USE THE INDEX OF TILES IN BOARD TO DETERMINE POSITION, MUST ALWAYS ITERATE THROUGH AND SEARCH POSITIONS
 
 
@@ -33,10 +32,15 @@
 
 - Add "summer" events that can only happen when waiting for other players to finish the board. (not priority)
 
-- Make a way for different boards to be in the game.
+- Make a way for different boards to be in the game. (later)
 
 - Make interaction between players for event choices.
 
 - Some character customization regarding stats and player image. (not priority)
 
-- Drawing the board will have to completely be redone for player branching. Actually all UI functions will need to be redone
+- In Event generation function, make it so it remembers what events have been done so that it is fairly balanced
+
+- 10 EventTile, 4 Good, 3 Bad
+
+- Grid with x -> positive to right and y -> positive down
+

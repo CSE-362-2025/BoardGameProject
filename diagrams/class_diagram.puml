@@ -20,6 +20,7 @@ class Board {
 
     - tiles: list<Tile>
     - size: int
+    - year: int
 
     + get_tile(position: int): Tile
     + get_player_positions(players: list<Player>): dict<Player, int>
@@ -29,6 +30,7 @@ abstract class Tile {
 
     - position: int
     - tile_type: string
+    - screen_position: tuple(x: int, y: int)
 
     + get_position(): int
     + get_type(): string
@@ -47,6 +49,12 @@ class StopTile {
     - event: Event
     - paths: list<tile_index: int>
 
+}
+
+class StartTile {
+}
+
+class EndTile {
 }
 
 class Player {
@@ -79,7 +87,7 @@ class Event {
     - description: string
     - choices: list<text, result, criteria>
     - rarity: int
-    - phase: string
+    - phase: list[year: int]
     - id: int
 
     + meet_criteria(player: Player): bool
@@ -150,6 +158,8 @@ Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
+Tile <|-- StartTile
+Tile <|-- EndTile
 Player <|-- ComputerPlayer
 
 
