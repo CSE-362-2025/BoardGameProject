@@ -100,6 +100,20 @@ class TestGameDataBase(unittest.TestCase):
 
         return mock_gm
 
+    def __get_mock_player_by_name(self, player_name: str) -> Mock | None:
+        """Return a mock Player object that has the given `player_name`
+
+        Args:
+            player_name (str): target player_name
+
+        Returns:
+            Mock | None: mock player object with simulated data, None if DNE
+        """
+        for each_player in self.mock_gm.players:
+            if player_name == each_player.name:
+                return each_player
+        return None
+
     def test_connect_with_valid_name_without_extension(self):
         """Test if connect() is successful with a given valid `db_name`
         without the `.db` extension at the end of the file name.
