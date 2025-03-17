@@ -1,5 +1,5 @@
 import os
-# to import from `database.py` file from parent directory
+import sqlite3
 import sys
 import unittest
 from random import randint
@@ -73,7 +73,7 @@ class TestGameDataBase(unittest.TestCase):
         mock_gm.game_database = "game_database"
         mock_gm.players: list[Mock] = []
 
-        # simulate players
+        # simulate 4 players
         for i in range(1, 5):
             mock_player: Mock = Mock()
             mock_player.name = f"player_{i}"
@@ -126,10 +126,88 @@ class TestGameDataBase(unittest.TestCase):
         self.__test_conn(valid_name)
 
     def test_save_game_valid(self):
-        res = self.db.save_game(game_manager=self.mock_gm)
-        self.assertTrue(res)
+        """Test if save_game() properly save game data into DB.
+        **This assumes connect() passed the test.**
+        """
+        try:
 
-        # TODO: test against the saved DB file
+            # create connection to default name for this test
+            conn = sqlite3.connect(self.test_db_name_default)
+            cur = conn.cursor()
+
+            res = self.db.save_game(game_manager=self.mock_gm)
+            self.assertTrue(res)
+
+            # * check for Players table
+
+            # fetch rows from `Players` table
+            rows_players = cur.execute(
+                """SELECT * FROM Players
+                """
+            ).fetchall()
+
+            # should have 4 rows
+            self.assertEqual(4, len(rows_players))
+
+            # get all names from DB
+            expected_names: list[str] = [each.name for each in self.mock_gm.players]
+            rows_player_names = cur.execute(
+                """SELECT name FROM Players
+                """
+            ).fetchall()
+
+            # check if all four expected player names are inside DB
+            self.assertListEqual(
+                expected_names, [str(each[0]) for each in rows_player_names]
+            )
+
+            # go through all players to compare stats (test passed above)
+            for each_expected_name in expected_names:
+                # grab actual player info from DB
+                actual_player_info_row: list[tuple] = cur.execute(
+                    """SELECT position, military, bilingual, fitness, academic, social
+                    FROM Players WHERE name = ?
+                    """,
+                    (each_expected_name),
+                ).fetchall()
+
+                # no duplicate name allowed
+                self.assertEqual(1, len(actual_player_info_row))
+
+                # grab expected player info to test it below
+                expected_player: Mock = self.__get_mock_player_by_name(
+                    each_expected_name
+                )
+                self.assertIsNotNone(expected_player)
+                expected_info: tuple = (
+                    expected_player.position,
+                    expected_player.status["military"],
+                    expected_player.status["bilingual"],
+                    expected_player.status["fitness"],
+                    expected_player.status["academic"],
+                    expected_player.status["social"],
+                )
+
+                # check if expected player info is same as actual
+                self.assertTupleEqual(expected_info, actual_player_info_row[0])
+
+                # * done checking `Players` table
+
+                # * check for `Events` table
+                # TODO: this
+                # * done checking `Events` table
+
+                # * check for `GameInfo` table
+                # * done checking `GameInfo` table
+
+            cur.close()
+        except sqlite3.Error as e:
+            self.fail(f"unexpected exception thrown: {e}")
+
+        finally:
+            # close conn
+            if conn:
+                conn.close()
 
     def test_save_game_invalid_none(self):
         res = self.db.save_game(None)
