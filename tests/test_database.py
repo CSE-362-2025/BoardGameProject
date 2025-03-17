@@ -5,7 +5,11 @@ import unittest
 from random import randint
 from unittest.mock import Mock
 
-sys.path.append("../BoardGameProject")
+# to import from `database.py` file from parent directory only when inside `tests` dir
+if os.getcwd().endswith(("tests", "tests/", "tests\\")):
+    sys.path.append("../")
+else:
+    sys.path.append("../BoardGameProject")
 
 from database import DB_DIR_PATH, DB_NAME_DEFAULT, GameDatabase
 
