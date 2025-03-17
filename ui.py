@@ -27,6 +27,7 @@ class UI():
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 16)
         self.Buttons = [Buttons(DICE_POS, (BUTTON_SIZE,BUTTON_SIZE), "Dice"), Buttons(NEXT_POS, (BUTTON_SIZE,BUTTON_SIZE), "Next Turn")]
+        self.buttonevents = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
@@ -113,18 +114,37 @@ class UI():
         self.display_message(f"Rolled: {roll}")
 
     def handle_click(self, pos):
-        events = []
         for button in self.Buttons:
             if button.visible:
                 result = button.handle_click(self.screen, pos)
                 if result:
-                    events.append(result)
-        print(events)
+                    self.buttonevents.append(result)
+
+    def run(self):
+        """React to events in the list FIFO, and remove all following copies of that event"""
+        if len(self.buttonevents) > 0:
+            next = self.buttonevents[0]
+            self.buttonevents = list_edit(self.buttonevents, next)
+            match next:
+                case 'Dice':
+                    self.roll_dice()
+                case 'Next Turn':
+                    self.change_current_player(self.player)
+            
+
+
+def list_edit(list, item):
+    """Removes all copies of an element from a list"""
+    list = [i for i in list if i != item]
+    return list
+
+
+
 
 
 
 class Buttons:
-    """Creates a button that tracks visuals and events"""
+    """Creates a button that can track itself visually and its events"""
     def __init__(self, centre, size, type):
         self.visible = True
         self.position = centre

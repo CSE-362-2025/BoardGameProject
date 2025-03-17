@@ -105,7 +105,7 @@ def main():
             pygame.display.update()  # Ensure the last message is displayed
             pygame.time.wait(2000)  # Wait for a couple of seconds before quitting
             running = False
-        
+        ui.run()
         # Update the screen (can be flipped to update only parts of the screen)
         pygame.display.flip()  # Update the entire screen
         clock.tick(60)
