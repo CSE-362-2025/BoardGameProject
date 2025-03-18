@@ -17,6 +17,9 @@ MAIN2 = (38, 80)
 MAIN3 = (62, 80)
 MAIN4 = (85, 80)
 MAINSIZE = (20,20)
+CARD1IN = (105, 25)
+CARD1OUT = (80, 25)
+CARDSIZE = (30, 20)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -38,6 +41,7 @@ class UI():
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg"),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
                         Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
+                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Card Display")
                         ]
         self.buttonPaused = []
         self.buttonevents = []
@@ -233,17 +237,23 @@ class Button:
             if button_rect.collidepoint(pos):
                 return self.type
 
-class DynaButton(Button):
+class CardDisplays(Button):
+    """Used to display the clickable cards that show stats or other info"""
     def __init__(self, centre, centre_moved, size, type, visible=True, image = None):
         self.main = centre
         super().__init__(centre, size, type, visible, image)
         self.moved = centre_moved
         self.hovered = False
 
-
     def display(self, screen):
-        if not self.hovered:
-            self.position = self.main
-        else:
-            self.position = self.moved
-        Button.display(self, screen)
+        super().display(screen)
+    
+    def handle_click(self, screen, pos):
+        result = super().handle_click(screen, pos)
+        if result:
+            if not self.hovered:
+                self.position = self.moved
+                self.hovered = True
+            else:
+                self.position = self.main
+                self.hovered = False
