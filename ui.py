@@ -19,6 +19,8 @@ MAIN4 = (85, 80)
 MAINSIZE = (20,20)
 CARD1IN = (105, 25)
 CARD1OUT = (80, 25)
+CARD2IN = (105, 50)
+CARD2OUT = (80, 50)
 CARDSIZE = (30, 20)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -41,7 +43,8 @@ class UI():
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg"),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
                         Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
-                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Card Display")
+                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard"),
+                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats")
                         ]
         self.buttonPaused = []
         self.buttonevents = []
@@ -198,7 +201,7 @@ class Button:
     """Creates a button that can track itself visually and its events"""
     def __init__(self, centre, size, type, visible = True, image = None):
         self.visible = visible
-        self.position = centre
+        self.position = centre #Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
         self.type = type
         self.image = image
