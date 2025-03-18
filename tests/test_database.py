@@ -227,6 +227,21 @@ class TestGameDataBase(unittest.TestCase):
                 # * done checking `Events` table
 
                 # * check for `GameInfo` table
+
+                actual_gameinfo_row: list[tuple] = cur.execute(
+                    """SELECT turn_count FROM GameInfo
+                    """
+                ).fetchall()
+
+                # check if only one turn_count (by design)
+                self.assertEqual(1, len(actual_gameinfo_row))
+
+                # grab expected game_info
+                expected_game_info_row: tuple = self.mock_gm.turn_count
+
+                # compare turn count
+                self.assertTupleEqual(expected_game_info_row, actual_gameinfo_row)
+
                 # * done checking `GameInfo` table
 
             cur.close()
