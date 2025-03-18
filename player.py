@@ -1,3 +1,9 @@
+"""
+Authors: Bottom Six
+Created: 2025/02/14
+Last Edited: 2025/03/18
+The player class tracks the player information, and has some functions to help manipulate and render the player
+"""
 
 import pygame
 import random
@@ -8,7 +14,6 @@ FONT_COLOR = (255, 255, 255)  # White text
 class Player:
 
     def __init__(self, name, color, stats=None, image=None):
-
         self.name = name
         self.color = color
         self.position = 0

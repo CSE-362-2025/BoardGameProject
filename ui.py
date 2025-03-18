@@ -1,3 +1,10 @@
+"""
+Authors: Bottom Six
+Created: 2025/02/14
+Last Edited: 2025/03/18
+The UI determines the positions of buttons and various player-interactable objects, and determines from this what action-events need to be done by the game manager
+"""
+
 import pygame
 import random
 
@@ -36,6 +43,7 @@ class UI():
         self.game_manager = game_manager
         self.player = player
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
+        self.background_img = None
         self.font = pygame.font.Font(None, 16)
         self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice"), 
                         Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
@@ -58,6 +66,9 @@ class UI():
         """Updates and draws all necessary UI components."""  
         # Draw the board, dice, and stats
         self.screen.fill((0, 0, 0))  # Clear the screen first
+        if self.background_img:
+            img = pygame.transform.scale(pygame.image.load(self.background_img),(self.screen.get_width(), self.screen.get_height()))
+            self.screen.blit(img)
         if board:
             self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
         self.display_buttons()   # Call a method to display the dice
@@ -190,11 +201,9 @@ class UI():
             button.turn_on()
         self.buttonPaused = []
 
-            
-
 
 def list_edit(list, item):
-    """Removes all copies of an element from a list"""
+    """Removes all copies of an element from a list: helper function"""
     list = [i for i in list if i != item]
     return list
 

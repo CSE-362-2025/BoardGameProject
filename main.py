@@ -1,10 +1,12 @@
+"""
+Authors: Bottom Six
+Created: 2025/02/14
+Last Edited: 2025/03/18
+The main class which handles setting up and running the game at a higher level
+"""
 import pygame
 from game_manager import GameManager
-from board import Board
-from player import Player
 from ui import UI
-from tiles import GoodTile, BadTile, EventTile, StopTile
-import json
 
 
 def main():

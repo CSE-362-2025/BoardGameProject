@@ -1,7 +1,7 @@
 """
-Author: Andrew
+Author: Bottom Six
 Created: 2025/02/29
-Last Edited: 2025/03/02
+Last Edited: 2025/03/18
 Game manager class that controls the flow of the game and the logic of the game
 """
 

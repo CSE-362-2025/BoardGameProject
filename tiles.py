@@ -1,3 +1,10 @@
+"""
+Author: Bottom Six
+Created: 2025/02/29
+Last Edited: 2025/03/18
+Tile Class to track the tiles and their information
+"""
+
 # Colors for different tile types
 TILE_COLORS = {
     "GoodTile": (50, 200, 50),  # Green
