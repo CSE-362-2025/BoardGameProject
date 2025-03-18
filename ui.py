@@ -65,7 +65,7 @@ class UI():
         players = self.game_manager.players
         """Updates and draws all necessary UI components."""  
         # Draw the board, dice, and stats
-        self.screen.fill((0, 0, 0))  # Clear the screen first
+        self.screen.fill(BG_COLOR)  # Clear screen first
         if self.background_img:
             img = pygame.transform.scale(pygame.image.load(self.background_img),(self.screen.get_width(), self.screen.get_height()))
             self.screen.blit(img)
@@ -93,7 +93,6 @@ class UI():
         self.return_state()
 
     def display_board(self, board, players):
-        self.screen.fill(BG_COLOR)  # Clear screen
         board.draw(self.screen, players)
 
     def display_stats(self):
