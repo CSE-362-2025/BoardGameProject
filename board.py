@@ -46,6 +46,6 @@ class Board:
         # Draw players
         for player in players:
             position = self.tiles[(player.position)].get_position()
-            position = (position[0] - mid, position[1] - mid, mid)
+            position = (position[0], position[1], mid)
             player.draw(screen, position)
             

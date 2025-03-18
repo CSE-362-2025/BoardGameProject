@@ -7,10 +7,16 @@ WINDOW_SIZE_Y= 720
 BG_COLOR = (30, 30, 30)  # Dark gray background
 FONT_COLOR = (255, 255, 255)  # White text
 
-BUTTON_SIZE = 80 
+
 # Adjust this based on your UI layout (percentage based)
-DICE_POS = (60, 100) 
-NEXT_POS = (40,100)
+DICE_POS = (85, 95) 
+DICE_SIZE = (20, 10)
+NEXT_POS = (40,95)
+MAIN1 = (15, 80)
+MAIN2 = (38, 80)
+MAIN3 = (62, 80)
+MAIN4 = (85, 80)
+MAINSIZE = (20,20)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -26,7 +32,14 @@ class UI():
         self.player = player
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Buttons(DICE_POS, (BUTTON_SIZE,BUTTON_SIZE), "Dice"), Buttons(NEXT_POS, (BUTTON_SIZE,BUTTON_SIZE), "Next Turn")]
+        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice"), 
+                        Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
+                        Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
+                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg"),
+                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
+                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
+                        ]
+        self.buttonPaused = []
         self.buttonevents = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
@@ -48,6 +61,12 @@ class UI():
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
+    def game_start(self):
+        self.save_state()
+        for button in self.Buttons:
+            if button.type == "New Game" or button.type == "Load Game" or button.type == "Custom Char" or button.type == "Settings":
+                button.turn_on()
+
 
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
@@ -63,8 +82,8 @@ class UI():
             self.screen.blit(stats_surface, stats_rect)
 
     def roll_dice(self):
-        self.dice_value = random.randint(1, 6)  # Roll dice
-        self.display_dice()  # Update display after rolling
+        self.dice_value = self.game_manager.roll_dice()  # Roll dice
+        self.display_roll(self.dice_value)  # Update display after rolling
         self.game_manager.play_turn(self.dice_value)
 
     def display_buttons(self):
@@ -121,15 +140,43 @@ class UI():
                     self.buttonevents.append(result)
 
     def run(self):
-        """React to events in the list FIFO, and remove all following copies of that event"""
+        """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
         if len(self.buttonevents) > 0:
             next = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next)
+            print(next)
             match next:
                 case 'Dice':
                     self.roll_dice()
+                    for button in self.Buttons:
+                        if button.type == "Dice":
+                            button.turn_off()
+                        elif button.type == "Next Turn":
+                            button.turn_on()
                 case 'Next Turn':
-                    self.change_current_player(self.player)
+                    self.game_manager.switch_turn()
+                    for button in self.Buttons:
+                        if button.type == "Next Turn":
+                            button.turn_off()
+                        elif button.type == "Dice":
+                            button.turn_on()
+                case 'New Game':
+                    self.return_state()
+    
+    def save_state(self):
+        for button in self.Buttons:
+            if button.visible:
+                self.buttonPaused.append(button)
+                button.turn_off()
+
+    def return_state(self):
+        for button in self.Buttons:
+            if button.visible:
+                button.turn_off()
+        for button in self.buttonPaused:
+            button.turn_on()
+        self.buttonPaused = []
+
             
 
 
@@ -143,13 +190,14 @@ def list_edit(list, item):
 
 
 
-class Buttons:
+class Button:
     """Creates a button that can track itself visually and its events"""
-    def __init__(self, centre, size, type):
-        self.visible = True
+    def __init__(self, centre, size, type, visible = True, image = None):
+        self.visible = visible
         self.position = centre
         self.size = size
         self.type = type
+        self.image = image
 
     def turn_on(self):
         self.visible = True
@@ -158,24 +206,44 @@ class Buttons:
         self.visible = False
 
     def display(self, screen):
-        screen_width = screen.get_width()/100
-        screen_height = screen.get_height()/100
-        font = pygame.font.Font(None, 16)
-        # Draw dice background (square)
-        button_rect = pygame.Rect((self.position[0])*screen_width-self.size[0]/2,(self.position[1])*screen_height-self.size[1], self.size[0], self.size[1])
-        pygame.draw.rect(screen, WHITE, button_rect)  # Background of the dice
-        pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the dice
-
-        # Draw dice value (centered in the dice square)
-        text_surface = font.render(str(self.type), True, BLACK)
-        text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
-        screen.blit(text_surface, text_rect)  # Draw the text on the screen
+        if self.visible:
+            screen_width = screen.get_width()/100
+            screen_height = screen.get_height()/100
+            font = pygame.font.Font(None, 16)
+            # Draw dice background (square)
+            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+            if self.image:
+                buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
+                screen.blit(buttonimg, button_rect)
+            else:
+                pygame.draw.rect(screen, WHITE, button_rect)  # Background of the dice
+                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the dice
+                # Draw value (centered in the square)
+                text_surface = font.render(str(self.type), True, BLACK)
+                text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
+                screen.blit(text_surface, text_rect)  # Draw the text on the screen
 
     def handle_click(self, screen, pos):
-        screen_width = screen.get_width()/100
-        screen_height = screen.get_height()/100
-        font = pygame.font.Font(None, 16)
-        # Check if the click was inside the dice area
-        button_rect = pygame.Rect((self.position[0])*screen_width-self.size[0]/2,(self.position[1])*screen_height-self.size[1], self.size[0], self.size[1])
-        if button_rect.collidepoint(pos):
-            return self.type
+        if self.visible:
+            screen_width = screen.get_width()/100
+            screen_height = screen.get_height()/100
+            font = pygame.font.Font(None, 16)
+            # Check if the click was inside the dice area
+            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+            if button_rect.collidepoint(pos):
+                return self.type
+
+class DynaButton(Button):
+    def __init__(self, centre, centre_moved, size, type, visible=True, image = None):
+        self.main = centre
+        super().__init__(centre, size, type, visible, image)
+        self.moved = centre_moved
+        self.hovered = False
+
+
+    def display(self, screen):
+        if not self.hovered:
+            self.position = self.main
+        else:
+            self.position = self.moved
+        Button.display(self, screen)

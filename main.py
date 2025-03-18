@@ -68,10 +68,10 @@ def main():
 
     # Create players
     players = [
-        Player("Player 1", (50, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 2", (50, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 3", (200, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
-        Player("Player 4", (200, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+        Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png"),
+        Player("Player 2", (50, 200, 200),),
+        Player("Player 3", (200, 200, 200),),
+        Player("Player 4", (200, 200, 50),),
 
     ]
 
@@ -83,6 +83,7 @@ def main():
     ui.game_manager = game_manager
 
     clock = pygame.time.Clock()
+    ui.game_start()
     ui.update(board, players)
 
 
