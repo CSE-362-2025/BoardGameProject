@@ -123,12 +123,12 @@ class UI():
         self.message_duration = duration
 
     def display_current_turn(self):
-        # Example of displaying player stats in the top-right corner
+        # Example of displaying player stats in the bottom-left corner
         self.font = pygame.font.Font(None, 16)
         if self.player:
             stats_text = f"{self.player.name}'s Turn"  # 
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
-            stats_rect = stats_surface.get_rect(bottomright=(450, 450))
+            stats_rect = stats_surface.get_rect(bottomright=(0.2*self.screen.get_width(), 0.9*self.screen.get_height()))
             self.screen.blit(stats_surface, stats_rect)
 
     def change_current_player(self, player):
