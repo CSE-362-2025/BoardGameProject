@@ -52,11 +52,14 @@ class UI():
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
 
-    def update(self, board, players):
+    def update(self):
+        board = self.game_manager.board
+        players = self.game_manager.players
         """Updates and draws all necessary UI components."""  
         # Draw the board, dice, and stats
         self.screen.fill((0, 0, 0))  # Clear the screen first
-        self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
+        if board:
+            self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
         self.display_buttons()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
@@ -68,12 +71,15 @@ class UI():
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
-    def game_start(self):
+    def main_menu(self):
         self.save_state()
         for button in self.Buttons:
             if button.type == "New Game" or button.type == "Load Game" or button.type == "Custom Char" or button.type == "Settings":
                 button.turn_on()
 
+    def game_start(self):           
+        self.game_manager.start_game()
+        self.return_state()
 
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
@@ -168,7 +174,7 @@ class UI():
                         elif button.type == "Dice":
                             button.turn_on()
                 case 'New Game':
-                    self.return_state()
+                    self.game_start()
     
     def save_state(self):
         for button in self.Buttons:

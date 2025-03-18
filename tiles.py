@@ -10,9 +10,11 @@ TILE_COLORS = {
 
 class Tile:
 
-    def __init__(self, position=(0,0),tile_type="None"):
-        self.position = position
-        self.tile_type = tile_type
+    def __init__(self, ID, position=(0,0),path = 0, tile_type="None"):
+        self.ID = ID #order player travels
+        self.position = position #where Tile is
+        self.tile_type = tile_type #what Tile is
+        self.path = path #which split Tile is on
 
     def get_position(self):
         return self.position
@@ -26,27 +28,27 @@ class Tile:
 
 class GoodTile(Tile):
 
-    def __init__(self, position):
-        super().__init__(position, tile_type="GoodTile")
+    def __init__(self,ID, position, path=0):
+        super().__init__(ID,position, path, tile_type="GoodTile")
         pass
 
 
 class BadTile(Tile):
 
-    def __init__(self, position):
-        super().__init__(position, tile_type="BadTile")
+    def __init__(self, ID,position, path=0):
+        super().__init__(ID,position, path, tile_type="BadTile")
         pass
 
 
 class EventTile(Tile):
 
-    def __init__(self, position):
-        super().__init__(position, tile_type="EventTile")
+    def __init__(self, ID,position, path=0):
+        super().__init__(ID,position, path, tile_type="EventTile")
         pass
 
 
 class StopTile(Tile):
     
-    def __init__(self, position, event):
-        super().__init__(position, tile_type="StopTile")
+    def __init__(self, ID, position, event, path=0):
+        super().__init__(ID, position, path, tile_type="StopTile")
         self.event = event

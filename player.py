@@ -15,6 +15,7 @@ class Player:
         self.events_played = []
         self.has_moved = True
         self.image=image
+        self.path = 0
 
         # can pass in stats to set them, otherwise default to 0 for now
         if stats is not None:
