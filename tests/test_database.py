@@ -194,7 +194,36 @@ class TestGameDataBase(unittest.TestCase):
                 # * done checking `Players` table
 
                 # * check for `Events` table
-                # TODO: this
+
+                # get all events info for current `each_expected_name`
+                actual_event_row: list[tuple] = cur.execute(
+                    """SELECT event_id, player_id, response
+                    FROM Events
+                    WHERE player_id IN
+                    (
+                        SELECT player_id FROM Players
+                        WHERE name = ?
+                    )
+                    """,
+                    (each_expected_name),
+                ).fetchall()
+
+                # check if have 5 events played
+                self.assertEqual(5, len(actual_event_row))
+
+                # grab expected event info to test it below
+                expected_event_info: list[tuple] = []
+                for each_event_mock_obj in list(expected_player.events_played.keys()):
+                    each_event_info_tup: tuple = (
+                        each_event_mock_obj.id,
+                        int(expected_player.name.split("_")[1]),
+                        int(expected_player.events_played[each_event_mock_obj]),
+                    )
+                    expected_event_info.append(each_event_info_tup)
+
+                # compare expected and actual events info
+                self.assertTupleEqual(expected_event_info, actual_event_row)
+
                 # * done checking `Events` table
 
                 # * check for `GameInfo` table
