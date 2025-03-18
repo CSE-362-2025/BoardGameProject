@@ -93,7 +93,6 @@ class TestGameDataBase(unittest.TestCase):
                 mock_event: Mock = Mock()
                 mock_event.name: str = f"mock_event_{j}"
                 mock_event.id: int = randint(1, 10)
-                mock_event.response: int = randint(1, 5)
 
                 mock_player.events_played.append({mock_event: randint(1, 3)})
 
