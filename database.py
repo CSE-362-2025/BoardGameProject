@@ -42,7 +42,11 @@ class GameDatabase(object):
                 military INTEGER,
                 bilingualism INTEGER,
                 fitness INTEGER,
-                academics INTEGER
+                academics INTEGER,
+                has_moved BOOLEAN,
+                branch BOOLEA,
+                next_pos INTEGER,
+                on_alt_path BOOLEAN
             );
         """
         )
