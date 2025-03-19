@@ -23,6 +23,8 @@ CARD1OUT = (80, 25)
 CARD2IN = (105, 50)
 CARD2OUT = (80, 50)
 CARDSIZE = (30, 20)
+PAUSE = (10,10)
+PAUSESIZE = (20,10)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -45,10 +47,12 @@ class UI():
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
                         Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
                         CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard"),
-                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats")
+                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
+                        Button(PAUSE,PAUSESIZE, "Pause", True)
                         ]
         self.buttonPaused = []
         self.buttonevents = []
+        self.open_menus = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
@@ -67,6 +71,10 @@ class UI():
         self.display_buttons()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
+        for menu in self.open_menus:
+            menu.draw(self.screen)
+
+            
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -154,6 +162,10 @@ class UI():
                 result = button.handle_click(self.screen, pos)
                 if result:
                     self.buttonevents.append(result)
+        for menu in self.open_menus:
+            result = menu.handle_click(self.screen, pos)
+            if result:
+                self.buttonevents.append(result)
 
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
@@ -178,7 +190,14 @@ class UI():
                             button.turn_on()
                 case 'New Game':
                     self.game_start()
+                case 'Pause':
+                    self.save_state()
+                    self.open_menus.append(Menu("Pause"))
+                case 'Return':
+                    self.open_menus.pop()
+                    self.return_state()
     
+
     def save_state(self):
         for button in self.Buttons:
             if button.visible:
@@ -200,9 +219,29 @@ def list_edit(list, item):
     return list
 
 
+class Menu:
 
+    def __init__(self, name, image = None):
+        self.name = name
+        self.image = image
+        self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
+                        Button(MAIN2, MAINSIZE, "Save"),
+                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
+                        Button(MAIN4, MAINSIZE, "Quit"),]
 
+    def draw(self, screen):
+        menu_background = pygame.Surface((screen.get_width(),screen.get_height()))
+        menu_background.fill((0,0,0))
+        menu_background.set_alpha(160)
+        screen.blit(menu_background, (0,0))
+        for button in self.buttons:
+            button.display(screen)
 
+    def handle_click(self, screen, pos):
+        for button in self.buttons:
+            result = button.handle_click(screen, pos)
+            if result:
+                return result
 
 class Button:
     """Creates a button that can track itself visually and its events"""
