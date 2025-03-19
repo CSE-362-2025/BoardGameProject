@@ -150,7 +150,29 @@ class GameDatabase(object):
                 ),
             )
 
-            # TODO: save all players into DB
+            # save all players into DB
+            for each_player in game_manager.players:
+                self.cursor.execute(
+                    """
+                    INSERT INTO Players (
+                        name, position, military, bilingual, athletic, academic, social, has_moved, branch, next_pos, on_alt_path
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        each_player.name,
+                        each_player.position,
+                        each_player.stats["military"],
+                        each_player.stats["bilingual"],
+                        each_player.stats["athletic"],
+                        each_player.stats["academic"],
+                        each_player.stats["social"],
+                        int(each_player.has_moved),
+                        int(each_player.branch),
+                        each_player.next_pos,
+                        int(each_player.on_alt_path),
+                    ),
+                )
 
             # TODO: save all events played by the players into DB
 
