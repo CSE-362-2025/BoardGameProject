@@ -1,8 +1,9 @@
 class Tile:
 
-    def __init__(self, position, tile_type):
+    def __init__(self, position, screen_position, tile_type):
         self.position = position
         self.tile_type = tile_type
+        self.screen_position = screen_position  
 
     def get_position(self):
         return self.position
@@ -34,6 +35,19 @@ class EventTile(Tile):
 
 class StopTile(Tile):
     
-    def __init__(self, position, event):
-        super().__init__(position, tile_type="StopTile")
+    def __init__(self, position, screen_position, event, paths):
+        super().__init__(position, screen_position, tile_type="StopTile")
         self.event = event
+        self.paths = paths
+
+
+class StartTile(Tile):
+    def __init__(self, position):
+        super().__init__(position, tile_type="StartTile")
+        pass
+
+
+class EndTile(Tile):
+    def __init__(self, position):
+        super().__init__(position, tile_type="EndTile")
+        pass

@@ -1,56 +1,42 @@
 [
     {
-        "type" : "Static",
-        "name" : "Event 1: Static",
-        "description" : "Dunked in Gym Class. (+1 Athletic)",
-
-        "criteria" : {"bilingual" : 0, 
-                    "athletic" : 0, 
-                    "academic" : 0, 
-                    "military" : 0, 
-                    "social" : 0},
-
-        "result" : {"bilingual" : 0, 
-                    "athletic" : 1, 
-                    "academic" : 0, 
-                    "military" : 0, 
-                    "social" : 0},
-        
-        "rarity" : 0
-
-
-    },
-
-    {
-        "type" : "Decision",
-        "name" : "Event 1: Decision",
+        "name" : "Event",
         "description" : "Exam coming up",
 
-        "criteria" : {"bilingual" : 0, 
-                    "athletic" : 0, 
-                    "academic" : 0, 
-                    "military" : 0, 
-                    "social" : 0},
 
         "choices" : [{"text" : "Study (+1 Academic)",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
                                 "academic" : 1, 
                                 "military" : 0, 
-                                "social" : 0}
+                                "social" : 0},
+
+                    "criteria" : {"bilingual" : 0, 
+                                "athletic" : 0, 
+                                "academic" : 0, 
+                                "military" : 0, 
+                                "social" : 0},
+                    "hide": true 
         },
 
         {"text" : "Go out with friends. (+2 Social -1 Academic)",
                     "result" : {"bilingual" : 0, 
                                 "athletic" : 0, 
-                                "academic" : -1, 
+                                "academic" : 1, 
                                 "military" : 0, 
-                                "social" : 2}
+                                "social" : 0},
+
+                    "criteria" : {"bilingual" : 0, 
+                                "athletic" : 0, 
+                                "academic" : 0, 
+                                "military" : 0, 
+                                "social" : 0},
+
+                    "hide": false
         }],
 
-        "rarity" : 0
-
-
+        "rarity" : 0,
+        "phase" : [1, 2, 3, 4],
+        "positive_event" : true
     }
-
 ]
