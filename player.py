@@ -1,6 +1,14 @@
-
+"""
+Authors: Bottom Six
+Created: 2025/02/14
+Last Edited: 2025/03/18
+The player class tracks the player information, and has some functions to help manipulate and render the player
+"""
 import pygame
 import random
+
+PLAYER_RADIUS = 25
+FONT_COLOR = (255, 255, 255)  # White text
 
 class Player:
 
@@ -55,6 +63,23 @@ class Player:
 
     def get_stats(self):
         return self.stats
+
+    def draw(self, screen, position):   
+        screen_width = screen.get_width()/100
+        screen_height = screen.get_height()/100
+        font = pygame.font.Font(None, 16)
+        mid = position[2]
+        if self.image:
+            playerimg = pygame.transform.scale(pygame.image.load(self.image),(PLAYER_RADIUS,PLAYER_RADIUS))
+            screen.blit(playerimg,((position[0])*screen_width-PLAYER_RADIUS/2, (position[1])*screen_height-PLAYER_RADIUS/2))
+        else:
+            pygame.draw.circle(screen, self.color, ((position[0])*screen_width, (position[1])*screen_height), PLAYER_RADIUS)
+
+        # Draw player name or symbol above the circle
+        player_text = font.render(self.name[-1], True, FONT_COLOR)
+        player_text_rect = player_text.get_rect(center=((position[0]-mid)*screen_width, (position[1] - mid)*screen_height))
+        screen.blit(player_text, player_text_rect)
+
     
 
 class ComputerPlayer(Player): 
