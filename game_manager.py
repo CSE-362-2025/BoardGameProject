@@ -83,9 +83,60 @@ class GameManager:
         pass
 
     def start_game(self):
+        print("Starting")
+        events = self.get_events(0)
+        self.events = events
+        self.board = self.get_board(0, events[1])
+        self.players = self.get_players()
         self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
+    
+    def get_events(self, year):
+             # Create events
+        with open("game_objects/events.json") as file:
+            events_raw = json.load(file)
+        
+        events = []
+        for event in events_raw:
+            events.append(Event(event['name'], event['description'], 
+                                    event['choices'], event['rarity'],
+                                    event['phase']))
+        return events
 
+    def get_board(self, year, stop_events):
+         boards = []
+        with open("game_objects/boards.json") as file:
+            boards_raw = json.load(file)
+    
+        board_raw = boards_raw[0]
+        tiles = []
+        for tile in board_raw['tiles']:
+            if tile['tile_type'] == "StopTile":
+                event_raw = tile['event']
+                if event_raw:
+                    event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
+                else:
+                    event = None
+                tiles.append(StopTile(tile['position'], tile['screen_position'],event, tile['paths']))
+            else:
+                tiles.append(Tile(tile['position'], tile['tile_type'], tile['screen_position']))
+    
+        boards.append(Board(tiles, board_raw['year']))
+        board = boards[0]
+        return boards
+
+    def get_players(self):
+        
+        # Create players
+        players = [
+            Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png"),
+            Player("Player 2", (50, 200, 200),),
+            Player("Player 3", (200, 200, 200),),
+            Player("Player 4", (200, 200, 50),),
+        ]
+        return players
+
+    
     def end_game(self):
         pass
 
