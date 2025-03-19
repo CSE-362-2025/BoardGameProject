@@ -63,7 +63,7 @@ class Player {
     - color: color
     - position: int
     - stats: dict<string, int> {bilingual, athletic, academic, military, social}
-    - events_played: list[event_id: int]
+    - events_played: list[dict<event_id: int, choice_idx: int>]
     - has_moved: bool
     - branch: bool
     - next_pos: int
@@ -85,7 +85,7 @@ class Event {
 
     - name: string
     - description: string
-    - choices: list<text, result, criteria>
+    - choices: list<text, result, criteria, consequence>
     - rarity: int
     - phase: list[year: int]
     - id: int
