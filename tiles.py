@@ -1,3 +1,19 @@
+"""
+Author: Bottom Six
+Created: 2025/02/29
+Last Edited: 2025/03/18
+Tile Class to track the tiles and their information
+"""
+
+# Colors for different tile types
+TILE_COLORS = {
+    "GoodTile": (50, 200, 50),  # Green
+    "BadTile": (200, 50, 50),  # Red
+    "EventTile": (50, 50, 200),  # Blue
+    "StopTile": (200, 200, 50)  # Yellow
+}
+
+
 class Tile:
 
     def __init__(self, position, screen_position, tile_type):
@@ -11,6 +27,8 @@ class Tile:
     def get_type(self):
         return self.tile_type
         
+    def get_colour(self):
+        return TILE_COLORS.get(self.get_type(), (100, 100, 100))  # Default gray if unknown
 
 class GoodTile(Tile):
 
