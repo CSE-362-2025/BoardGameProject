@@ -26,6 +26,15 @@
 
 - I'm going with each tile generates a random effect
 
+### Board
+
+- Tile positions start at 1 and increase sequentially
+- Side paths are normal paths + 100 to their position
+
+### Player Interaction
+
+- Have a pool of events that 
+
 ## To-do
 
 - Add a way to move in a different direction after a stop tile. (done ish)

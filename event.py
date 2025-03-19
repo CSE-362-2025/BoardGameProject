@@ -4,7 +4,7 @@ class Event:
 
     id_iter = itertools.count()
 
-    def __init__(self, name, description, choices, rarity, phase):
+    def __init__(self, name, description, choices, rarity=None, phase=None):
         self.name = name
         self.description = description
         self.choices = choices

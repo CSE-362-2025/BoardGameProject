@@ -4,7 +4,7 @@ from board import Board
 from player import Player
 from ui import UI
 from event import Event
-from tiles import GoodTile, BadTile, EventTile, StopTile
+from tiles import Tile, StopTile
 import json
 
 
@@ -28,47 +28,64 @@ def main():
         events.append(Event(event['name'], event['description'], 
                                     event['choices'], event['rarity'],
                                     event['phase']))
+    boards = []
+    with open("game_objects/boards.json") as file:
+        boards_raw = json.load(file)
 
-            
-    event_stoptile = Event("StopTile 1", "", [{"text" : "Same path",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : -1, 
-                                "military" : 0, 
-                                "social" : 0},
+    board_raw = boards_raw[0]
+    tiles = []
+    for tile in board_raw['tiles']:
+        if tile['tile_type'] == "StopTile":
+            event_raw = tile['event']
+            if event_raw:
+                event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
+            else:
+                event = None
+            tiles.append(StopTile(tile['position'], tile['screen_position'],event, tile['paths']))
+        else:
+            tiles.append(Tile(tile['position'], tile['tile_type'], tile['screen_position']))
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
-                                "social" : 0}
-        },
+    boards.append(Board(tiles, board_raw['year']))
+    board = boards[0]
+    # event_stoptile = Event("StopTile 1", "", [{"text" : "Same path",
+    #                 "result" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : -1, 
+    #                             "military" : 0, 
+    #                             "social" : 0},
 
-        {"text" : "Jump path",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 1, 
-                                "military" : 0, 
-                                "social" : 0},
+    #                 "criteria" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 0, 
+    #                             "military" : 0, 
+    #                             "social" : 0}
+    #     },
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
-                                "social" : 0}
-        }], None, None)
+    #     {"text" : "Jump path",
+    #                 "result" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 1, 
+    #                             "military" : 0, 
+    #                             "social" : 0},
+
+    #                 "criteria" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 0, 
+    #                             "military" : 0, 
+    #                             "social" : 0}
+    #     }], None, None)
     
 
     # Create board with tiles
-    tiles = [
-        GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
-        GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 110]),
-        GoodTile(10), BadTile(11), EventTile(12), BadTile(13), EventTile(14),
-        GoodTile(110), BadTile(111), EventTile(112), BadTile(113), EventTile(114),
-        GoodTile(15), BadTile(16), GoodTile(17), BadTile(18)
-    ]
+    # tiles = [
+    #     GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
+    #     GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 110]),
+    #     GoodTile(10), BadTile(11), EventTile(12), BadTile(13), EventTile(14),
+    #     GoodTile(110), BadTile(111), EventTile(112), BadTile(113), EventTile(114),
+    #     GoodTile(15), BadTile(16), GoodTile(17), BadTile(18)
+    # ]
 
-    board = Board(tiles)
+    # board = Board(tiles)
 
     # Create players
     players = [

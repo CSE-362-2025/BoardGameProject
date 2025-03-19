@@ -1,6 +1,6 @@
 class Tile:
 
-    def __init__(self, position, tile_type, screen_position):
+    def __init__(self, position, screen_position, tile_type):
         self.position = position
         self.tile_type = tile_type
         self.screen_position = screen_position  
@@ -35,8 +35,8 @@ class EventTile(Tile):
 
 class StopTile(Tile):
     
-    def __init__(self, position, event, paths):
-        super().__init__(position, tile_type="StopTile")
+    def __init__(self, position, screen_position, event, paths):
+        super().__init__(position, screen_position, tile_type="StopTile")
         self.event = event
         self.paths = paths
 

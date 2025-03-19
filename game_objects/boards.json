@@ -55,6 +55,7 @@
                 "position": 9,
                 "tile_type": "StopTile",
                 "screen_position": [13,5],
+                "paths": [10, 100],
                 "event": {}
 
             },
@@ -80,6 +81,7 @@
                 "position": 13,
                 "tile_type": "StopTile",
                 "screen_position": [5,5],
+                "paths": [],
                 "event": {}
 
             },
@@ -129,6 +131,7 @@
                 "position": 113,
                 "tile_type": "StopTile",
                 "screen_position": [10,10],
+                "paths": [],
                 "event": {}
 
             },
