@@ -1,12 +1,12 @@
-"""
-Authors: Bottom Six
-Created: 2025/02/14
-Last Edited: 2025/03/18
-The main class which handles setting up and running the game at a higher level
-"""
 import pygame
 from game_manager import GameManager
+from board import Board
+from player import Player
 from ui import UI
+from event import Event
+from tiles import Tile, StopTile
+import json
+
 
 def main():
     # Initialize pygame
@@ -18,13 +18,92 @@ def main():
     # Create UI instance
     ui = UI()
 
+    # Create events
+    
+    with open("game_objects/events.json") as file:
+        events_raw = json.load(file)
+    
+    events = []
+    for event in events_raw:
+        events.append(Event(event['name'], event['description'], 
+                                    event['choices'], event['rarity'],
+                                    event['phase']))
+    boards = []
+    with open("game_objects/boards.json") as file:
+        boards_raw = json.load(file)
+
+    board_raw = boards_raw[0]
+    tiles = []
+    for tile in board_raw['tiles']:
+        if tile['tile_type'] == "StopTile":
+            event_raw = tile['event']
+            if event_raw:
+                event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
+            else:
+                event = None
+            tiles.append(StopTile(tile['position'], tile['screen_position'],event, tile['paths']))
+        else:
+            tiles.append(Tile(tile['position'], tile['tile_type'], tile['screen_position']))
+
+    boards.append(Board(tiles, board_raw['year']))
+    board = boards[0]
+    # event_stoptile = Event("StopTile 1", "", [{"text" : "Same path",
+    #                 "result" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : -1, 
+    #                             "military" : 0, 
+    #                             "social" : 0},
+
+    #                 "criteria" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 0, 
+    #                             "military" : 0, 
+    #                             "social" : 0}
+    #     },
+
+    #     {"text" : "Jump path",
+    #                 "result" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 1, 
+    #                             "military" : 0, 
+    #                             "social" : 0},
+
+    #                 "criteria" : {"bilingual" : 0, 
+    #                             "athletic" : 0, 
+    #                             "academic" : 0, 
+    #                             "military" : 0, 
+    #                             "social" : 0}
+    #     }], None, None)
+    
+
+    # Create board with tiles
+    # tiles = [
+    #     GoodTile(0), BadTile(1), GoodTile(2), BadTile(3), EventTile(4),
+    #     GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), StopTile(9, event_stoptile, [10, 110]),
+    #     GoodTile(10), BadTile(11), EventTile(12), BadTile(13), EventTile(14),
+    #     GoodTile(110), BadTile(111), EventTile(112), BadTile(113), EventTile(114),
+    #     GoodTile(15), BadTile(16), GoodTile(17), BadTile(18)
+    # ]
+
+    # board = Board(tiles)
+
+    # Create players
+    players = [
+        Player("Player 1", (50, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5})
+    #     Player("Player 2", (50, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+    #     Player("Player 3", (200, 200, 200), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+    #     Player("Player 4", (200, 200, 50), {"bilingual": 5, "athletic": 5, "academic": 5, "military": 5, "social": 5}),
+     ]
+
+
     # Initialize GameManager
-    game_manager = GameManager(ui, game_database=None)
+    game_manager = GameManager(board, players, events, ui, game_database=None)
+    game_manager.start_game()
+
     ui.game_manager = game_manager
 
     clock = pygame.time.Clock()
-    ui.main_menu()
-    ui.update()
+    ui.update(board, players)
 
 
     # Main game loop
@@ -37,15 +116,21 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 ui.handle_click(event.pos)  # Check if dice was clicked
 
+        # Display the current state
+        # ui.update(board, players)
+
         # Check if the game is over
         if game_manager.is_game_over():
             ui.display_message("Game Over!")  # Display game over message
             pygame.display.update()  # Ensure the last message is displayed
             pygame.time.wait(2000)  # Wait for a couple of seconds before quitting
             running = False
-        ui.run()
+
         # Display the current state
-        ui.update()
+        if game_manager.current_player.has_moved:
+            ui.update(board, players)
+            game_manager.current_player.has_moved = False
+
         # Update the screen (can be flipped to update only parts of the screen)
         pygame.display.flip()  # Update the entire screen
         clock.tick(60)
