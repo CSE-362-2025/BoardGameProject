@@ -117,7 +117,7 @@ class GameDatabase(object):
             print(f"GameDatabase.connect() raised exception={e}")
             return False
 
-    def save_game(self, game_manager) -> bool:
+    def save_game(self, game_manager: GameManager) -> bool:
         """Save game into the connected DB.
 
         Args:
@@ -128,17 +128,18 @@ class GameDatabase(object):
         """
         try:
             # save GameInfo
+            current_player_index: int = game_manager.players.index(game_manager.current_player)
             self.cursor.execute(
                 """
-                INSERT INTO GameInfo (turn_count) VALUES (?)
+                INSERT INTO GameInfo (turn_count, current_player_index, is_game_over)
+                VALUES (?, ?, ?)
                 """,
-                (game_manager.turn_count,),
+                (game_manager.turn_count, current_player_index, int(game_manager.is_game_over)),
             )
 
             # TODO: save all players into DB
 
             # TODO: save all events played by the players into DB
-
 
             self.connection.commit()
             return True
