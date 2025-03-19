@@ -44,7 +44,7 @@ class GameDatabase(object):
                 fitness INTEGER,
                 academics INTEGER,
                 has_moved BOOLEAN,
-                branch BOOLEA,
+                branch BOOLEAN,
                 next_pos INTEGER,
                 on_alt_path BOOLEAN
             );
@@ -70,7 +70,9 @@ class GameDatabase(object):
             """
             CREATE TABLE IF NOT EXISTS GameInfo (
                 game_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                turn_count INTEGER NOT NULL
+                turn_count INTEGER NOT NULL,
+                current_player_index INTEGER NOT NULL,
+                is_game_over BOOLEAN
             );
         """
         )
