@@ -151,7 +151,7 @@ class GameDatabase(object):
             )
 
             # save all players into DB
-            for each_player in game_manager.players:
+            for each_player_index, each_player in enumerate(game_manager.players):
                 self.cursor.execute(
                     """
                     INSERT INTO Players (
@@ -174,7 +174,20 @@ class GameDatabase(object):
                     ),
                 )
 
-            # TODO: save all events played by the players into DB
+                # save all events played by the players into DB
+                for each_event_dict in each_player.events_played:
+                    each_event_id: int = int(list(each_event_dict.keys())[0])
+                    self.cursor.execute(
+                        """
+                        INSERT INTO Events (event_id, player_id, response)
+                        VALUES (?, ?, ?)
+                        """,
+                        (
+                            each_event_dict,
+                            each_player_index,
+                            int(each_event_dict[each_event_id]),
+                        ),
+                    )
 
             self.connection.commit()
             return True
