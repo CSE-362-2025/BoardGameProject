@@ -128,6 +128,12 @@ class GameDatabase(object):
             bool: True if successful, False otherwise
         """
         try:
+            # clear DB first
+            if not self.clear_database():
+                # clear_database failed
+                print("GameDatabase.save_game(): failed to clear DB before saving")
+                return False
+
             # save GameInfo
             current_player_index: int = game_manager.players.index(game_manager.current_player)
             self.cursor.execute(
