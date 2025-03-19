@@ -20,6 +20,7 @@ class Board {
 
     - tiles: list<Tile>
     - size: int
+    - year: int
 
     + get_tile(position: int): Tile
     + get_player_positions(players: list<Player>): dict<Player, int>
@@ -29,6 +30,7 @@ abstract class Tile {
 
     - position: int
     - tile_type: string
+    - screen_position: tuple(x: int, y: int)
 
     + get_position(): int
     + get_type(): string
@@ -45,15 +47,27 @@ class EventTile {
 
 class StopTile {
     - event: Event
+    - paths: list<tile_index: int>
 
+}
+
+class StartTile {
+}
+
+class EndTile {
 }
 
 class Player {
 
     - name: string
+    - color: color
     - position: int
     - stats: dict<string, int> {bilingual, athletic, academic, military, social}
-    - events_played: list[Dict{<Event, choice_idx>}]
+    - events_played: list[event_id: int]
+    - has_moved: bool
+    - branch: bool
+    - next_pos: int
+    - on_alt_path: bool
 
     + move(spaces: int): Tile
     + store_event(Event, choice_idx): void
@@ -71,23 +85,13 @@ class Event {
 
     - name: string
     - description: string
-    - criteria: dict<string, int>
-    - result: dict<string, int>
+    - choices: list<text, result, criteria>
     - rarity: int
-    - event_type: string
+    - phase: list[year: int]
+    - id: int
 
     + meet_criteria(player: Player): bool
     + get_type(self): string
-}
-
-class StaticEvent {
-
-    + apply_result(player: Player): void
-}
-
-class DecisionEvent {
-    - choices: list<string>
-
     + apply_result(player: Player, choice_idx: int): void
 }
 
@@ -100,8 +104,9 @@ class GameManager {
     - events: list<Event>
     - ui: UI
     - game_database: GameDatabase
+    - current_player: Player
 
-    + play_turn(): void
+    + play_turn(dice_value: int): void
     + play_computer_turn(): void
     + game_start(): void
     + game_end(): void
@@ -110,7 +115,9 @@ class GameManager {
     + get_random_event(): Event
     + is_game_over(): bool
     + event_choice(event: Event, choice_idx: int): void
-    + accept_event(event: Event): void
+    + branching_event_choice(event: Event, choice_idx: int)
+    + get_random_event(): Event
+    + is_game_over: bool
     + generate_good_tile_effects(): Dict<string, int>
     + generate_bad_tile_effects(): Dict<string, int>
 }
@@ -119,15 +126,21 @@ class UI {
 
     - game_manager: GameManager
     - player: Player
+    - screen: PyGame
+    - font: PyGame
+    - dice_value: int
+    - message: string
+    - message_duration: int
 
-    + display_board(): void
+    + update(): void
+    + display_board(board: Board, players: list<Player>): void
     + display_stats(): void
     + display_dice(): void
     + display_decision_event(event: Event): void
+    + display_stoptile_event(event: Event): void
     + display_computer_decision(event: Event, choice_idx: int): void
-    + display_non_decision_event(event: Event): void
-    + display_computer_non_decision_event(event: Event): void
     + display_message(message: string): void
+    + display_current_turn(): void
     + change_current_player(player: Player): void
     + display_roll(roll: int): void
 }
@@ -145,8 +158,8 @@ Tile <|-- GoodTile
 Tile <|-- BadTile
 Tile <|-- EventTile
 Tile <|-- StopTile
-Event <|-- StaticEvent
-Event <|-- DecisionEvent
+Tile <|-- StartTile
+Tile <|-- EndTile
 Player <|-- ComputerPlayer
 
 

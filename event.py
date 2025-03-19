@@ -5,17 +5,19 @@ Last Edited: 2025/02/29
 Events Class - ask Gallant
 """
 import pygame
-
+import itertools
 
 class Event:
 
-    def __init__(self, name, description, criteria, result, rarity, type):
+    id_iter = itertools.count()
+
+    def __init__(self, name, description, choices, rarity=None, phase=None):
         self.name = name
         self.description = description
-        self.criteria = criteria
-        self.result = result
+        self.choices = choices
         self.rarity = rarity
-        self.type = type  # "Decision" or "Static"
+        self.phase = phase  # list
+        self.id = next(self.id_iter)
     
 
     def meet_criteria(self, player_stats):
@@ -24,23 +26,6 @@ class Event:
     def get_type(self):
         return self.type
 
-
-class StaticEvent(Event):
-
-    def __init__(self, name, description, criteria, result, rarity):
-        super().__init__(name, description, criteria, result, rarity, type="Static")
-
-    def apply_result(self, player):
-        player.change_stats(self.result)
-
-class DecisionEvent(Event):
-
-    def __init__(self, name, description, criteria, choices, rarity):
-        super().__init__(name, description, criteria, None, rarity, type="Decision")
-        
-        self.choices = choices
-
     def apply_result(self, player, choice_idx):
-        player.update_stats(self.choices[choice_idx].result)
-
+        player.change_stats(self.choices[choice_idx-1]['result'])
 

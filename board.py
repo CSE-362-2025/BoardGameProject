@@ -12,13 +12,20 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 class Board:
     
-    def __init__(self, tiles):
+    def __init__(self, tiles, year):
         self.tiles = tiles
         self.size = len(tiles)
+        self.year = year
 
     # returns tile at position
     def get_tile(self, position):
-        return self.tiles[position]
+
+        for tile in self.tiles:
+            if position == tile.position:
+                return tile
+            
+        print("No tile at that position")
+        return None
 
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):

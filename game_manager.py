@@ -31,46 +31,46 @@ class GameManager:
         self.current_player.has_moved = True
         roll = dice_value
 
-        print(roll)
-        path = []
+
+        if self.current_player.branch:
+            self.current_player.branch = False
+            self.current_player.position = self.current_player.next_pos
+            self.current_player.on_alt_path = True
+            
+
         # Checking if hitting a stop tile
-        for tile in self.board.tiles:
-            if tile.path == self.current_player.path:
-                path.append(tile)
-                if self.current_player.position < tile.ID < self.current_player.position + roll + 1:
-                    if tile.get_type() == "StopTile":
-                        print("Found StopTile")
-                        steps = self.board.tiles.index(tile) - self.current_player.position
-                        self.current_player.move(steps)
-                        # self.ui.display_board(self.board, self.players)
-                        self.handle_event(tile.event)  # Handle event for stop tile
-                        return  # Exit after stop tile processing
+        for tile in self.board.tiles[self.current_player.position + 1: self.current_player.position + roll + 1]:
+            if tile.get_type() == "StopTile":
+                print("Found StopTile")
+                steps = tile.position - self.current_player.position
+                self.current_player.move(steps)
+                if len(tile.paths) > 1:
+                    self.current_player.branch = True
+
+                self.ui.display_stoptile_event(tile.event)
+                return  # Exit after stop tile processing
 
         # Move the player if not a stop tile
         self.current_player.move(roll)
-        try:
-            try:
-                for pos in path:
-                    #first attempt to go to next tile on path
-                    if pos.ID == self.current_player.position:
-                        tile = pos
-                        break
-            except Exception:
-                #no tile on path - paths have merged (no maps have reachable next split)
-                self.current_player.path = 0 #returns player to main path
-                for pos in self.board.tiles:
-                    if pos.ID == self.current_player.position:
-                        tile = pos
-                        break
-        except Exception as e:
-            #gone past the end of the board
+
+        print(f"Current Player Position: {self.current_player.position}")
+
+        tile = self.board.get_tile(self.current_player.position)
+
+        if not tile and self.current_player.on_alt_path:
+            self.current_player.on_alt_path = False
+            self.current_player.position -= 100  # Puts the position back on "main" path
+            tile = self.board.get_tile(self.current_player.position)
+            print(tile.position, self.current_player.position)
+
+        if not tile:        
             tile = self.board.tiles[self.board.size-1]
             self.current_player.position = self.board.size-1
 
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
             event = self.get_random_event()
-            self.handle_event(event)  # Handle event for event tile
+            self.ui.display_decision_event(event)
 
         elif tile.get_type() in ["GoodTile", "BadTile"]:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
@@ -80,17 +80,6 @@ class GameManager:
         else:
             print(tile.get_type())
             raise Exception("Invalid tile type")
-        
-        
-    def handle_event(self, event):
-        """Handles the logic for processing an event, such as displaying the appropriate UI for decision or non-decision events."""
-        if event.get_type() == "Decision":
-            self.ui.display_decision_event(event)
-        elif event.get_type() == "Static":
-            self.ui.display_non_decision_event(event)
-        else:
-            print(event.get_type())
-            raise Exception("Invalid event type")
 
 
     def play_computer_turn(self):
@@ -188,17 +177,50 @@ class GameManager:
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
-
-    # after event is acknowledged by user
-    def accept_event(self, event):
-        event.apply_result(self.current_player)
-        self.current_player.store_event(event)  # store event in player's history
+    def branching_event_choice(self, event, choice_idx):
+        event.apply_result(self.current_player, choice_idx)
+        pos = self.current_player.position
+        self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
+        self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
     # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity
-    def get_random_event(self):
-        return random.choice(self.events)
+    def get_random_event(self, cook_results=False): 
+        number = random.randint(1,20)
+        i=0    # avoid infinate loop
+
+        # common 75%
+        if number >= 1 and number <= 15:
+            while i < 500:
+                event = random.choice(self.events)
+                if event.rarity != 2 and self.board.year not in self.event.phase:
+                    i += 1
+                    continue
+                else:
+                    break
+
+        # rare 20%
+        elif number >= 16 and number <= 19:
+            while i < 500:
+                event = random.choice(self.events)
+                if event.rarity != 1 and self.board.year not in self.event.phase:
+                    i += 1
+                    continue
+                else:
+                    break
+
+        # super rare 5%
+        else:
+            while i < 500:
+                event = random.choice(self.events)
+                if event.rarity != 0 and self.board.year not in self.event.phase:
+                    i += 1
+                    continue
+                else:
+                    break
+
+        
 
     def is_game_over(self):
         return self.turn_count >= 40
@@ -209,7 +231,7 @@ class GameManager:
         number = random.randint(1,5)
 
         if number == 1:
-            return ["French Lessons! (+1 Bilingual)", {
+            return ["French Lessons! (+1 Biligual)", {
             "bilingual": 1,
             "athletic": 0,
             "academic": 0,

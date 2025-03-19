@@ -8,7 +8,6 @@ import pygame
 from game_manager import GameManager
 from ui import UI
 
-
 def main():
     # Initialize pygame
     pygame.init()

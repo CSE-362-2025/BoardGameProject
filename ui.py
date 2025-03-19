@@ -88,6 +88,7 @@ class UI():
             if button.type == "New Game" or button.type == "Load Game" or button.type == "Custom Char" or button.type == "Settings":
                 button.turn_on()
 
+
     def game_start(self):           
         self.game_manager.start_game()
         self.return_state()
@@ -117,20 +118,20 @@ class UI():
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+        choice_idx = random.randint(1, len(event.choices))
+        print(f"Chose: {choice_idx}")
+        self.game_manager.event_choice(event, choice_idx)
+
+    def display_stoptile_event(self, event):
+        self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+        choice_idx = 2
+        # choice_idx = random.randint(1, len(event.choices))
+        print(f"Chose: {choice_idx}, {event.choices[choice_idx-1]['text']}")
+        self.game_manager.branching_event_choice(event, choice_idx)
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
-    
-    def display_non_decision_event(self, event):
-        # Display the non-decision event
-        self.display_message(f"{event.name}: {event.description}")
-        self.game_manager.accept_event(event)
-
-    def display_computer_non_decision_event(self, event):
-        # Display the result of the computer's non-decision event
-        self.display_message(f"Computer: {event.name} | Result: {event.result}")
-        self.game_manager.accept_event(event)
 
     # Display game messages such as player turn, etc.
     def display_message(self, message, duration=200):

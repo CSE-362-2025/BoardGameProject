@@ -16,7 +16,6 @@ TILE_COLORS = {
 
 
 class Tile:
-
     def __init__(self, ID, position=(0,0),path = 0, tile_type="None"):
         self.ID = ID #order player travels
         self.position = position #where Tile is
@@ -55,7 +54,19 @@ class EventTile(Tile):
 
 
 class StopTile(Tile):
-    
     def __init__(self, ID, position, event, path=0):
         super().__init__(ID, position, path, tile_type="StopTile")
         self.event = event
+        self.paths = paths
+
+
+class StartTile(Tile):
+    def __init__(self, position):
+        super().__init__(position, tile_type="StartTile")
+        pass
+
+
+class EndTile(Tile):
+    def __init__(self, position):
+        super().__init__(position, tile_type="EndTile")
+        pass
