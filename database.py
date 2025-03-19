@@ -123,19 +123,19 @@ class GameDatabase(object):
         gm = game_manager
         try:
             print("TRYING TO SAVE TURNCOUNT")
-            
-            db.cursor(
+
+            self.cursor(
                 """
                 INSERT INTO GameInfo (turn_count) VALUES (?)
                 """,(gm.turn_count,)
             )
-            db.connection.commit() 
+            self.connection.commit()
             print('TRUE')
             return True
-        except:
-            print('FALSE')
+        except sqlite3.Error as e:
+            print('FALSE' + str(e))
             return False
-         
+
 
     def load_game(self, game_manager) -> bool:
         """Load game from the connected DB.
@@ -146,7 +146,7 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        
+
 
     def clear_database(self) -> bool:
         """Clear any saved game states from the connected DB.
@@ -157,7 +157,6 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
 
         try:
             self.cursor.execute(
@@ -176,8 +175,10 @@ class GameDatabase(object):
             """
             )
             self.connection.commit()
+            return True
         except sqlite3.Error as e:
             print(f"FAILED: {e}")
+            return False
 
     def close_connection(self) -> None:
         """Close connection to DB."""
