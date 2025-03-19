@@ -128,7 +128,7 @@ class GameManager:
     
         boards.append(Board(tiles, board_raw['year']))
         board = boards[0]
-        return boards
+        return board
 
     def get_players(self):
         
@@ -149,7 +149,7 @@ class GameManager:
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
         self.ui.change_current_player(self.current_player)
-        self.ui.update(self.board, self.players)
+        self.ui.update()
         print(self.current_player.name)
 
     def roll_dice(self):
