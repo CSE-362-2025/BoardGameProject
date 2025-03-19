@@ -20,10 +20,11 @@ TILE_COLORS = {
     "Good": (50, 200, 50),  # Green
     "Bad": (200, 50, 50),  # Red
     "Event": (50, 50, 200),  # Blue
-    "Stop": (200, 200, 50)  # Yellow
+    "Stop": (200, 200, 50),  # Yellow
 }
 
-class UI():
+
+class UI:
 
     # player is current player, changes during switch_turn()
     def __init__(self, game_manager=None, player=None):
@@ -40,8 +41,10 @@ class UI():
         """Updates and draws all necessary UI components."""
         # Draw the board, dice, and stats
         self.screen.fill((0, 0, 0))  # Clear the screen first
-        self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
-        self.display_dice()   # Call a method to display the dice
+        self.display_board(
+            board, players
+        )  # Call a method to draw the game board (implement as needed)
+        self.display_dice()  # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
 
@@ -54,7 +57,6 @@ class UI():
 
         pygame.display.flip()  # Update the display
 
-
     def display_board(self, board, players):
         self.screen.fill(BG_COLOR)  # Clear screen
 
@@ -64,15 +66,21 @@ class UI():
                 tile_index = i * GRID_SIZE + j
                 if tile_index < len(board.tiles):
                     tile = board.tiles[tile_index]  # Get tile object
-                    tile_color = TILE_COLORS.get(tile.get_type(), (100, 100, 100))  # Default gray if unknown
-                    
+                    tile_color = TILE_COLORS.get(
+                        tile.get_type(), (100, 100, 100)
+                    )  # Default gray if unknown
+
                     # Draw tile rectangle
-                    rect = pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                    rect = pygame.Rect(
+                        j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE
+                    )
                     pygame.draw.rect(self.screen, tile_color, rect)
                     pygame.draw.rect(self.screen, (0, 0, 0), rect, 2)  # Black border
 
                     # Draw tile type letter in center
-                    text_surface = self.font.render(tile.get_type()[:], True, FONT_COLOR)
+                    text_surface = self.font.render(
+                        tile.get_type()[:], True, FONT_COLOR
+                    )
                     text_rect = text_surface.get_rect(center=rect.center)
                     self.screen.blit(text_surface, text_rect)
 
@@ -80,12 +88,16 @@ class UI():
         for player in players:
             player_x = (player.position % GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
             player_y = (player.position // GRID_SIZE) * TILE_SIZE + TILE_SIZE // 2
-            
-            pygame.draw.circle(self.screen, player.color, (player_x-25, player_y-25), PLAYER_RADIUS)
+
+            pygame.draw.circle(
+                self.screen, player.color, (player_x - 25, player_y - 25), PLAYER_RADIUS
+            )
 
             # Draw player name or symbol above the circle
             player_text = self.font.render(player.name[-1], True, FONT_COLOR)
-            player_text_rect = player_text.get_rect(center=(player_x-25, player_y - PLAYER_RADIUS - 25))
+            player_text_rect = player_text.get_rect(
+                center=(player_x - 25, player_y - PLAYER_RADIUS - 25)
+            )
             self.screen.blit(player_text, player_text_rect)
 
         pygame.display.flip()  # Update display
@@ -108,7 +120,9 @@ class UI():
 
         # Draw dice value (centered in the dice square)
         text_surface = self.font.render(str(self.dice_value), True, BLACK)
-        text_rect = text_surface.get_rect(center=dice_rect.center)  # Center the text inside the dice square
+        text_rect = text_surface.get_rect(
+            center=dice_rect.center
+        )  # Center the text inside the dice square
         self.screen.blit(text_surface, text_rect)  # Draw the text on the screen
 
         # Update the display to reflect changes
@@ -127,12 +141,14 @@ class UI():
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
-        self.display_message(f"Event: {event.name}: Choices: {', '.join([choice['text'] for choice in event.choices])}")
+        self.display_message(
+            f"Event: {event.name}: Choices: {', '.join([choice['text'] for choice in event.choices])}"
+        )
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
-    
+
     def display_non_decision_event(self, event):
         # Display the non-decision event
         self.display_message(f"Event: {event.name}")
@@ -151,7 +167,7 @@ class UI():
         # Example of displaying player stats in the top-right corner
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            stats_text = f"{self.player.name}'s Turn"  # 
+            stats_text = f"{self.player.name}'s Turn"  #
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
             stats_rect = stats_surface.get_rect(bottomright=(450, 450))
             self.screen.blit(stats_surface, stats_rect)
