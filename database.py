@@ -2,6 +2,7 @@ import sqlite3
 import pathlib
 from os import path
 from game_manager import GameManager
+from player import Player
 
 DB_NAME_DEFAULT = "game_data.db"
 DB_DIR_PATH = pathlib.Path("database")
@@ -127,17 +128,17 @@ class GameDatabase(object):
             self.cursor(
                 """
                 INSERT INTO GameInfo (turn_count) VALUES (?)
-                """,(gm.turn_count,)
+                """,
+                (gm.turn_count,),
             )
             self.connection.commit()
-            print('TRUE')
+            print("TRUE")
             return True
         except sqlite3.Error as e:
-            print('FALSE' + str(e))
+            print("FALSE" + str(e))
             return False
 
-
-    def load_game(self, game_manager) -> bool:
+    def load_game(self, game_manager: GameManager) -> bool:
         """Load game from the connected DB.
 
         Args:
@@ -146,7 +147,69 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
+        try:
+            # grab game_info from DB
+            db_gameinfo_rows: list[tuple] = self.cursor.execute(
+                """SELECT turn_count FROM GameInfo
+                """
+            ).fetchall()
+            # overwrite into game_manager
 
+            game_manager.turn_count = int(db_gameinfo_rows[0][0])
+
+            # grab players info and into game_manager's list of players
+            db_player_rows: list[tuple] = self.cursor.execute(
+                """SELECT name, position, bilingual, athletic, military, social
+                FROM Players
+                """
+            ).fetchall()
+            # initialize new Player obj with info from DB
+            for i, each_player in enumerate(game_manager.players):
+                # ordered by ID <-> index
+                each_row = db_player_rows[i]
+
+                # overwrite player's obj with data from DB
+                each_player.name = str(each_row[0])
+                each_player.position = int(each_row[1])
+                each_player.stats["bilingual"] = int(each_row[2])
+                each_player.stats["athletic"] = int(each_row[3])
+                each_player.stats["military"] = int(each_row[4])
+                each_player.stats["social"] = int(each_row[5])
+
+                # TODO: load other attributes (has_moved, next_pos, ...)
+
+                # reset events_played list
+                each_player.events_played = []
+
+            # grab events from DB
+            db_event_rows: list[tuple] = self.cursor.execute(
+                """SELECT player_id, event_id, response
+                FROM Events
+                """
+            ).fetchall()
+
+            # append events played by a player (dict)
+            for each_event_row in db_event_rows:
+                # SQL IDs starts at one
+                player_index: int = int(each_event_row[0]) - 1
+                event_id: int = each_event_row[1]
+                resp: int = each_event_row[2]
+
+                each_event_with_resp: dict[int, int] = {event_id: resp}
+
+                # append into the player's list
+                game_manager.players[player_index].events_played.append(
+                    each_event_with_resp
+                )
+
+            return True
+        except sqlite3.Error as e:
+            # TODO: logger for error handling
+            return False
+        except (TypeError, ValueError) as e:
+            return False
+        except IndexError as e:
+            return False
 
     def clear_database(self) -> bool:
         """Clear any saved game states from the connected DB.
@@ -160,17 +223,17 @@ class GameDatabase(object):
 
         try:
             self.cursor.execute(
-            """
+                """
                 DELETE FROM Players;
             """
             )
             self.cursor.execute(
-            """
+                """
                 DELETE FROM GameInfo;
             """
             )
             self.cursor.execute(
-            """
+                """
                 DELETE FROM Events;
             """
             )
