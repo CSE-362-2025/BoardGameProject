@@ -274,6 +274,45 @@ class TestGameDataBase(unittest.TestCase):
 
         self.assertDictEqual(vars(rand_gm), vars(self.mock_gm))
 
+    def test_clear_database(self):
+
+        res = self.db.clear_database()
+        self.assertTrue(res)
+
+        # check if table has no rows
+        try:
+            conn = sqlite3.connect(self.test_db_name_default)
+            cursor = conn.cursor()
+
+            # check if Players table is empty
+            player_rows = cursor.execute(
+                """SELECT * FROM Players
+                """
+            ).fetchall()
+            self.assertEqual(0, len(player_rows))
+
+            # check if Events table is empty
+            event_rows = cursor.execute(
+                """SELECT * FROM Events
+                """
+            ).fetchall()
+            self.assertEqual(0, len(event_rows))
+
+            # check if GameInfo table is empty
+            gameinfo_rows = cursor.execute(
+                """SELECT * FROM GameInfo
+                """
+            ).fetchall()
+            self.assertEqual(0, len(gameinfo_rows))
+
+            cursor.close()
+        except sqlite3.Error as e:
+            self.fail(f"unexpected exception thrown: {e}")
+        finally:
+            if conn:
+                conn.close()
+
+
 
 if __name__ == "__main__":
     unittest.main()
