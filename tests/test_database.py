@@ -25,9 +25,12 @@ class TestGameDataBase(unittest.TestCase):
 
     def setUp(self):
         self.db = GameDatabase()
+        self.db.connect(TestGameDataBase.test_db_name_default)
         self.mock_gm = self.__create_mock_game_manager_instance()
 
     def tearDown(self):
+        self.db.close_connection()
+
         del self.db
         self.db = None
         del self.mock_gm
@@ -57,7 +60,8 @@ class TestGameDataBase(unittest.TestCase):
             res = self.db.connect(db_name)
             self.assertTrue(res)
 
-            self.db.close_connection()
+            # db is now closed inside `tearDown`
+            # self.db.close_connection()
 
             # delete the DB files created during this test case
             db_path = os.path.join(DB_DIR_PATH, db_name)
@@ -276,7 +280,11 @@ class TestGameDataBase(unittest.TestCase):
 
     def test_clear_database(self):
 
+        # write data into DB
+        self.db.save_game(self.mock_gm)
+
         res = self.db.clear_database()
+
         self.assertTrue(res)
 
         # check if table has no rows
@@ -311,7 +319,6 @@ class TestGameDataBase(unittest.TestCase):
         finally:
             if conn:
                 conn.close()
-
 
 
 if __name__ == "__main__":
