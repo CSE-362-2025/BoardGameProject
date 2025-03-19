@@ -2,14 +2,19 @@ import os
 import sqlite3
 import sys
 import unittest
+from pathlib import Path
 from random import randint
 from unittest.mock import Mock
 
-# to import from `database.py` file from parent directory only when inside `tests` dir
 if os.getcwd().endswith(("tests", "tests/", "tests\\")):
-    sys.path.append("../")
-else:
-    sys.path.append("../BoardGameProject")
+    # inside tests directory, move up
+    dest_path = Path(os.getcwd()).parent.absolute()
+    print(f"changing CWD {os.getcwd()} -> {dest_path}")
+    os.chdir(dest_path)
+
+# add parent (project's root) dir to PATH
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+print(f"appended to PATH: {(os.path.dirname(os.path.dirname(__file__)))}")
 
 from database import DB_DIR_PATH, DB_NAME_DEFAULT, GameDatabase
 
