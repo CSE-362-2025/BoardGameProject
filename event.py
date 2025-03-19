@@ -1,3 +1,10 @@
+"""
+Author: Bottom Six
+Created: 2025/02/18
+Last Edited: 2025/02/29
+Events Class - ask Gallant
+"""
+import pygame
 import itertools
 
 class Event:
