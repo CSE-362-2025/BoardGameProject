@@ -86,6 +86,9 @@ class TestGameDataBase(unittest.TestCase):
         mock_gm.game_database = "game_database"
         mock_gm.players: list[Mock] = []
 
+        # create 5 random events played for each player
+        available_event_id_list: list[int] = [i for i in range(20)]
+
         # simulate 4 players
         for i in range(1, 5):
             mock_player: Mock = Mock()
@@ -106,11 +109,14 @@ class TestGameDataBase(unittest.TestCase):
 
             mock_player.events_played: list[dict[Mock, int]] = []
 
-            # create 5 random events played for each player
             for j in range(1, 6):
                 mock_event: Mock = Mock()
                 mock_event.name: str = f"mock_event_{j}"
-                mock_event.id: int = randint(1, 10)
+
+                # randomly choose one event from available list of events
+                mock_event.id: int = choice(available_event_id_list)
+                # remove chosen event from available list
+                available_event_id_list.remove(mock_event.id)
 
                 mock_player.events_played.append({mock_event.id: randint(1, 3)})
 
