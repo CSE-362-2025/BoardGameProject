@@ -61,6 +61,7 @@ class GameDatabase(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 event_id INTEGER,
                 player_id INTEGER,
+                response INTEGER,
                 FOREIGN KEY (player_id) REFERENCES Players(player_id)
             );
         """
@@ -128,6 +129,9 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
+        if game_manager is None:
+            return False
+
         try:
             # clear DB first
             if not self.clear_database():
@@ -150,6 +154,7 @@ class GameDatabase(object):
                     int(game_manager.is_game_over),
                 ),
             )
+            self.connection.commit()
 
             # save all players into DB
             for each_player_index, each_player in enumerate(game_manager.players):
@@ -174,25 +179,27 @@ class GameDatabase(object):
                         int(each_player.on_alt_path),
                     ),
                 )
+                self.connection.commit()
 
                 # save all events played by the players into DB
                 for each_event_dict in each_player.events_played:
-                    each_event_id: int = int(list(each_event_dict.keys())[0])
+                    each_event_id = list(each_event_dict.keys())[0]
                     self.cursor.execute(
                         """
                         INSERT INTO Events (event_id, player_id, response)
                         VALUES (?, ?, ?)
                         """,
                         (
-                            each_event_dict,
-                            each_player_index,
+                            int(each_event_id),
+                            int(each_player_index),
                             int(each_event_dict[each_event_id]),
                         ),
                     )
+                    self.connection.commit()
 
-            self.connection.commit()
             return True
         except sqlite3.Error as e:
+            print(f"GameDatabase.save_game(): unexpected exception = {e}")
             return False
 
     def load_game(self, game_manager: GameManager) -> bool:

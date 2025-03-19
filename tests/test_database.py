@@ -1,9 +1,10 @@
 import os
 import sqlite3
 import sys
+import traceback
 import unittest
 from pathlib import Path
-from random import randint
+from random import choice, randint
 from unittest.mock import Mock
 
 if os.getcwd().endswith(("tests", "tests/", "tests\\")):
@@ -22,6 +23,9 @@ from database import DB_DIR_PATH, DB_NAME_DEFAULT, GameDatabase
 class TestGameDataBase(unittest.TestCase):
 
     test_db_name_default: str = DB_NAME_DEFAULT
+    test_db_name_default_full_rel_path: Path = Path(
+        os.path.join(os.path.join(os.getcwd(), "database")), test_db_name_default
+    )
 
     def setUp(self):
         self.db = GameDatabase()
@@ -87,7 +91,7 @@ class TestGameDataBase(unittest.TestCase):
             mock_player: Mock = Mock()
             mock_player.name = f"player_{i}"
             mock_player.position = randint(1, 10)
-            mock_player.status: dict[str, int] = {
+            mock_player.stats: dict[str, int] = {
                 "bilingual": randint(1, 10),
                 "athletic": randint(1, 10),
                 "academic": randint(1, 10),
@@ -95,17 +99,28 @@ class TestGameDataBase(unittest.TestCase):
                 "social": randint(1, 10),
             }
 
+            mock_player.has_moved: bool = randint(1, 2) == 1
+            mock_player.branch: bool = randint(1, 2) == 1
+            mock_player.next_pos: int = randint(1, 10)
+            mock_player.on_alt_path: bool = randint(1, 2) == 1
+
             mock_player.events_played: list[dict[Mock, int]] = []
 
             # create 5 random events played for each player
-            for j in range(1, 5):
+            for j in range(1, 6):
                 mock_event: Mock = Mock()
                 mock_event.name: str = f"mock_event_{j}"
                 mock_event.id: int = randint(1, 10)
 
-                mock_player.events_played.append({mock_event: randint(1, 3)})
+                mock_player.events_played.append({mock_event.id: randint(1, 3)})
 
             mock_gm.players.append(mock_player)
+
+        # pick random current player
+        mock_gm.current_player = choice(mock_gm.players)
+
+        # random value for `is_game_over attribute`
+        mock_gm.is_game_over: bool = randint(1, 2) == 1
 
         return mock_gm
 
@@ -140,12 +155,12 @@ class TestGameDataBase(unittest.TestCase):
         """
         try:
 
-            # create connection to default name for this test
-            conn = sqlite3.connect(self.test_db_name_default)
-            cur = conn.cursor()
-
             res = self.db.save_game(game_manager=self.mock_gm)
             self.assertTrue(res)
+
+            # create connection to default name for this test
+            conn = sqlite3.connect(self.test_db_name_default_full_rel_path)
+            cur = conn.cursor()
 
             # * check for Players table
 
@@ -174,10 +189,10 @@ class TestGameDataBase(unittest.TestCase):
             for each_expected_name in expected_names:
                 # grab actual player info from DB
                 actual_player_info_row: list[tuple] = cur.execute(
-                    """SELECT position, military, bilingual, fitness, academic, social
+                    """SELECT position, military, bilingual, athletic, academic, social
                     FROM Players WHERE name = ?
                     """,
-                    (each_expected_name),
+                    (str(each_expected_name),),
                 ).fetchall()
 
                 # no duplicate name allowed
@@ -190,11 +205,11 @@ class TestGameDataBase(unittest.TestCase):
                 self.assertIsNotNone(expected_player)
                 expected_info: tuple = (
                     expected_player.position,
-                    expected_player.status["military"],
-                    expected_player.status["bilingual"],
-                    expected_player.status["fitness"],
-                    expected_player.status["academic"],
-                    expected_player.status["social"],
+                    expected_player.stats["military"],
+                    expected_player.stats["bilingual"],
+                    expected_player.stats["athletic"],
+                    expected_player.stats["academic"],
+                    expected_player.stats["social"],
                 )
 
                 # check if expected player info is same as actual
@@ -214,7 +229,7 @@ class TestGameDataBase(unittest.TestCase):
                         WHERE name = ?
                     )
                     """,
-                    (each_expected_name),
+                    (str(each_expected_name),),
                 ).fetchall()
 
                 # check if have 5 events played
@@ -222,16 +237,21 @@ class TestGameDataBase(unittest.TestCase):
 
                 # grab expected event info to test it below
                 expected_event_info: list[tuple] = []
-                for each_event_mock_obj in list(expected_player.events_played.keys()):
+                for each_event_dict in expected_player.events_played:
+                    event_id: int = int(list(each_event_dict.keys())[0])
                     each_event_info_tup: tuple = (
-                        each_event_mock_obj.id,
+                        event_id,
                         int(expected_player.name.split("_")[1]),
-                        int(expected_player.events_played[each_event_mock_obj]),
+                        each_event_dict[event_id],
                     )
                     expected_event_info.append(each_event_info_tup)
 
                 # compare expected and actual events info
-                self.assertTupleEqual(expected_event_info, actual_event_row)
+                self.assertEqual(len(expected_event_info), len(actual_event_row))
+                print(f"TBD: expected={expected_event_info}")
+                print(f"TBD: actual={actual_event_row}")
+                for i in range(len(expected_event_info)):
+                    self.assertTupleEqual(expected_event_info[i], actual_event_row[i])
 
                 # * done checking `Events` table
 
@@ -255,6 +275,7 @@ class TestGameDataBase(unittest.TestCase):
 
             cur.close()
         except sqlite3.Error as e:
+            print(f"\t{traceback.print_exc()}")
             self.fail(f"unexpected exception thrown: {e}")
 
         finally:
@@ -289,7 +310,7 @@ class TestGameDataBase(unittest.TestCase):
 
         # check if table has no rows
         try:
-            conn = sqlite3.connect(self.test_db_name_default)
+            conn = sqlite3.connect(self.test_db_name_default_full_rel_path)
             cursor = conn.cursor()
 
             # check if Players table is empty
