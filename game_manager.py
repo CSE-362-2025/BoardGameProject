@@ -6,18 +6,23 @@ Game manager class that controls the flow of the game and the logic of the game
 """
 
 import random
-from tiles import GoodTile, BadTile, EventTile, StopTile
+from board import Board
+from tiles import Tile, StopTile
+from player import Player
+from event import Event
+import json
 
 
 class GameManager:
 
-    def __init__(self, board, players, events, ui, game_database):
+    def __init__(self, ui, game_database):
         
-        self.board = board
-        self.players = players
-        self.events = events
+        self.board = None
+        self.players = None
+        self.events = None
         self.ui = ui
         self.game_database = game_database
+        self.year = 0
 
         self.current_player = None
         self.turn_count = 0
@@ -86,7 +91,7 @@ class GameManager:
         print("Starting")
         events = self.get_events(0)
         self.events = events
-        self.board = self.get_board(0, events[1])
+        self.board = self.get_board(0)
         self.players = self.get_players()
         self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
@@ -103,8 +108,8 @@ class GameManager:
                                     event['phase']))
         return events
 
-    def get_board(self, year, stop_events):
-         boards = []
+    def get_board(self, year):
+        boards = []
         with open("game_objects/boards.json") as file:
             boards_raw = json.load(file)
     
@@ -119,7 +124,7 @@ class GameManager:
                     event = None
                 tiles.append(StopTile(tile['position'], tile['screen_position'],event, tile['paths']))
             else:
-                tiles.append(Tile(tile['position'], tile['tile_type'], tile['screen_position']))
+                tiles.append(Tile(tile['position'], tile['screen_position'], tile['tile_type']))
     
         boards.append(Board(tiles, board_raw['year']))
         board = boards[0]

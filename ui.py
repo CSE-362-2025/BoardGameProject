@@ -63,6 +63,7 @@ class UI():
             img = pygame.transform.scale(pygame.image.load(self.background_img),(self.screen.get_width(), self.screen.get_height()))
             self.screen.blit(img)
         if board:
+            board = board[self.game_manager.year]
             self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
         self.display_buttons()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any

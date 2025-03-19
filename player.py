@@ -12,13 +12,14 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 class Player:
 
-    def __init__(self, name, color, stats=None):
+    def __init__(self, name, color, stats=None, image=None):
 
         self.name = name
         self.color = color
         self.position = 0
         self.events_played = []
         self.has_moved = True
+        self.image=image
 
         # For branching
         self.branch = False

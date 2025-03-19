@@ -12,9 +12,10 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 class Board:
     
-    def __init__(self, tiles):
+    def __init__(self, tiles, year):
         self.tiles = tiles
         self.size = len(tiles)
+        self.year = year
 
     # returns tile at position
     def get_tile(self, position):
@@ -31,8 +32,7 @@ class Board:
         # Draw tiles
         mid = TILE_SIZE/2
         for tile in self.tiles:
-            position = tile.get_position()
-
+            position = tile.get_screen_pos()
             # Draw tile rectangle
             rect = pygame.Rect((position[0])*screen_width-mid, (position[1])*screen_height-mid, TILE_SIZE, TILE_SIZE)
             pygame.draw.rect(screen, tile.get_colour(), rect)
@@ -46,9 +46,9 @@ class Board:
         # Draw players
         for player in players:
             try:
-                position = self.tiles[(player.position)].get_position()
+                position = self.tiles[(player.position)].get_screen_pos()
             except Exception as e:
-                position = self.tiles[-1].get_position()
+                position = self.tiles[-1].get_screen_pos()
             position = (position[0], position[1], mid)
             player.draw(screen, position)
             

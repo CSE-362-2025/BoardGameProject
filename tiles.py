@@ -26,6 +26,9 @@ class Tile:
     
     def get_type(self):
         return self.tile_type
+    
+    def get_screen_pos(self):
+        return self.screen_position
         
     def get_colour(self):
         return TILE_COLORS.get(self.get_type(), (100, 100, 100))  # Default gray if unknown
@@ -60,12 +63,12 @@ class StopTile(Tile):
 
 
 class StartTile(Tile):
-    def __init__(self, position):
-        super().__init__(position, tile_type="StartTile")
+    def __init__(self, position, screen_position):
+        super().__init__(position, screen_position, tile_type="StartTile")
         pass
 
 
 class EndTile(Tile):
-    def __init__(self, position):
-        super().__init__(position, tile_type="EndTile")
+    def __init__(self, position, screen_position):
+        super().__init__(position, screen_position, tile_type="EndTile")
         pass

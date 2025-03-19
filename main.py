@@ -15,7 +15,6 @@ def main():
 
     # Initialize GameManager
     game_manager = GameManager(ui, game_database=None)
-    game_manager.start_game()
 
     ui.game_manager = game_manager
 
