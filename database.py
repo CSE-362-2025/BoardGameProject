@@ -135,13 +135,19 @@ class GameDatabase(object):
                 return False
 
             # save GameInfo
-            current_player_index: int = game_manager.players.index(game_manager.current_player)
+            current_player_index: int = game_manager.players.index(
+                game_manager.current_player
+            )
             self.cursor.execute(
                 """
                 INSERT INTO GameInfo (turn_count, current_player_index, is_game_over)
                 VALUES (?, ?, ?)
                 """,
-                (game_manager.turn_count, current_player_index, int(game_manager.is_game_over)),
+                (
+                    game_manager.turn_count,
+                    current_player_index,
+                    int(game_manager.is_game_over),
+                ),
             )
 
             # TODO: save all players into DB
