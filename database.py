@@ -120,14 +120,11 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        db = GameDatabase()
-        db.connect("")
-
         gm = game_manager
         try:
             print("TRYING TO SAVE TURNCOUNT")
             
-            db.cursor.execute(
+            db.cursor(
                 """
                 INSERT INTO GameInfo (turn_count) VALUES (?)
                 """,(gm.turn_count,)
@@ -160,7 +157,27 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        pass
+        db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
+
+        try:
+            self.cursor.execute(
+            """
+                DELETE FROM Players;
+            """
+            )
+            self.cursor.execute(
+            """
+                DELETE FROM GameInfo;
+            """
+            )
+            self.cursor.execute(
+            """
+                DELETE FROM Events;
+            """
+            )
+            self.connection.commit()
+        except sqlite3.Error as e:
+            print(f"FAILED: {e}")
 
     def close_connection(self) -> None:
         """Close connection to DB."""
@@ -233,5 +250,5 @@ if __name__ == "__main__":
     )
     rows = res.fetchall()
     print(f"all events played by Player1 = {rows}")
-
+    db.clear_database()
     db.close_connection()
