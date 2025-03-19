@@ -120,41 +120,25 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-        gm = game_manager
-        for each in gm:
-           pass 
-
         try:
-            print("TRYING TO SAVE TURNCOUNT")
-
+            # save GameInfo
             self.cursor.execute(
                 """
                 INSERT INTO GameInfo (turn_count) VALUES (?)
-                """,(gm.turn_count,)
-            )
-            name = self.cursor.execute(
-                """
-                SELECT player_id FROM Players WHERE name = ?
-                """,(gm.current_player,)
+                """,
+                (game_manager.turn_count,),
             )
 
-            self.cursor.execute(
-                """
-                INSERT INTO Events (event_id, playe_id) VALUES (?,?)
-                """,(gm.Player.events_played, name)
-            )
-            self.cursor(
-                """
+            # TODO: save all players into DB
 
-                """
-            )
+            # TODO: save all events played by the players into DB
+
+
             self.connection.commit()
-            print('TRUE')
             return True
         except sqlite3.Error as e:
-            print('FALSE' + str(e))
+            print("FALSE" + str(e))
             return False
-
 
     def load_game(self, game_manager) -> bool:
         """Load game from the connected DB.
@@ -165,7 +149,6 @@ class GameDatabase(object):
         Returns:
             bool: True if successful, False otherwise
         """
-
 
     def clear_database(self) -> bool:
         """Clear any saved game states from the connected DB.
@@ -179,17 +162,17 @@ class GameDatabase(object):
 
         try:
             self.cursor.execute(
-            """
+                """
                 DELETE FROM Players;
             """
             )
             self.cursor.execute(
-            """
+                """
                 DELETE FROM GameInfo;
             """
             )
             self.cursor.execute(
-            """
+                """
                 DELETE FROM Events;
             """
             )
