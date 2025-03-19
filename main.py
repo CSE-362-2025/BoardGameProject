@@ -11,7 +11,7 @@ import json
 def main():
     # Initialize pygame
     pygame.init()
-    
+
     # Set up display
     pygame.display.set_caption("Board Game")
 
@@ -19,22 +19,22 @@ def main():
     ui = UI()
 
     # Create events
-    
+
     with open("game_objects/events.json") as file:
         events_raw = json.load(file)
-    
+
     events = []
     for event in events_raw:
         if event['type'] == "Decision":
-            events.append(DecisionEvent(event['name'], event['description'], 
+            events.append(DecisionEvent(event['name'], event['description'],
                                         event['criteria'], event['choices'],
                                         event['rarity']))
 
         elif event['type'] == "Static":
-            events.append(StaticEvent(event['name'], event['description'], 
+            events.append(StaticEvent(event['name'], event['description'],
                                         event['criteria'], event['result'],
                                         event['rarity']))
-            
+
     event_stoptile = StaticEvent("StopTile Event", "...", None, None, 0)
     print(event_stoptile.get_type())
 
@@ -45,7 +45,7 @@ def main():
         GoodTile(5), BadTile(6), GoodTile(7), BadTile(8), EventTile(9),
         GoodTile(10), BadTile(11), GoodTile(12), BadTile(13), StopTile(14, event_stoptile),
         GoodTile(15), BadTile(16), GoodTile(17), BadTile(18), EventTile(19),
-        
+
     ]
     board = Board(tiles)
 
