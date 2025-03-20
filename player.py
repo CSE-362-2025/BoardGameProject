@@ -25,6 +25,11 @@ class Player:
                 "social": 0,
             }
 
+        # add attributes to match latest class diagram
+        self.next_pos: int = 0
+        self.on_alt_path: bool = False
+        self.branch: bool = False
+
     def move(self, spaces):
         self.position += spaces
 
@@ -40,9 +45,9 @@ class Player:
 
     def get_stats(self):
         return self.stats
-    
 
-class ComputerPlayer(Player): 
+
+class ComputerPlayer(Player):
 
     def __init__(self, name, stats=None):
         super().__init__(name, stats)
