@@ -12,7 +12,7 @@ from tiles import GoodTile, BadTile, EventTile, StopTile
 class GameManager:
 
     def __init__(self, board, players, events, ui, game_database):
-        
+
         self.board = board
         self.players = players
         self.events = events
@@ -21,16 +21,22 @@ class GameManager:
 
         self.current_player = None
         self.turn_count = 0
-        self.is_game_over = False
+        self._is_game_over = False
 
     def save_game(self):
         """Save game into a DB file.
         """
-        self.game_database.save_game(self)
+        if self.game_database.save_game(self):
+            print("save game successful")
+        else:
+            print("save game unsuccessful")
 
     def load_game(self):
         """Load game from a DB file."""
-        self.game_database.load_game(self)
+        if self.game_database.load_game(self):
+            print("load game successful")
+        else:
+            print("load game unsuccessful")
 
     # plays all logic for playing human turn
     def play_turn(self, dice_value):
@@ -74,8 +80,8 @@ class GameManager:
         else:
             print(tile.get_type())
             raise Exception("Invalid tile type")
-        
-        
+
+
         self.switch_turn()
 
     def handle_event(self, event):
@@ -120,14 +126,15 @@ class GameManager:
         self.current_player.store_event(event)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
-    # gets a random event from the list of events that 
+    # gets a random event from the list of events that
     # meets the criteria of the player's stats, must take into account rarity
     def get_random_event(self):
         return random.choice(self.events)
 
+    @property
     def is_game_over(self):
-        self.is_game_over = self.turn_count >= 40
-        return self.is_game_over
+        self._is_game_over = self.turn_count >= 40
+        return self._is_game_over
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
