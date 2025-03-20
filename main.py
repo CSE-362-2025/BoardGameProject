@@ -59,9 +59,12 @@ def main():
 
     ]
 
+    # initialize GameDatabase
+    g_db = GameDatabase()
+    g_db.connect("")
 
     # Initialize GameManager
-    game_manager = GameManager(board, players, events, ui, game_database=GameDatabase())
+    game_manager = GameManager(board, players, events, ui, game_database=g_db)
     game_manager.start_game()
 
     ui.game_manager = game_manager
