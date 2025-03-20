@@ -21,6 +21,7 @@ class GameManager:
 
         self.current_player = None
         self.turn_count = 0
+        self.is_game_over = False
 
     def save_game(self):
         """Save game into a DB file.
@@ -125,7 +126,8 @@ class GameManager:
         return random.choice(self.events)
 
     def is_game_over(self):
-        return self.turn_count >= 40
+        self.is_game_over = self.turn_count >= 40
+        return self.is_game_over
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
