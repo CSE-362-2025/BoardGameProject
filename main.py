@@ -5,6 +5,7 @@ from player import Player
 from ui import UI
 from event import DecisionEvent, StaticEvent
 from tiles import GoodTile, BadTile, EventTile, StopTile
+from database import GameDatabase
 import json
 
 
@@ -60,7 +61,7 @@ def main():
 
 
     # Initialize GameManager
-    game_manager = GameManager(board, players, events, ui, game_database=None)
+    game_manager = GameManager(board, players, events, ui, game_database=GameDatabase())
     game_manager.start_game()
 
     ui.game_manager = game_manager
