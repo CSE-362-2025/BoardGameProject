@@ -22,6 +22,15 @@ class GameManager:
         self.current_player = None
         self.turn_count = 0
 
+    def save_game(self):
+        """Save game into a DB file.
+        """
+        self.game_database.save_game(self)
+
+    def load_game(self):
+        """Load game from a DB file."""
+        self.game_database.load_game(self)
+
     # plays all logic for playing human turn
     def play_turn(self, dice_value):
 
