@@ -11,8 +11,18 @@ PLAYER_RADIUS = 20  # Radius of player circle
 
 DICE_SIZE = 80
 DICE_POS = (225, 400)  # Adjust this based on your UI layout
+
+SAVE_BUTTON_SIZE = 80
+SAVE_BUTTON_POS = (10, 400)
+
+LOAD_BUTTON_SIZE = 80
+LOAD_BUTTON_POS = (100, 400)
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+TEAL = (9, 173, 150)
+GREEN = (39, 230, 30)
 
 
 # Colors for different tile types
@@ -47,6 +57,10 @@ class UI:
         self.display_dice()  # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
+
+        # draw save/load buttons
+        self.display_save_button()
+        self.display_load_button()
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -112,6 +126,40 @@ class UI:
             self.screen.blit(stats_surface, stats_rect)
             pygame.display.flip()
 
+    def display_save_button(self):
+        """Draw square button to save current game."""
+        save_button_rect: pygame.Rect = pygame.Rect(
+            SAVE_BUTTON_POS[0],
+            SAVE_BUTTON_POS[1],
+            SAVE_BUTTON_SIZE,
+            SAVE_BUTTON_SIZE,
+        )
+        pygame.draw.rect(self.screen, GREEN, save_button_rect)
+
+        # save game button text in the center
+        save_button_text = self.font.render("SAVE", True, BLACK)
+        save_button_text_rect = save_button_text.get_rect(
+            center=save_button_rect.center
+        )
+        self.screen.blit(save_button_text, save_button_text_rect)
+
+    def display_load_button(self):
+        """Draw square button to load current game."""
+        load_button_rect: pygame.Rect = pygame.Rect(
+            LOAD_BUTTON_POS[0],
+            LOAD_BUTTON_POS[1],
+            LOAD_BUTTON_SIZE,
+            LOAD_BUTTON_SIZE,
+        )
+        pygame.draw.rect(self.screen, TEAL, load_button_rect)
+
+        # load game button text in the center
+        load_button_text = self.font.render("LOAD", True, BLACK)
+        load_button_text_rect = load_button_text.get_rect(
+            center=load_button_rect.center
+        )
+        self.screen.blit(load_button_text, load_button_text_rect)
+
     def display_dice(self):
         # Draw dice background (square)
         dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
@@ -138,6 +186,29 @@ class UI:
         dice_rect = pygame.Rect(DICE_POS[0], DICE_POS[1], DICE_SIZE, DICE_SIZE)
         if dice_rect.collidepoint(pos):
             self.roll_dice()
+
+        # check if the click was inside the save button
+        save_button_rect: pygame.Rect = pygame.Rect(
+            SAVE_BUTTON_POS[0],
+            SAVE_BUTTON_POS[1],
+            SAVE_BUTTON_SIZE,
+            SAVE_BUTTON_SIZE,
+        )
+        # check if the click was inside the load button
+        load_button_rect: pygame.Rect = pygame.Rect(
+            LOAD_BUTTON_POS[0],
+            LOAD_BUTTON_POS[1],
+            LOAD_BUTTON_SIZE,
+            LOAD_BUTTON_SIZE,
+        )
+
+        if save_button_rect.collidepoint(pos):
+            # save game!
+            self.game_manager.save_game()
+        elif load_button_rect.collidepoint(pos):
+            # load game action
+            self.game_manager.load_game()
+
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
