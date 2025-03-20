@@ -83,6 +83,9 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 ui.handle_click(event.pos)  # Check if dice was clicked
 
+                # force UI to update on mouse click to instantly view loaded game
+                ui.update(board, players)
+
         # Display the current state
         # ui.update(board, players)
 
