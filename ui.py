@@ -44,8 +44,8 @@ class UI():
                         Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
                         Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
-                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
-                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
+                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
+                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
                         CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard",),
                         CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
                         Button(PAUSE,PAUSESIZE, "Pause", True)
