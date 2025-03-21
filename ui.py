@@ -80,9 +80,9 @@ class UI:
         self.message_duration = 0  # Number of frames the message will stay on screen
 
     def update(self):
+        """Updates and draws all necessary UI components."""
         board = self.game_manager.board
         players = self.game_manager.players
-        """Updates and draws all necessary UI components."""
         # Draw the board, dice, and stats
         self.screen.fill(BG_COLOR)  # Clear screen first
         if self.background_img:
