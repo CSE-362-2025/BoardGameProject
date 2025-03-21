@@ -9,6 +9,10 @@ entity player {
     --
     *name: str
     *position: int
+    *next_pos: int
+    *on_alt_path: bool
+    *branch: bool
+    *has_moved: bool
     *bilingual: int
     *athletic: int
     *military: int
@@ -38,7 +42,9 @@ player ||--o{ event: plays\n1..*
 entity game_info {
     game_info_id: int
     --
-    turn_count: int
+    *turn_count: int
+    *current_player_index: int
+    *is_game_over: bool
 }
 
 @enduml
