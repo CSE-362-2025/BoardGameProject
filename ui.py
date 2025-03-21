@@ -193,7 +193,7 @@ class UI():
                     self.game_start()
                 case 'Pause':
                     self.save_state()
-                    self.open_menus.append(Menu("Pause"))
+                    self.open_menus.append(PauseMenu("Pause"))
                 case 'Return':
                     self.open_menus.pop()
                     self.return_state()
@@ -275,7 +275,7 @@ class Button:
             screen_height = screen.get_height()/100
             font = pygame.font.Font(None, 16)
             # Draw dice background (square)
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
             if self.image:
                 buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
                 screen.blit(buttonimg, button_rect)
@@ -293,7 +293,7 @@ class Button:
             screen_height = screen.get_height()/100
             font = pygame.font.Font(None, 16)
             # Check if the click was inside the dice area
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
             if button_rect.collidepoint(pos):
                 return self.type
 
