@@ -197,6 +197,8 @@ class UI():
                 case 'Return':
                     self.open_menus.pop()
                     self.return_state()
+                case 'Quit':
+                    pygame.event.Event(quit)
     
 
     def save_state(self):
