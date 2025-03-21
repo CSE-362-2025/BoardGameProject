@@ -40,13 +40,13 @@ class UI():
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.background_img = None
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice"), 
+        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice",), 
                         Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
                         Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg"),
+                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
                         Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
-                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard"),
+                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard",),
                         CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
                         Button(PAUSE,PAUSESIZE, "Pause", True)
                         ]
@@ -256,12 +256,13 @@ class EventMenu(Menu):
 
 class Button:
     """Creates a button that can track itself visually and its events"""
-    def __init__(self, centre, size, type, visible = True, image = None):
+    def __init__(self, centre, size, type, visible = True, image = None, enabled = True):
         self.visible = visible
         self.position = centre #Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
         self.type = type
         self.image = image
+        self.enabled = enabled
 
     def turn_on(self):
         self.visible = True
@@ -278,10 +279,13 @@ class Button:
             button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
             if self.image:
                 buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
+                if not self.enabled:
+                    buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
             else:
-                pygame.draw.rect(screen, WHITE, button_rect)  # Background of the dice
-                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the dice
+                if self.enabled:
+                    pygame.draw.rect(screen, WHITE, button_rect)  # Background of the button
+                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the button
                 # Draw value (centered in the square)
                 text_surface = font.render(str(self.type), True, BLACK)
                 text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
@@ -289,19 +293,20 @@ class Button:
 
     def handle_click(self, screen, pos):
         if self.visible:
-            screen_width = screen.get_width()/100
-            screen_height = screen.get_height()/100
-            font = pygame.font.Font(None, 16)
-            # Check if the click was inside the dice area
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
-            if button_rect.collidepoint(pos):
-                return self.type
+            if self.enabled: 
+                screen_width = screen.get_width()/100
+                screen_height = screen.get_height()/100
+                font = pygame.font.Font(None, 16)
+                # Check if the click was inside the dice area
+                button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+                if button_rect.collidepoint(pos):
+                    return self.type
 
 class CardDisplays(Button):
     """Used to display the clickable cards that show stats or other info"""
-    def __init__(self, centre, centre_moved, size, type, visible=True, image = None):
+    def __init__(self, centre, centre_moved, size, type, visible=True, image = None, enabled = True):
         self.main = centre
-        super().__init__(centre, size, type, visible, image)
+        super().__init__(centre, size, type, visible, image, enabled)
         self.moved = centre_moved
         self.hovered = False
 
