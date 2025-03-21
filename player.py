@@ -17,6 +17,8 @@ class Player:
         self.name = name
         self.color = color
         self.position = 0
+        self.curr_pos_draw = [0,0]
+        self.next_pos_draw = [0,0]
         self.events_played = []
         self.has_moved = True
         self.image=image
@@ -70,6 +72,7 @@ class Player:
         screen_height = screen.get_height()/100
         font = pygame.font.Font(None, 16)
         mid = position[2]
+        self.next_pos_draw = [(position[0])*screen_width-PLAYER_RADIUS/2,(position[1])*screen_height-PLAYER_RADIUS/2]
         if self.image:
             playerimg = pygame.transform.scale(pygame.image.load(self.image),(PLAYER_RADIUS,PLAYER_RADIUS))
             screen.blit(playerimg,((position[0])*screen_width-PLAYER_RADIUS/2, (position[1])*screen_height-PLAYER_RADIUS/2))

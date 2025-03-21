@@ -225,10 +225,7 @@ class Menu:
     def __init__(self, name, image = None):
         self.name = name
         self.image = image
-        self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
-                        Button(MAIN2, MAINSIZE, "Save"),
-                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
-                        Button(MAIN4, MAINSIZE, "Quit"),]
+        self.buttons = []
 
     def draw(self, screen):
         menu_background = pygame.Surface((screen.get_width(),screen.get_height()))
@@ -244,9 +241,17 @@ class Menu:
             if result:
                 return result
 
-class EventMenu(Menu):
+class PauseMenu(Menu):
+    def __init__(self, name, image=None):
+        super().__init__(name, image)
+        self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
+                        Button(MAIN2, MAINSIZE, "Save"),
+                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
+                        Button(MAIN4, MAINSIZE, "Quit"),
+        ]   
 
-    def __init__(self, name, image = None):
+class EventMenu(Menu):
+    def __init__(self, name, image = None, Event=None):
         super().__init__(name, image)
 
 class Button:
