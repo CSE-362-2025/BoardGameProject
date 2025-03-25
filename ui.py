@@ -299,11 +299,11 @@ class EventMenu(Menu):
 class Button:
     """Creates a button that can track itself visually and its events"""
 
-    def __init__(self, centre, size, type, visible=True, image=None, enabled=True):
+    def __init__(self, centre, size, _type :str, visible=True, image=None, enabled=True):
         self.visible = visible
         self.position = centre  # Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
-        self.type = type
+        self.type: str = _type
         self.image = image
         self.enabled = enabled
 
