@@ -210,10 +210,10 @@ class UI:
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
         if len(self.buttonevents) > 0:
-            next = self.buttonevents[0]
-            self.buttonevents = list_edit(self.buttonevents, next)
-            print(next)
-            match next:
+            next_event = self.buttonevents[0]
+            self.buttonevents = list_edit(self.buttonevents, next_event)
+            print(next_event)
+            match next_event:
                 case "Dice":
                     self.roll_dice()
                     for button in self.Buttons:
