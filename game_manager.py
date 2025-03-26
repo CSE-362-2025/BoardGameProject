@@ -49,7 +49,7 @@ class GameManager:
                 if len(tile.paths) > 1:
                     self.current_player.branch = True
 
-                self.ui.display_stoptile_event(tile.event)
+                self.ui.display_decision_event(tile.event)
                 return  # Exit after stop tile processing
 
         # Move the player if not a stop tile
@@ -104,8 +104,8 @@ class GameManager:
         events = []
         for event in events_raw:
             events.append(Event(event['name'], event['description'], 
-                                    event['choices'], event['rarity'],
-                                    event['phase']))
+                                    event['choices'], rarity=event['rarity'],
+                                    phase=event['phase']))
         return events
 
     def get_board(self, year):
@@ -119,10 +119,17 @@ class GameManager:
             if tile['tile_type'] == "StopTile":
                 event_raw = tile['event']
                 if event_raw:
-                    event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
+                    if event_raw['branch']:
+                        event = Event(event_raw['name'], event_raw['description'], event_raw['choices'], branch=event_raw['branch'])
+                    else: 
+                        event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
                 else:
                     event = None
-                tiles.append(StopTile(tile['position'], tile['screen_position'],event, tile['paths']))
+
+                if event_raw['branch']:
+                    tiles.append(StopTile(tile['position'], tile['screen_position'], event, tile['paths']))
+                else:
+                    tiles.append(StopTile(tile['position'], tile['screen_position'], event))
             else:
                 tiles.append(Tile(tile['position'], tile['screen_position'], tile['tile_type']))
     
@@ -134,10 +141,10 @@ class GameManager:
         
         # Create players
         players = [
-            Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png"),
-            Player("Player 2", (50, 200, 200),),
-            Player("Player 3", (200, 200, 200),),
-            Player("Player 4", (200, 200, 50),),
+            Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png")
+            # Player("Player 2", (50, 200, 200),),
+            # Player("Player 3", (200, 200, 200),),
+            # Player("Player 4", (200, 200, 50),),
         ]
         return players
 
@@ -158,15 +165,20 @@ class GameManager:
     # used by the ui after human picks event choice
     def event_choice(self, event, choice_idx):
         event.apply_result(self.current_player, choice_idx)
+
+        if event.branch:
+            pos = self.current_player.position
+            self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
+
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
-    def branching_event_choice(self, event, choice_idx):
-        event.apply_result(self.current_player, choice_idx)
-        pos = self.current_player.position
-        self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
-        self.current_player.store_event(event, choice_idx)  # store event in player's history
-        self.ui.display_board(self.board, self.players)
+    # def branching_event_choice(self, event, choice_idx):
+    #     event.apply_result(self.current_player, choice_idx)
+    #     pos = self.current_player.position
+    #     self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
+    #     self.current_player.store_event(event, choice_idx)  # store event in player's history
+    #     self.ui.display_board(self.board, self.players)
 
     # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity
