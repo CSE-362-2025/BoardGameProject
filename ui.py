@@ -18,11 +18,13 @@ MAIN2 = (38, 80)
 MAIN3 = (62, 80)
 MAIN4 = (85, 80)
 MAINSIZE = (20,20)
-CARD1IN = (105, 25)
-CARD1OUT = (80, 25)
-CARD2IN = (105, 50)
-CARD2OUT = (80, 50)
+CARD1IN = (105, 20)
+CARD1OUT = (80, 20)
+CARD2IN = (105, 45)
+CARD2OUT = (80, 45)
 CARDSIZE = (30, 20)
+PAUSE = (5,2.5)
+PAUSESIZE = (10,5)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -38,17 +40,19 @@ class UI():
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.background_img = None
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice"), 
+        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice",), 
                         Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
                         Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg"),
-                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg"),
-                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg"),
-                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard"),
-                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats")
+                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
+                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
+                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
+                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard",),
+                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
+                        Button(PAUSE,PAUSESIZE, "Pause", True)
                         ]
         self.buttonPaused = []
         self.buttonevents = []
+        self.open_menus = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
@@ -67,6 +71,10 @@ class UI():
         self.display_buttons()   # Call a method to display the dice
         self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
+        for menu in self.open_menus:
+            menu.draw(self.screen)
+
+            
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -109,7 +117,8 @@ class UI():
 
     # Pass in event and display decision choices
     def display_decision_event(self, event):
-        self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+        if event:
+            self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -154,6 +163,10 @@ class UI():
                 result = button.handle_click(self.screen, pos)
                 if result:
                     self.buttonevents.append(result)
+        for menu in self.open_menus:
+            result = menu.handle_click(self.screen, pos)
+            if result:
+                self.buttonevents.append(result)
 
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
@@ -178,7 +191,16 @@ class UI():
                             button.turn_on()
                 case 'New Game':
                     self.game_start()
+                case 'Pause':
+                    self.save_state()
+                    self.open_menus.append(PauseMenu("Pause"))
+                case 'Return':
+                    self.open_menus.pop()
+                    self.return_state()
+                case 'Quit':
+                    pygame.event.Event(quit)
     
+
     def save_state(self):
         for button in self.Buttons:
             if button.visible:
@@ -200,18 +222,49 @@ def list_edit(list, item):
     return list
 
 
+class Menu:
 
+    def __init__(self, name, image = None):
+        self.name = name
+        self.image = image
+        self.buttons = []
 
+    def draw(self, screen):
+        menu_background = pygame.Surface((screen.get_width(),screen.get_height()))
+        menu_background.fill((0,0,0))
+        menu_background.set_alpha(160)
+        screen.blit(menu_background, (0,0))
+        for button in self.buttons:
+            button.display(screen)
 
+    def handle_click(self, screen, pos):
+        for button in self.buttons:
+            result = button.handle_click(screen, pos)
+            if result:
+                return result
+
+class PauseMenu(Menu):
+    def __init__(self, name, image=None):
+        super().__init__(name, image)
+        self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
+                        Button(MAIN2, MAINSIZE, "Save"),
+                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
+                        Button(MAIN4, MAINSIZE, "Quit"),
+        ]   
+
+class EventMenu(Menu):
+    def __init__(self, name, image = None, Event=None):
+        super().__init__(name, image)
 
 class Button:
     """Creates a button that can track itself visually and its events"""
-    def __init__(self, centre, size, type, visible = True, image = None):
+    def __init__(self, centre, size, type, visible = True, image = None, enabled = True):
         self.visible = visible
         self.position = centre #Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
         self.type = type
         self.image = image
+        self.enabled = enabled
 
     def turn_on(self):
         self.visible = True
@@ -225,13 +278,16 @@ class Button:
             screen_height = screen.get_height()/100
             font = pygame.font.Font(None, 16)
             # Draw dice background (square)
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
             if self.image:
                 buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
+                if not self.enabled:
+                    buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
             else:
-                pygame.draw.rect(screen, WHITE, button_rect)  # Background of the dice
-                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the dice
+                if self.enabled:
+                    pygame.draw.rect(screen, WHITE, button_rect)  # Background of the button
+                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the button
                 # Draw value (centered in the square)
                 text_surface = font.render(str(self.type), True, BLACK)
                 text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
@@ -239,19 +295,20 @@ class Button:
 
     def handle_click(self, screen, pos):
         if self.visible:
-            screen_width = screen.get_width()/100
-            screen_height = screen.get_height()/100
-            font = pygame.font.Font(None, 16)
-            # Check if the click was inside the dice area
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1])*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
-            if button_rect.collidepoint(pos):
-                return self.type
+            if self.enabled: 
+                screen_width = screen.get_width()/100
+                screen_height = screen.get_height()/100
+                font = pygame.font.Font(None, 16)
+                # Check if the click was inside the dice area
+                button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+                if button_rect.collidepoint(pos):
+                    return self.type
 
 class CardDisplays(Button):
     """Used to display the clickable cards that show stats or other info"""
-    def __init__(self, centre, centre_moved, size, type, visible=True, image = None):
+    def __init__(self, centre, centre_moved, size, type, visible=True, image = None, enabled = True):
         self.main = centre
-        super().__init__(centre, size, type, visible, image)
+        super().__init__(centre, size, type, visible, image, enabled)
         self.moved = centre_moved
         self.hovered = False
 

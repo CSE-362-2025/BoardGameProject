@@ -178,7 +178,7 @@ class GameManager:
         if number >= 1 and number <= 15:
             while i < 500:
                 event = random.choice(self.events)
-                if event.rarity != 2 and self.board.year not in self.event.phase:
+                if event.rarity != 2 and self.board.year not in event.phase:
                     i += 1
                     continue
                 else:
@@ -188,7 +188,7 @@ class GameManager:
         elif number >= 16 and number <= 19:
             while i < 500:
                 event = random.choice(self.events)
-                if event.rarity != 1 and self.board.year not in self.event.phase:
+                if event.rarity != 1 and self.board.year not in event.phase:
                     i += 1
                     continue
                 else:
@@ -198,7 +198,7 @@ class GameManager:
         else:
             while i < 500:
                 event = random.choice(self.events)
-                if event.rarity != 0 and self.board.year not in self.event.phase:
+                if event.rarity != 0 and self.board.year not in event.phase:
                     i += 1
                     continue
                 else:
