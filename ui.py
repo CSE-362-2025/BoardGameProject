@@ -275,6 +275,9 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
+                case EVENT_BUTTONS_CHOICE_TYPE_STR:
+                    # one choice button has been clicked, clean up and back to menu
+                    self.open_menus.pop()
 
     def save_state(self):
         for button in self.Buttons:
