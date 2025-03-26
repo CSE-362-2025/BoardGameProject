@@ -29,7 +29,7 @@ class Board:
         screen_height = screen.get_height()/100
         font = pygame.font.Font(None, 16)
         # Draw tiles
-        TILE_SIZE = (screen_width*5, screen_height*5)
+        TILE_SIZE = (screen_width*8, screen_height*8)
         mid = (TILE_SIZE[0]/2, TILE_SIZE[1]/2)
         for tile in self.tiles:
             position = tile.get_screen_pos()
@@ -51,4 +51,4 @@ class Board:
                 position = self.tiles[-1].get_screen_pos()
             position = (position[0], position[1], mid)
             player.draw(screen, position)
-            
+
