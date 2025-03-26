@@ -7,7 +7,6 @@ The player class tracks the player information, and has some functions to help m
 import pygame
 import random
 
-PLAYER_RADIUS = 25
 FONT_COLOR = (255, 255, 255)  # White text
 
 class Player:
@@ -17,7 +16,7 @@ class Player:
         self.name = name
         self.color = color
         self.position = 0
-        self.curr_pos_draw = [0,0]
+        self.curr_pos_draw = [500,500]
         self.next_pos_draw = [0,0]
         self.events_played = []
         self.has_moved = True
@@ -70,6 +69,7 @@ class Player:
     def draw(self, screen, position):   
         screen_width = screen.get_width()/100
         screen_height = screen.get_height()/100
+        PLAYER_RADIUS = screen_height*2
         font = pygame.font.Font(None, 16)
         self.next_pos_draw = [(position[0])*screen_width-PLAYER_RADIUS/2,(position[1])*screen_height-PLAYER_RADIUS/2]
         if self.next_pos_draw[0]-1.1 < self.curr_pos_draw[0] <self.next_pos_draw[0]+1.1:
