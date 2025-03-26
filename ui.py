@@ -182,6 +182,17 @@ class UI:
                 f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}"
             )
 
+            # * start the decision_event flow
+            # TODO: pass decision_event backdrop image here
+            self.open_menus.append(
+                EventMenu(
+                    "Decision Event",
+                    self.game_manager.current_player,
+                    image=None,
+                    event=event,
+                )
+            )
+
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
