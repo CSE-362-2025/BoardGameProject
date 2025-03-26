@@ -248,7 +248,7 @@ class PauseMenu(Menu):
         super().__init__(name, image)
         self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
                         Button(MAIN2, MAINSIZE, "Save"),
-                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
+                        Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
                         Button(MAIN4, MAINSIZE, "Quit"),
         ]   
 
