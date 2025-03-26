@@ -10,9 +10,8 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 
 # Adjust this based on your UI layout (percentage based)
-DICE_POS = (85, 95) 
-DICE_SIZE = (20, 10)
-NEXT_POS = (40,95)
+DICE_POS = (88, 88) 
+DICE_SIZE = (20, 20)
 MAIN1 = (15, 80)
 MAIN2 = (38, 80)
 MAIN3 = (62, 80)
@@ -40,8 +39,8 @@ class UI():
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.background_img = None
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice",), 
-                        Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
+        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"), 
+                        Button(DICE_POS, DICE_SIZE, "Next Turn", False),
                         Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),

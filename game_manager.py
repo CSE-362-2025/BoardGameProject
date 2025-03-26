@@ -134,10 +134,10 @@ class GameManager:
         
         # Create players
         players = [
-            Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png"),
-            Player("Player 2", (50, 200, 200),),
-            Player("Player 3", (200, 200, 200),),
-            Player("Player 4", (200, 200, 50),),
+            Player("Player 1", (50, 200, 50), image="Resources/Pawn_Red.png"),
+            Player("Player 2", (50, 200, 200), image="Resources/Pawn_Yellow.png"),
+            Player("Player 3", (200, 200, 200),image="Resources/Pawn_Green.png"),
+            Player("Player 4", (200, 200, 50),image="Resources/Pawn_Blue.png"),
         ]
         return players
 
