@@ -1,42 +1,48 @@
 [
     {
-        "name" : "Event",
-        "description" : "Exam coming up",
+        "name" : "First time at the COR",
+        "description" : "You received an email asking you to sign papers for the administration of your student file.",
 
 
-        "choices" : [{"text" : "Study (+1 Academic)",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 1, 
-                                "military" : 0, 
-                                "social" : 0},
+        "choices" : [
+            {
+                "text" : "You decide you won’t go right now, you’re busy with school and the COR can wait.",
+                "result" : {"bilingual" : 0, 
+                            "athletic" : 0, 
+                            "academic" : -1, 
+                            "military" : 0, 
+                            "social" : 0},
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
-                                "social" : 0},
-                    "hide": true 
+                "criteria" : {"bilingual" : 0, 
+                            "athletic" : 0, 
+                            "academic" : 0, 
+                            "military" : 0, 
+                            "social" : 0},
+
+                "consequence": "You procrastinate and forget to go to the COR this week, maybe you’ll do it next week.",
+                "hide": false
         },
 
-        {"text" : "Go out with friends. (+2 Social -1 Academic)",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 1, 
-                                "military" : 0, 
-                                "social" : 0},
+        {
+            "text" : "You know that when it comes to the COR and administration stuff it’s always better to get it over with as fast as you can.",
+            "result" : {"bilingual" : 0, 
+                        "athletic" : 0, 
+                        "academic" : 1, 
+                        "military" : 0, 
+                        "social" : 0},
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
-                                "social" : 0},
+            "criteria" : {"bilingual" : 0, 
+                        "athletic" : 0, 
+                        "academic" : 4, 
+                        "military" : 0, 
+                        "social" : 0},
 
-                    "hide": false
-        }],
+            "Consequence": "Your eagerness to sign papers impresses the COR staff making their day better.",
+            "hide": false
+        }
+    ],
 
         "rarity" : 0,
-        "phase" : [1, 2, 3, 4],
-        "positive_event" : true
+        "phase" : [1]
     }
 ]
