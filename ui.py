@@ -323,6 +323,42 @@ class EventMenu(Menu):
     def __init__(self, name, image=None, Event=None):
         super().__init__(name, image)
 
+        if event is None:
+            raise RuntimeError("EventMenu(): the received `event` is None")
+
+        self.image: str | None = image
+        if image is None:
+            # TODO: replace/remove this fallback image path
+            # fall back to testing default image
+            self.image = "Resources/gunsalute-scarlets-mckenzie.jpg"
+
+        self.curr_player = curr_player
+        self.event = event
+        self.buttons: list[Button] = []
+
+        # * create buttons for available options
+
+        choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[len(event.choices)]
+
+        for i, each_choice in enumerate(event.choices):
+            # grab stat dict to compare
+            curr_player_stat: dict = self.curr_player.stats
+            choice_criteria_stat: dict = each_choice["criteria"]
+
+            # check if current player can choose this choice
+            is_enabled: bool = self.__is_choice_available(
+                curr_player_stat, choice_criteria_stat
+            )
+
+            # create a button
+            each_choice_button: Button = Button(
+                centre=choice_button_pos[i],
+                size=EVENT_BUTTONS_CHOICE_SIZE,
+                _type=EVENT_BUTTONS_CHOICE_TYPE_STR,
+                enabled=is_enabled,
+            )
+            self.buttons.append(each_choice_button)
+
 
 class Button:
     """Creates a button that can track itself visually and its events"""
