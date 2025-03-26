@@ -320,7 +320,25 @@ class PauseMenu(Menu):
 
 
 class EventMenu(Menu):
-    def __init__(self, name, image=None, Event=None):
+
+    def __is_choice_available(self, player_stat: dict, choice_stat: dict) -> bool:
+        """Check if the `player_stat` is higher or equal than `choice_stat` dictionary.
+        This assumes two given dict has the same keys.
+
+        Args:
+            player_stat (dict): stat dict for current player
+            choice_stat (dict): required stat level to be able to choose this action
+
+        Returns:
+            bool: True if player can check this event
+        """
+        for each_key in list(player_stat.keys()):
+            if player_stat[each_key] < choice_stat[each_key]:
+                # player does not meet the required criteria
+                return False
+        return True
+
+    def __init__(self, name, curr_player, image=None, event=None):
         super().__init__(name, image)
 
         if event is None:
