@@ -71,24 +71,24 @@ class Player:
         screen_height = screen.get_height()/100
         PLAYER_RADIUS = position[2][1]
         font = pygame.font.Font(None, 16)
-        self.next_pos_draw = [(position[0]/2)*screen_width+position[2][0],(position[1])*screen_height]
-        if self.next_pos_draw[0]-1.1 < self.curr_pos_draw[0] <self.next_pos_draw[0]+1.1:
+        self.next_pos_draw = [(position[0])*screen_width,(position[1])*screen_height]
+        if self.next_pos_draw[0]-3.1 < self.curr_pos_draw[0] <self.next_pos_draw[0]+3.1:
             self.curr_pos_draw[0] = self.next_pos_draw[0]       
         else:
             if self.next_pos_draw[0] < self.curr_pos_draw[0]:
-                self.curr_pos_draw[0] = self.curr_pos_draw[0]-1
+                self.curr_pos_draw[0] = self.curr_pos_draw[0]-3
             else:
-                self.curr_pos_draw[0] = self.curr_pos_draw[0]+1
-        if self.next_pos_draw[1]-1.1 < self.curr_pos_draw[1] <self.next_pos_draw[1]+1.1:
+                self.curr_pos_draw[0] = self.curr_pos_draw[0]+3
+        if self.next_pos_draw[1]-3.1 < self.curr_pos_draw[1] <self.next_pos_draw[1]+3.1:
             self.curr_pos_draw[1] = self.next_pos_draw[1]
         else:
             if self.next_pos_draw[1] < self.curr_pos_draw[1]:
-                self.curr_pos_draw[1] = self.curr_pos_draw[1]-1
+                self.curr_pos_draw[1] = self.curr_pos_draw[1]-3
             else:
-                self.curr_pos_draw[1] = self.curr_pos_draw[1]+1
+                self.curr_pos_draw[1] = self.curr_pos_draw[1]+3
         if self.image:
             playerimg = pygame.transform.scale(pygame.image.load(self.image),(PLAYER_RADIUS,PLAYER_RADIUS))
-            screen.blit(playerimg,(self.curr_pos_draw[0], self.curr_pos_draw[1]))
+            screen.blit(playerimg,(self.curr_pos_draw[0]-PLAYER_RADIUS/2, self.curr_pos_draw[1]-PLAYER_RADIUS/2))
         else:
             pygame.draw.circle(screen, self.color, (self.curr_pos_draw[0], self.curr_pos_draw[1]), PLAYER_RADIUS)
 
