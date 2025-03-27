@@ -1,35 +1,35 @@
 [
     {
-        "name" : "Event",
-        "description" : "Exam coming up",
+        "name" : "Event name Study Vs. Fun",
+        "description" : "Event description: Exam coming up",
 
 
         "choices" : [{"text" : "Study (+1 Academic)",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 1, 
-                                "military" : 0, 
+                    "result" : {"bilingual" : 0,
+                                "athletic" : 0,
+                                "academic" : 1,
+                                "military" : 0,
                                 "social" : 0},
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
+                    "criteria" : {"bilingual" : 0,
+                                "athletic" : 0,
+                                "academic" : 0,
+                                "military" : 0,
                                 "social" : 0},
-                    "hide": true 
+                    "hide": true
         },
 
         {"text" : "Go out with friends. (+2 Social -1 Academic)",
-                    "result" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 1, 
-                                "military" : 0, 
+                    "result" : {"bilingual" : 0,
+                                "athletic" : 0,
+                                "academic" : 1,
+                                "military" : 0,
                                 "social" : 0},
 
-                    "criteria" : {"bilingual" : 0, 
-                                "athletic" : 0, 
-                                "academic" : 0, 
-                                "military" : 0, 
+                    "criteria" : {"bilingual" : 0,
+                                "athletic" : 0,
+                                "academic" : 0,
+                                "military" : 0,
                                 "social" : 0},
 
                     "hide": false
