@@ -44,18 +44,18 @@ EVENT_BUTTONS_CHOICE_TYPE_STR: str = "Decision Event Choice"
 # mapping number of all choices -> their position tuple
 # TODO: placeholder value, match all position coordinates with event popup background image
 EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
-    1: [(50, EVENT_BUTTONS_POS_Y_TOP_ROW)],
-    2: [(30, EVENT_BUTTONS_POS_Y_TOP_ROW), (80, EVENT_BUTTONS_POS_Y_TOP_ROW)],
+    1: [(50, EVENT_BUTTONS_POS_Y_BOTTOM_ROW)],
+    2: [(30, EVENT_BUTTONS_POS_Y_BOTTOM_ROW), (80, EVENT_BUTTONS_POS_Y_BOTTOM_ROW)],
     3: [
-        (20, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (40, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (60, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (20, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (40, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (60, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
     ],
     4: [
-        (15, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (35, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (55, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (75, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (15, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (35, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (55, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (75, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
     ],
 }
 
