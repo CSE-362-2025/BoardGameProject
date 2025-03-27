@@ -31,7 +31,13 @@ BLACK = (0, 0, 0)
 TURN_SIZE = 80
 TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
-## For event popup screen
+## constants for event popup screen
+
+# position of rect for title
+
+# position of rect for description
+
+# button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 80
 EVENT_BUTTONS_POS_Y_TOP_ROW: int = 50
 
@@ -175,6 +181,11 @@ class UI:
             if button.visible:
                 button.display(self.screen)
 
+    # TODO: delete this test code
+    ## catch-all to force all event call
+    def display_stoptile_event(self, event):
+        self.display_decision_event(event)
+
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         if event:
@@ -191,6 +202,10 @@ class UI:
                     image=None,
                     event=event,
                 )
+            )
+            print("appended into `open_menus`, finished handling event:")
+            print(
+                f"\t{event.name}: {', '.join([choice['text'] for choice in event.choices])}"
             )
 
     def display_computer_decision(self, event, choice_idx):
@@ -386,10 +401,17 @@ class EventMenu(Menu):
             each_choice_button: Button = Button(
                 centre=choice_button_pos[i],
                 size=EVENT_BUTTONS_CHOICE_SIZE,
-                _type=EVENT_BUTTONS_CHOICE_TYPE_STR,
+                # string to display on the button
+                _type=each_choice["text"],
                 enabled=is_enabled,
             )
             self.buttons.append(each_choice_button)
+
+    def draw(self, screen):
+        super().draw(screen)
+
+        # TODO: draw pop up for title, description
+        print("TODO: draw rect for event title and description")
 
 
 class Button:
