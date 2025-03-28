@@ -10,9 +10,8 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 
 # Adjust this based on your UI layout (percentage based)
-DICE_POS = (85, 95) 
-DICE_SIZE = (20, 10)
-NEXT_POS = (40,95)
+DICE_POS = (88, 88) 
+DICE_SIZE = (20, 20)
 MAIN1 = (15, 80)
 MAIN2 = (38, 80)
 MAIN3 = (62, 80)
@@ -40,8 +39,8 @@ class UI():
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
         self.background_img = None
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice",), 
-                        Button(NEXT_POS, DICE_SIZE, "Next Turn", False),
+        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"), 
+                        Button(DICE_POS, DICE_SIZE, "Next Turn", False),
                         Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
@@ -148,6 +147,17 @@ class UI():
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
             stats_rect = stats_surface.get_rect(bottomright=(0.2*self.screen.get_width(), 0.9*self.screen.get_height()))
             self.screen.blit(stats_surface, stats_rect)
+            portrait = self.player.get_portrait()
+            if portrait:
+                if self.screen.get_width()/1.75<self.screen.get_height():
+                    width = self.screen.get_width()/100
+                else:
+                    width = self.screen.get_height()/60
+                portrait = pygame.transform.scale(portrait,(width*20, width*20))
+                portrait_rect = portrait.get_rect(bottomleft=(0-width,self.screen.get_height()-width))
+                self.screen.blit(portrait,portrait_rect)
+
+
 
     def change_current_player(self, player):
         self.player = player
@@ -248,7 +258,7 @@ class PauseMenu(Menu):
         super().__init__(name, image)
         self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
                         Button(MAIN2, MAINSIZE, "Save"),
-                        Button(MAIN3, MAINSIZE, "Settings", "Resources/SETTINGS.jpg"),
+                        Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
                         Button(MAIN4, MAINSIZE, "Quit"),
         ]   
 
