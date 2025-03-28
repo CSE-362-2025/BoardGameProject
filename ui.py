@@ -62,10 +62,9 @@ class UI():
                            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
                            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
                            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"))
+                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
         self.sounds['click'].set_volume(0.5)
-        self.sounds['start'].set_volume(2)
-        self.sounds['pause'].set_volume(5)
 
 
     def update(self):
