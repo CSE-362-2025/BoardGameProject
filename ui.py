@@ -473,8 +473,58 @@ class EventMenu(Menu):
     def draw(self, screen):
         super().draw(screen)
 
-        # TODO: draw pop up for title, description
-        print("TODO: draw rect for event title and description")
+        # DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+
+        # * event title Rect
+        title_rect_left = (
+            EVENT_TITLE_POS_CENTRE[0] - EVENT_TITLE_SIZE[0] / 2
+        ) * screen_width
+        title_rect_top = (
+            EVENT_TITLE_POS_CENTRE[1] - EVENT_TITLE_SIZE[1] / 2
+        ) * screen_height
+        title_rect_width = EVENT_TITLE_SIZE[0] * screen_width
+        title_rect_height = EVENT_TITLE_SIZE[1] * screen_height
+
+        event_title_rect: pygame.Rect = pygame.Rect(
+            title_rect_left, title_rect_top, title_rect_width, title_rect_height
+        )
+
+        event_title_font: pygame.font.Font = pygame.font.Font(
+            None, EVENT_TITLE_FONT_SIZE
+        )
+
+        # title rect and border
+        pygame.draw.rect(screen, WHITE, event_title_rect)
+        pygame.draw.rect(screen, BLACK, event_title_rect, 3)
+        # assume title text can fit in
+        self.__draw_text_with_wrap(
+            screen, self.event.name, BLACK, event_title_rect, event_title_font
+        )
+
+        # * event description rect
+        desc_rect_left = (
+            EVENT_DESC_POS_CENTRE[0] - EVENT_DESC_SIZE[0] / 2
+        ) * screen_width
+        desc_rect_top = (
+            EVENT_DESC_POS_CENTRE[1] - EVENT_DESC_SIZE[1] / 2
+        ) * screen_height
+        desc_rect_width = EVENT_DESC_SIZE[0] * screen_width
+        desc_rect_height = EVENT_DESC_SIZE[1] * screen_height
+
+        event_desc_rect: pygame.Rect = pygame.Rect(
+            desc_rect_left, desc_rect_top, desc_rect_width, desc_rect_height
+        )
+
+        event_desc_font: pygame.font.Font = pygame.font.Font(None, EVENT_DESC_FONT_SIZE)
+
+        # description rect and border
+        pygame.draw.rect(screen, WHITE, event_desc_rect)
+        pygame.draw.rect(screen, BLACK, event_desc_rect, 3)
+        remaining: str = self.__draw_text_with_wrap(
+            screen, self.event.description, BLACK, event_desc_rect, event_desc_font
+        )
 
 
 class Button:
