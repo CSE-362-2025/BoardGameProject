@@ -196,7 +196,7 @@ class UI:
     def display_decision_event(self, event):
         if event:
             self.display_message(
-                f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}"
+                f"(starting event) {event.name}: {', '.join([choice['text'] for choice in event.choices])}"
             )
 
             # * start the decision_event flow
@@ -209,7 +209,7 @@ class UI:
                     event=event,
                 )
             )
-            print("appended into `open_menus`, finished handling event:")
+            print("appended into `open_menus`, ending display_decision_event()")
             print(
                 f"\t{event.name}: {', '.join([choice['text'] for choice in event.choices])}"
             )
