@@ -84,6 +84,10 @@ class UI():
         self.display_current_turn()
         for menu in self.open_menus:
             menu.draw(self.screen)
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+            pygame.mixer.music.play(2)
+            pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
 
             
 
@@ -218,6 +222,8 @@ class UI():
                 case 'New Game':
                     self.sounds['start'].play()
                     self.game_start()
+                case 'Save':
+                    random.choice(list(self.sounds.values())).play()
                 case 'Pause':
                     self.sounds['pause'].play()
                     self.save_state()
