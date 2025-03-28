@@ -11,7 +11,7 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 class Player:
 
-    def __init__(self, name, color, stats=None, image=None):
+    def __init__(self, name, color, stats=None, image=None, portrait=None):
 
         self.name = name
         self.color = color
@@ -21,6 +21,7 @@ class Player:
         self.events_played = []
         self.has_moved = True
         self.image=image
+        self.portrait=portrait
 
         # For branching
         self.branch = False
@@ -91,6 +92,13 @@ class Player:
             screen.blit(playerimg,(self.curr_pos_draw[0]-PLAYER_RADIUS/2, self.curr_pos_draw[1]-PLAYER_RADIUS*1.5))
         else:
             pygame.draw.circle(screen, self.color, (self.curr_pos_draw[0], self.curr_pos_draw[1]), PLAYER_RADIUS)
+
+    def get_portrait(self):
+        if self.portrait:
+            portrait = pygame.image.load(self.portrait)
+            return portrait
+        else:
+            return False
 
     
 

@@ -147,6 +147,17 @@ class UI():
             stats_surface = self.font.render(stats_text, True, FONT_COLOR)
             stats_rect = stats_surface.get_rect(bottomright=(0.2*self.screen.get_width(), 0.9*self.screen.get_height()))
             self.screen.blit(stats_surface, stats_rect)
+            portrait = self.player.get_portrait()
+            if portrait:
+                if self.screen.get_width()/1.75<self.screen.get_height():
+                    width = self.screen.get_width()/100
+                else:
+                    width = self.screen.get_height()/60
+                portrait = pygame.transform.scale(portrait,(width*20, width*20))
+                portrait_rect = portrait.get_rect(bottomleft=(0-width,self.screen.get_height()-width))
+                self.screen.blit(portrait,portrait_rect)
+
+
 
     def change_current_player(self, player):
         self.player = player
