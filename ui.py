@@ -33,9 +33,15 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
-# position of rect for title
+# event title rect and font
+EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
+EVENT_TITLE_SIZE: tuple[int] = (80, 10)
+EVENT_TITLE_FONT_SIZE: int = 50
 
-# position of rect for description
+# event description and font
+EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
+EVENT_DESC_SIZE: tuple[int] = (70, 30)
+EVENT_DESC_FONT_SIZE: int = 30
 
 # button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 80
