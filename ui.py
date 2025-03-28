@@ -180,6 +180,7 @@ class UI():
         for menu in self.open_menus:
             result = menu.handle_click(self.screen, pos)
             if result:
+                self.sounds['click'].play()
                 self.buttonevents.append(result)
 
     def run(self):
