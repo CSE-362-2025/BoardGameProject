@@ -57,7 +57,12 @@ class UI():
         self.message_duration = 0  # Number of frames the message will stay on screen
         self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
                            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"))
+                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"))
         self.sounds['click'].set_volume(0.5)
         self.sounds['start'].set_volume(2)
         self.sounds['pause'].set_volume(5)
