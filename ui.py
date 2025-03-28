@@ -461,6 +461,7 @@ class EventMenu(Menu):
             )
 
             # create a button
+            # TODO: maybe create child class `ChoiceButton` to style/handle click differently?
             each_choice_button: Button = Button(
                 centre=choice_button_pos[i],
                 size=EVENT_BUTTONS_CHOICE_SIZE,
