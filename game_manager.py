@@ -38,10 +38,19 @@ class GameManager:
             self.current_player.branch = False
             self.current_player.position = self.current_player.next_pos
             self.current_player.on_alt_path = True
+
+        print(f"Player's position before move {self.current_player.position}")
             
 
         # Checking if hitting a stop tile
-        for tile in self.board.tiles[self.current_player.position + 1: self.current_player.position + roll + 1]:
+        for i in range(self.current_player.position + 1, self.current_player.position + roll + 1):
+            tile = self.board.get_tile(i)
+            if not tile:
+                tile = self.board.get_tile(i-100)
+                if not tile:
+                    print("OUT OF BOUNDS WHEN LOOKING FOR A STOPTILE")
+                    break
+
             if tile.get_type() == "StopTile":
                 print("Found StopTile")
                 steps = tile.position - self.current_player.position
@@ -129,7 +138,7 @@ class GameManager:
                 if event_raw['branch']:
                     tiles.append(StopTile(tile['position'], tile['screen_position'], event, tile['paths']))
                 else:
-                    tiles.append(StopTile(tile['position'], tile['screen_position'], event))
+                    tiles.append(StopTile(tile['position'], tile['screen_position'], event, []))
             else:
                 tiles.append(Tile(tile['position'], tile['screen_position'], tile['tile_type']))
     
@@ -157,7 +166,7 @@ class GameManager:
         self.current_player = self.players[(self.turn_count) % len(self.players)]
         self.ui.change_current_player(self.current_player)
         self.ui.update()
-        print(self.current_player.name)
+        # print(self.current_player.name)
 
     def roll_dice(self):
         return random.randint(1, 6)
@@ -168,7 +177,8 @@ class GameManager:
 
         if event.branch:
             pos = self.current_player.position
-            self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
+            self.current_player.next_pos = (self.board.get_tile(pos).paths[choice_idx-1]) - 1
+            print(f"Current Player Next Pos: {self.current_player.next_pos}")
 
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)

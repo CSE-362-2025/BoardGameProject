@@ -19,7 +19,13 @@ class Board:
 
     # returns tile at position
     def get_tile(self, position):
-        return self.tiles[position]
+        for tile in self.tiles:
+
+            if tile.position == position:
+                return tile
+
+        print(f"No Tiles found at positions {position}")
+        return None     
 
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):
