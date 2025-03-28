@@ -1,0 +1,497 @@
+[
+    {
+    "name" : "Another Important Inspection",
+    "description" : "You have an important inspection tomorrow morning. You don’t really want to spend all evening cleaning as you have much better things to do, however you are willing to if it means having the best room.",
+
+
+    "choices" : [
+        {
+            "text" : "You spend all night cleaning your room.",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 1, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 3, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " Impressed by the quality of your room, your staff congratulate you.",
+            "hide": false
+    },
+
+    {
+        "text" : "Playing video games all night seems like a better idea.",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : -2, 
+                    "athletic" : 0, 
+                    "social" : -1},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": "you had fun all night, but your room looks like a mess for the inspection.",
+        "hide": false
+    },
+        
+    {
+        "text" : " I’m behind on my school work, I need to study.",
+        "result" : {"academic" : 2, 
+                    "bilingual" : 0, 
+                    "military" : -1, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "criteria" : {"academic" : 3, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "consequence": "You spent all night studying and not cleaning. Your room was somewhat bad, but not the worst, someone else spent all night gaming instead.",
+        "hide": false
+    },
+
+    {
+        "text" : "You decide that it would be really funny to go mess with someone else's room before the inspection. It might make your room look better in comparison.",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : -3},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": "You spent more time planning to mess someone up than on your own room, while you successfully got someone else in trouble, you’ve lost the respect of your friends.",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+
+{
+    "name" : " A budding cinephile? ",
+    "description" : " Your friends want to go see a movie during study hours. ",
+
+
+    "choices" : [
+        {
+            "text" : " You’re tired and the movie sounds boring, so you say no since you have class the next day. ",
+            "result" : {"academic" : 1, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : -2},
+
+            "criteria" : {"academic" : 3, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " You spent the night in your room studying, when your friends came back from the movie they all hung out together and had a great time. ",
+            "hide": false
+    },
+
+    {
+        "text" : " You decide that it would be a fun time and you’ve wanted to blow off some steam lately. ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 3},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": " The movie was great and you had an amazing time with your friends, you really enjoyed spending that time off and you realise how important these moments are. ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : " That dang Phone ",
+    "description" : " Your FYOP Staff decided to give you a generous amount of “Phone Time” this evening. After taking a well deserved shower, you ponder what to do with your free time. ",
+
+
+    "choices" : [
+        {
+            "text" : " Study some College Knowledge in the hallway. ",
+            "result" : {"academic" : 1, 
+                        "bilingual" : 0, 
+                        "military" : 1, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " Your Staff are concerned as to why you are not taking the time to call your family, but they do admire your dedication to learning the college knowledge. ",
+            "hide": false
+    },
+
+    {
+        "text" : " Shine your Shoes in your room. ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 2, 
+                    "athletic" : 0, 
+                    "social" : -1},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 1, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": " Your staff is baffled as to why you are shining your shoes instead of playing on your phone. They suspect that you might be a super cadet… But man do those oxfords look shiny. ",
+        "hide": false
+    },
+    {
+            "text" : " Call your Loved Ones ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 1},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 2},
+
+            "consequence": " You spend the rest of phone time on the line with your loved ones. You talk about all the cool stuff you did in the last week and your friends and family are super impressed. They tell you that they are proud of you and that they can’t wait to see you again. ",
+            "hide": false
+    }    
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : " Exploring the campus’s history. ",
+    "description" : " A friend of yours has invited you to go around the campus to sightsee and explore all the historical landmarks peppered on the grounds of the college. ",
+
+
+    "choices" : [
+        {
+            "text" : " Feeling rather inspired you decide that familiarising yourself with the campus geography could only be a good thing. ",
+            "result" : {"academic" : 1, 
+                        "bilingual" : 0, 
+                        "military" : 1, 
+                        "athletic" : 0, 
+                        "social" : 1},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 3},
+
+            "consequence": " While exploring you come across multiple sights you make sure to keep in mind, like the bunker, the catacombs, and many more. ",
+            "hide": false
+    },
+
+    {
+        "text" : " You’ve never been too interested in architecture or historical buildings, thus you decide to spend your time doing other things ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": " Looking out from your window you look at the college and wonder if you made the right decision. ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : " Questions unbecoming of an Officer. ",
+    "description" : "  Music is pumping and your FYOP staff are giving you a tight timing to get your combats on. You start looking for your combats but realise that all the patches are not on, cause you recently washed em. You got your name and your rank on but you are confused as to where the Canadian flag goes on the uniform. ",
+
+
+    "choices" : [
+        {
+            "text" : " Ask your flightmate across the hallway. ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : -1, 
+                        "athletic" : 0, 
+                        "social" : 1},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " You scream for your friend over the deafening music in the hallway. Luckily they hear you call for them the first time and tell you the answer you were looking for : “THE FLAG GOES ON THE LEFT”. You think you're safe. But. Your FYOP Staff saw the whole interaction go down and they are baffled as to how you didn’t know the answer to that stupid question. They give you a giant log with the letter SFQ on them and you log that thing around for the rest of the day. ",
+            "hide": false
+    },
+
+    {
+        "text" : " Attempt to ask your Staff ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 1, 
+                    "athletic" : 0, 
+                    "social" : 1},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": " As you’re about to ask the staff walking in the hallway, you notice your flightmates all wearing their flag on the left. You decide to copy them. When the time comes, you’re out of your room and everyone seems to be up to standard, all with their canadian flags on the left of their combats. ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : " A friendly Encounter with the Cmdt. ",
+    "description" : " On your way to class, you notice from a distance the College Cmdt themself! ",
+
+
+    "choices" : [
+        {
+            "text" : " Greet them like you would anyone else. ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : -1, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " With a big smile on your face you stride on past the Cmdt and greet them by rank and name (all that college knowledge wasn't for nothing), the Cmdt says good day to you and they keep walking. Proud of yourself you keep going, only to realize… You forgot to salute them. ",
+            "hide": false
+    },
+
+    {
+        "text" : " Greet them like the super cadet that you are ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 2, 
+                    "athletic" : 0, 
+                    "social" : -1},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 5, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": " With a stern face you walk past the Cmdt and pull the stiffest salute imaginable. The Cmdt Salutes you back and bids you a good day. Salute Secured. Mission, Accomplished. ",
+        "hide": false
+    },
+    {
+            "text" : " Avoid the College Cmdt ",
+            "result" : {"academic" : 1, 
+                        "bilingual" : -1, 
+                        "military" : -2, 
+                        "athletic" : -1, 
+                        "social" : -1},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": " To avoid saluting the Cmdt you turn a hard left into Massey Library. “Not today” you tell yourself. ",
+            "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : "  ",
+    "description" : "  ",
+
+
+    "choices" : [
+        {
+            "text" : "  ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": "  ",
+            "hide": false
+    },
+
+    {
+        "text" : "  ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": "  ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : "  ",
+    "description" : "  ",
+
+
+    "choices" : [
+        {
+            "text" : "  ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": "  ",
+            "hide": false
+    },
+
+    {
+        "text" : "  ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": "  ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+},
+ 
+{
+    "name" : "  ",
+    "description" : "  ",
+
+
+    "choices" : [
+        {
+            "text" : "  ",
+            "result" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "criteria" : {"academic" : 0, 
+                        "bilingual" : 0, 
+                        "military" : 0, 
+                        "athletic" : 0, 
+                        "social" : 0},
+
+            "consequence": "  ",
+            "hide": false
+    },
+
+    {
+        "text" : "  ",
+        "result" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "criteria" : {"academic" : 0, 
+                    "bilingual" : 0, 
+                    "military" : 0, 
+                    "athletic" : 0, 
+                    "social" : 0},
+
+        "Consequence": "  ",
+        "hide": false
+    }
+],
+
+    "rarity" : 0,
+    "phase" : [1]
+}
+]
+
+
+ 
