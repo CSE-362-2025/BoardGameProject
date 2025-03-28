@@ -55,6 +55,7 @@ class GameManager:
                 print("Found StopTile")
                 steps = tile.position - self.current_player.position
                 self.current_player.move(steps)
+                print(f"Player Position after move: {self.current_player.position}")
                 if len(tile.paths) > 1:
                     self.current_player.branch = True
 
@@ -64,7 +65,11 @@ class GameManager:
         # Move the player if not a stop tile
         self.current_player.move(roll)
 
-        print(f"Current Player Position: {self.current_player.position}")
+        print(f"Player Position after move: {self.current_player.position}")
+
+        # VERY TEMP
+        if self.current_player.position > 22:
+            self.current_player.position = 22
 
         tile = self.board.get_tile(self.current_player.position)
 
@@ -87,6 +92,10 @@ class GameManager:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
             self.current_player.change_stats(effects[1])
             self.ui.display_message(f"{effects[0]}")
+
+        elif tile.get_type() == "EndTile":
+            print(f"{self.current_player.name} is at the end of the board")
+            self.current_player.at_end = True
 
         else:
             print(tile.get_type())
@@ -150,20 +159,34 @@ class GameManager:
         
         # Create players
         players = [
-            Player("Player 1", (50, 200, 50), image="Resources/test_meeple.png")
-            # Player("Player 2", (50, 200, 200),),
-            # Player("Player 3", (200, 200, 200),),
-            # Player("Player 4", (200, 200, 50),),
+            Player("Player 1", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png"),
+            Player("Player 2", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png"),
+            Player("Player 3", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png"),
+            Player("Player 4", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png")
         ]
         return players
 
     
     def end_game(self):
-        pass
+        print("THE GAME IS OVER")
 
     def switch_turn(self):
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
+
+        i = 0
+        if self.current_player.at_end:
+            while i < 4:
+                self.current_player = self.players[(self.turn_count + i) % len(self.players)]
+
+                if self.current_player.at_end:
+                    i += 1
+
+        if i == 4:
+            self.end_game()
+            return
+
+
         self.ui.change_current_player(self.current_player)
         self.ui.update()
         # print(self.current_player.name)
