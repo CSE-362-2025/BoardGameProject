@@ -55,6 +55,7 @@ class UI():
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
+        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"))
 
     def update(self):
         board = self.game_manager.board
@@ -174,6 +175,7 @@ class UI():
             if button.visible:
                 result = button.handle_click(self.screen, pos)
                 if result:
+                    self.sounds['click'].play()
                     self.buttonevents.append(result)
         for menu in self.open_menus:
             result = menu.handle_click(self.screen, pos)

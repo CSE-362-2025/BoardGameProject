@@ -6,6 +6,7 @@ from ui import UI
 def main():
     # Initialize pygame
     pygame.init()
+    pygame.mixer.init()
     
     # Set up display
     pygame.display.set_caption("Board Game")
