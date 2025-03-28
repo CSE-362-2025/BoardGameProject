@@ -15,13 +15,14 @@ class Player:
 
         self.name = name
         self.color = color
-        self.position = 0
+        self.position = 1
         self.curr_pos_draw = [0,0]
         self.next_pos_draw = [0,0]
         self.events_played = []
         self.has_moved = True
         self.image=image
         self.portrait=portrait
+        self.at_end = False
 
         # For branching
         self.branch = False

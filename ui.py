@@ -118,6 +118,8 @@ class UI():
     def display_decision_event(self, event):
         if event:
             self.display_message(f"{event.name}: {', '.join([choice['text'] for choice in event.choices])}")
+            choice = 1
+            self.game_manager.event_choice(event, choice)
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -183,7 +185,7 @@ class UI():
         if len(self.buttonevents) > 0:
             next = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next)
-            print(next)
+            # print(next)
             match next:
                 case 'Dice':
                     self.roll_dice()
