@@ -317,7 +317,7 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
-                case EVENT_BUTTONS_CHOICE_TYPE_STR:
+                case "Decision Event Choice":
                     # one choice button has been clicked, clean up and back to menu
                     # TODO: how does this work?, above constant isn't used anymore by event choice `Button` objects
                     self.open_menus.pop()
@@ -403,16 +403,16 @@ class EventMenu(Menu):
         """
         rect = pygame.Rect(rect)
         y = rect.top
-        lineSpacing = -2
+        line_spacing = -2
 
         # get the height of the font
-        fontHeight = font.size("Tg")[1]
+        font_height = font.size("Tg")[1]
 
         while text:
             i = 1
 
             # determine if the row of text will be outside our area
-            if y + fontHeight > rect.bottom:
+            if y + font_height > rect.bottom:
                 break
 
             # determine maximum width of line
@@ -431,7 +431,7 @@ class EventMenu(Menu):
                 image = font.render(text[:i], aa, color)
 
             surface.blit(image, (rect.left, y))
-            y += fontHeight + lineSpacing
+            y += font_height + line_spacing
 
             # remove the text we just blitted
             text = text[i:]
