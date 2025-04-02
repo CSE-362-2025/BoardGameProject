@@ -84,10 +84,8 @@ class UI():
         for menu in self.open_menus:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
-            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-            pygame.mixer.music.play(2)
-            pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-
+            self.set_sound()
+        
             
 
         # If there's a message to display, show it
@@ -103,8 +101,19 @@ class UI():
             if button.type == "New Game" or button.type == "Load Game" or button.type == "Custom Char" or button.type == "Settings":
                 button.turn_on()
 
+    def set_sound(self):
+            if self.player:
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+                pygame.mixer.music.play(2)
+                pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+            else:
+                pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
+                pygame.mixer.music.play()
+
+
     def game_start(self):           
         self.game_manager.start_game()
+        self.set_sound()
         self.return_state()
 
     def display_board(self, board, players):
