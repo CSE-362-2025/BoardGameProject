@@ -17,10 +17,10 @@ MAIN2 = (38, 80)
 MAIN3 = (62, 80)
 MAIN4 = (85, 80)
 MAINSIZE = (20,20)
-CARD1IN = (105, 20)
-CARD1OUT = (80, 20)
-CARD2IN = (105, 45)
-CARD2OUT = (80, 45)
+CARD1IN = (115, 17.5)
+CARD1OUT = (90, 17.5)
+CARD2IN = (115, 32.5)
+CARD2OUT = (90, 32.5)
 CARDSIZE = (30, 20)
 PAUSE = (5,2.5)
 PAUSESIZE = (10,5)
@@ -45,10 +45,10 @@ class UI():
                         Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
                         Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
                         Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard",),
-                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
                         Button(PAUSE,PAUSESIZE, "Pause", True)
                         ]
+        self.Buttons.insert(0, CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Player Stats",image="Resources/rmc_card.png"))
+        self.Buttons.insert(1, CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Leaderboard", image = "Resources/rmc_card.png"))
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -145,10 +145,8 @@ class UI():
         # Example of displaying player stats in the bottom-left corner
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            stats_text = f"{self.player.name}'s Turn"  # 
-            stats_surface = self.font.render(stats_text, True, FONT_COLOR)
-            stats_rect = stats_surface.get_rect(bottomright=(0.2*self.screen.get_width(), 0.9*self.screen.get_height()))
-            self.screen.blit(stats_surface, stats_rect)
+            info = (self.player.name, self.player.stats)
+            self.Buttons[0].update_info(info)
             portrait = self.player.get_portrait()
             if portrait:
                 if self.screen.get_width()/1.75<self.screen.get_height():
@@ -323,16 +321,65 @@ class CardDisplays(Button):
         super().__init__(centre, size, type, visible, image, enabled)
         self.moved = centre_moved
         self.hovered = False
+        self.info = None
 
     def display(self, screen):
-        super().display(screen)
-    
-    def handle_click(self, screen, pos):
-        result = super().handle_click(screen, pos)
-        if result:
-            if not self.hovered:
-                self.position = self.moved
-                self.hovered = True
+        if self.visible:
+            screen_width = screen.get_width()/100
+            screen_height = screen_width
+            w=21
+            h=14
+            font = pygame.font.Font(None, 16)
+            # Draw dice background (square)
+            button_rect = pygame.Rect((self.position[0]-w)*screen_width,(self.position[1]-h)*screen_height, w*screen_width, h*screen_height)
+            if self.image:
+                buttonimg = pygame.transform.scale(pygame.image.load(self.image),(w*screen_width,h*screen_height))
+                buttonimg = self.add_stats(buttonimg.copy(), font)
+                if not self.enabled:
+                    buttonimg.set_alpha(160)
+                screen.blit(buttonimg, button_rect)
             else:
-                self.position = self.main
-                self.hovered = False
+                if self.enabled:
+                    pygame.draw.rect(screen, WHITE, button_rect)  # Background of the button
+                pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the button
+                # Draw value (centered in the square)
+                text_surface = font.render(str(self.type), True, BLACK)
+                text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
+                text_surface = self.add_stats(text_surface, text_rect)
+                screen.blit(text_surface, text_rect)  # Draw the text on the screen
+
+    def add_stats(self, buttonimg, font):
+        if self.info:
+            width = buttonimg.get_width()/100
+            height = buttonimg.get_height()/100
+            name = font.render(str(self.info[0]), False, WHITE)
+            buttonimg.blit(name, (30*width, 20*height))
+            base = 40
+            for item in self.info[1]:
+                stat = font.render(str(item), True, BLACK)
+                buttonimg.blit(stat, (50*width, base*height))
+                base = base+10
+            
+        return buttonimg
+
+    def update_info(self, info):
+        self.info = info
+
+    def handle_click(self, screen, pos):
+        if self.visible:
+            if self.enabled: 
+                screen_width = screen.get_width()/100
+                screen_height = screen_width
+                w=21
+                h=14
+                font = pygame.font.Font(None, 16)
+                    # Check if the click was inside the dice area
+                button_rect = pygame.Rect((self.position[0]-w)*screen_width,(self.position[1]-h)*screen_height, w*screen_width, h*screen_height)
+                if button_rect.collidepoint(pos):    
+                    if not self.hovered:
+                        self.position = self.moved
+                        self.hovered = True
+                    else:
+                        self.position = self.main
+                        self.hovered = False
+                    return self.type

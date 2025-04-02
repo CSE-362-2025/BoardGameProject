@@ -46,7 +46,6 @@ class Player:
         self.position += spaces
 
     def change_stats(self, stats):
-
         # keeps it above 0 and below 10
         for key in stats:
             if self.stats[key] + stats[key] > 10:
