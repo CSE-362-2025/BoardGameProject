@@ -41,6 +41,24 @@ class Player:
                 "academic": 5,
                 "social": 5,
             }
+        
+        # Increment when landing on specific tile
+        self.tile_counts = {
+            "GoodTile": 0,
+            "BadTile": 0,
+            "EventTile": 0
+        }
+        
+        # Turn count for each board, increments when it is player's turn and player is not at the end of the board
+        self.turns = {
+            "BoardY1": 0,
+            "BoardY2": 0,
+            "BoardY3": 0,
+            "BoardY4": 0
+        }
+
+        # Every roll gets added to the list 
+        self.rolls = []
 
     def move(self, spaces):
         self.position += spaces
