@@ -7,7 +7,6 @@ Board Class sets up the board and helps determine the tile type the player is on
 import pygame
 import player
 
-TILE_SIZE=100
 FONT_COLOR = (255, 255, 255)  # White text
 
 class Board:
@@ -19,7 +18,13 @@ class Board:
 
     # returns tile at position
     def get_tile(self, position):
-        return self.tiles[position]
+        for tile in self.tiles:
+
+            if tile.position == position:
+                return tile
+
+        print(f"No Tiles found at positions {position}")
+        return None     
 
     # returns a list of positions of the players [<player, position>]
     def get_player_positions(self, players):
@@ -30,11 +35,12 @@ class Board:
         screen_height = screen.get_height()/100
         font = pygame.font.Font(None, 16)
         # Draw tiles
-        mid = TILE_SIZE/2
+        TILE_SIZE = (screen_width*8, screen_height*8)
+        mid = (TILE_SIZE[0]/2, TILE_SIZE[1]/2)
         for tile in self.tiles:
             position = tile.get_screen_pos()
             # Draw tile rectangle
-            rect = pygame.Rect((position[0])*screen_width-mid, (position[1])*screen_height-mid, TILE_SIZE, TILE_SIZE)
+            rect = pygame.Rect((position[0])*screen_width-mid[0], (position[1])*screen_height-mid[1], TILE_SIZE[0], TILE_SIZE[1])
             pygame.draw.rect(screen, tile.get_colour(), rect)
             pygame.draw.rect(screen, (0, 0, 0), rect, 2)  # Black border
 
@@ -46,9 +52,9 @@ class Board:
         # Draw players
         for player in players:
             try:
-                position = self.tiles[(player.position)].get_screen_pos()
+                position = self.get_tile(player.position).get_screen_pos()
             except Exception as e:
                 position = self.tiles[-1].get_screen_pos()
             position = (position[0], position[1], mid)
             player.draw(screen, position)
-            
+

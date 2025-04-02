@@ -4,12 +4,13 @@ class Event:
 
     id_iter = itertools.count()
 
-    def __init__(self, name, description, choices, rarity=None, phase=None):
+    def __init__(self, name, description, choices, branch=None, rarity=None, phase=None):
         self.name = name
         self.description = description
         self.choices = choices
         self.rarity = rarity
         self.phase = phase  # list
+        self.branch = branch
         self.id = next(self.id_iter)
     
 
