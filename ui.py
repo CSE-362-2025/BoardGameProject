@@ -33,6 +33,11 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
+# Rect with TSS background
+EVENT_RECT_POS_CENTRE: tuple[int] = (50, 60)
+EVENT_RECT_SIZE: tuple[int] = (50, 80)
+EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
+
 # event title rect and font
 EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
 EVENT_TITLE_SIZE: tuple[int] = (80, 10)
@@ -46,6 +51,15 @@ EVENT_DESC_FONT_SIZE: int = 30
 # button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 80
 EVENT_BUTTONS_POS_Y_TOP_ROW: int = 50
+
+# event button text size
+EVENT_BUTTONS_FONT_SIZE: int = 18
+
+# event button colours
+# TODO: match the colours with TSS background
+EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (226, 72, 45)
+EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (160, 92, 80)
+EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (71, 30, 22)
 
 # choice size
 EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (20, 20)
@@ -279,6 +293,7 @@ class UI:
                     for button in self.Buttons:
                         if button.type == "Dice":
                             button.turn_off()
+                        # TODO: comment below to disable other buttons in EventMenu
                         elif button.type == "Next Turn":
                             button.turn_on()
                 case "Next Turn":
@@ -298,7 +313,9 @@ class UI:
                     self.return_state()
                 case EVENT_BUTTONS_CHOICE_TYPE_STR:
                     # one choice button has been clicked, clean up and back to menu
+                    # TODO: how does this work?, above constant isn't used anymore by event choice `Button` objects
                     self.open_menus.pop()
+                    self.return_state()
 
     def save_state(self):
         for button in self.Buttons:
@@ -460,9 +477,13 @@ class EventMenu(Menu):
                 curr_player_stat, choice_criteria_stat
             )
 
-            # create a button
-            # TODO: maybe create child class `ChoiceButton` to style/handle click differently?
-            each_choice_button: Button = Button(
+            # TODO: create tss rect here
+
+            # TODO: pass the `Surface` of TSS rect to button
+            # create EventChoiceButton
+            each_choice_button: Button = EventChoiceButton(
+                tss_surface=None,
+                button_text=each_choice["text"],
                 centre=choice_button_pos[i],
                 size=EVENT_BUTTONS_CHOICE_SIZE,
                 # string to display on the button
@@ -478,57 +499,40 @@ class EventMenu(Menu):
         screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
 
-        # * event title Rect
-        title_rect_left = (
-            EVENT_TITLE_POS_CENTRE[0] - EVENT_TITLE_SIZE[0] / 2
+        # * event popup rect with `TSS` containing title and desc
+        event_rect_left = (
+            EVENT_RECT_POS_CENTRE[0] - EVENT_RECT_SIZE[0] / 2
         ) * screen_width
-        title_rect_top = (
-            EVENT_TITLE_POS_CENTRE[1] - EVENT_TITLE_SIZE[1] / 2
+        event_rect_top = (
+            EVENT_RECT_POS_CENTRE[1] - EVENT_RECT_SIZE[1] / 2
         ) * screen_height
-        title_rect_width = EVENT_TITLE_SIZE[0] * screen_width
-        title_rect_height = EVENT_TITLE_SIZE[1] * screen_height
+        event_rect_width = EVENT_RECT_SIZE[0] * screen_width
+        event_rect_height = EVENT_RECT_SIZE[1] * screen_height
 
-        event_title_rect: pygame.Rect = pygame.Rect(
-            title_rect_left, title_rect_top, title_rect_width, title_rect_height
+        event_rect: pygame.Rect = pygame.Rect(
+            event_rect_left, event_rect_top, event_rect_width, event_rect_height
         )
 
+        # load TSS image
+        tss = pygame.image.load(EVENT_RECT_TSS_PATH)
+        tss.convert()
+        tss_rect: pygame.rect.Rect = tss.get_rect()
+
+        # fit TSS into event_rect
+        tss_rect_adjusted: pygame.rect.Rect = tss_rect.fit(event_rect)
+        tss_resized = pygame.transform.scale(tss, tss_rect_adjusted.size)
+
+        screen.blit(tss_resized, tss_rect_adjusted)
+
+        # * draw event title
         event_title_font: pygame.font.Font = pygame.font.Font(
             None, EVENT_TITLE_FONT_SIZE
         )
 
-        # title rect and border
-        pygame.draw.rect(screen, WHITE, event_title_rect)
-        pygame.draw.rect(screen, BLACK, event_title_rect, 3)
-        # assume title text can fit in
-        self.__draw_text_with_wrap(
-            screen, self.event.name, BLACK, event_title_rect, event_title_font
-        )
-
-        # * event description rect
-        desc_rect_left = (
-            EVENT_DESC_POS_CENTRE[0] - EVENT_DESC_SIZE[0] / 2
-        ) * screen_width
-        desc_rect_top = (
-            EVENT_DESC_POS_CENTRE[1] - EVENT_DESC_SIZE[1] / 2
-        ) * screen_height
-        desc_rect_width = EVENT_DESC_SIZE[0] * screen_width
-        desc_rect_height = EVENT_DESC_SIZE[1] * screen_height
-
-        event_desc_rect: pygame.Rect = pygame.Rect(
-            desc_rect_left, desc_rect_top, desc_rect_width, desc_rect_height
-        )
-
-        event_desc_font: pygame.font.Font = pygame.font.Font(None, EVENT_DESC_FONT_SIZE)
-
-        # description rect and border
-        pygame.draw.rect(screen, WHITE, event_desc_rect)
-        pygame.draw.rect(screen, BLACK, event_desc_rect, 3)
-        remaining: str = self.__draw_text_with_wrap(
-            screen, self.event.description, BLACK, event_desc_rect, event_desc_font
-        )
+        # * draw event desc
 
 
-class Button:
+class Button(object):
     """Creates a button that can track itself visually and its events"""
 
     def __init__(
@@ -595,6 +599,58 @@ class Button:
                 )
                 if button_rect.collidepoint(pos):
                     return self.type
+
+
+class EventChoiceButton(Button):
+
+    def __init__(self, button_text: str, tss_surface: pygame.Surface, *args, **kwargs):
+        self.tss_surface = tss_surface
+        self.button_text = button_text
+        super().__init__(*args, **kwargs)
+
+    def display(self, screen):
+        """Overridden, display button with choice-button-style
+
+        Args:
+            screen (Surface): main game screen
+        """
+
+        if not self.visible:
+            # not visible, skip
+            return
+
+        # ! DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+        font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
+
+        button_rect = pygame.rect.Rect(
+            (self.position[0] - self.size[0] / 2) * screen_width,
+            (self.position[1] - self.size[1] / 2) * screen_height,
+            self.size[0] * screen_width,
+            self.size[1] * screen_height,
+        )
+
+        # draw button rect on screen
+        fill_colour = (
+            EVENT_BUTTONS_FILL_ENABLED_COLOUR
+            if self.enabled
+            else EVENT_BUTTONS_FILL_DISABLED_COLOUR
+        )
+
+        # fill
+        pygame.draw.rect(screen, fill_colour, button_rect)
+        # border
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
+
+        # draw text on top
+        button_text_surface: pygame.Surface = font.render(
+            self.button_text, True, EVENT_BUTTONS_FONT_SIZE
+        )
+        button_text_rect = button_text_surface.get_rect(
+            center=button_rect.center
+        )
+        screen.blit(button_text_surface, button_text_rect)
 
 
 class CardDisplays(Button):
