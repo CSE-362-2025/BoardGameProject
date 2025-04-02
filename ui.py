@@ -200,12 +200,12 @@ class UI:
             )
 
             # * start the decision_event flow
-            # TODO: pass decision_event backdrop image here
+            self.save_state()
             self.open_menus.append(
                 EventMenu(
                     "Decision Event",
                     self.game_manager.current_player,
-                    image=None,
+                    image="Resources/tss.jpg",
                     event=event,
                 )
             )
