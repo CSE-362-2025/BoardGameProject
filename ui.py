@@ -10,20 +10,20 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 
 # Adjust this based on your UI layout (percentage based)
-DICE_POS = (88, 88) 
+DICE_POS = (88, 88)
 DICE_SIZE = (20, 20)
 MAIN1 = (15, 80)
 MAIN2 = (38, 80)
 MAIN3 = (62, 80)
 MAIN4 = (85, 80)
-MAINSIZE = (20,20)
+MAINSIZE = (20, 20)
 CARD1IN = (105, 20)
 CARD1OUT = (80, 20)
 CARD2IN = (105, 45)
 CARD2OUT = (80, 45)
 CARDSIZE = (30, 20)
-PAUSE = (5,2.5)
-PAUSESIZE = (10,5)
+PAUSE = (5, 2.5)
+PAUSESIZE = (10, 5)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -96,16 +96,31 @@ class UI:
         )
         self.background_img = None
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"), 
-                        Button(DICE_POS, DICE_SIZE, "Next Turn", False),
-                        Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
-                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
-                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-                        CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Leaderboard",),
-                        CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
-                        Button(PAUSE,PAUSESIZE, "Pause", True)
-                        ]
+        self.Buttons = [
+            Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
+            Button(DICE_POS, DICE_SIZE, "Next Turn", False),
+            Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
+            Button(
+                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
+            ),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                "Resources/CUSTOM_CHARA.jpg",
+                False,
+            ),
+            Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
+            CardDisplays(
+                CARD1IN,
+                CARD1OUT,
+                CARDSIZE,
+                "Leaderboard",
+            ),
+            CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Player Stats"),
+            Button(PAUSE, PAUSESIZE, "Pause", True),
+        ]
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -243,15 +258,15 @@ class UI:
             self.screen.blit(stats_surface, stats_rect)
             portrait = self.player.get_portrait()
             if portrait:
-                if self.screen.get_width()/1.75<self.screen.get_height():
-                    width = self.screen.get_width()/100
+                if self.screen.get_width() / 1.75 < self.screen.get_height():
+                    width = self.screen.get_width() / 100
                 else:
-                    width = self.screen.get_height()/60
-                portrait = pygame.transform.scale(portrait,(width*20, width*20))
-                portrait_rect = portrait.get_rect(bottomleft=(0-width,self.screen.get_height()-width))
-                self.screen.blit(portrait,portrait_rect)
-
-
+                    width = self.screen.get_height() / 60
+                portrait = pygame.transform.scale(portrait, (width * 20, width * 20))
+                portrait_rect = portrait.get_rect(
+                    bottomleft=(0 - width, self.screen.get_height() - width)
+                )
+                self.screen.blit(portrait, portrait_rect)
 
     def change_current_player(self, player):
         self.player = player
@@ -307,9 +322,8 @@ class UI:
                     # TODO: how does this work?, above constant isn't used anymore by event choice `Button` objects
                     self.open_menus.pop()
                     self.return_state()
-                case 'Quit':
+                case "Quit":
                     pygame.event.Event(quit)
-    
 
     def save_state(self):
         for button in self.Buttons:
@@ -357,11 +371,12 @@ class Menu:
 class PauseMenu(Menu):
     def __init__(self, name, image=None):
         super().__init__(name, image)
-        self.buttons = [Button(MAIN1, MAINSIZE, "Return"),
-                        Button(MAIN2, MAINSIZE, "Save"),
-                        Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
-                        Button(MAIN4, MAINSIZE, "Quit"),
-        ]   
+        self.buttons = [
+            Button(MAIN1, MAINSIZE, "Return"),
+            Button(MAIN2, MAINSIZE, "Save"),
+            Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
+            Button(MAIN4, MAINSIZE, "Quit"),
+        ]
 
 
 class EventMenu(Menu):
@@ -640,9 +655,7 @@ class EventChoiceButton(Button):
         button_text_surface: pygame.Surface = font.render(
             self.button_text, True, EVENT_BUTTONS_FONT_SIZE
         )
-        button_text_rect = button_text_surface.get_rect(
-            center=button_rect.center
-        )
+        button_text_rect = button_text_surface.get_rect(center=button_rect.center)
         screen.blit(button_text_surface, button_text_rect)
 
 
