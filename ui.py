@@ -330,10 +330,10 @@ class UI:
         self.buttonPaused = []
 
 
-def list_edit(list, item):
+def list_edit(target_list, item):
     """Removes all copies of an element from a list: helper function"""
-    list = [i for i in list if i != item]
-    return list
+    ret = [i for i in target_list if i != item]
+    return ret
 
 
 class Menu:
