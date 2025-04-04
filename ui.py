@@ -365,7 +365,6 @@ class Button:
                 else:
                     button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
                 if button_rect.collidepoint(pos):
-                    print(self.type)
                     return self.type
 
 class CardDisplays(Button):
