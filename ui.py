@@ -196,11 +196,6 @@ class UI:
             if button.visible:
                 button.display(self.screen)
 
-    # TODO: delete this test code
-    ## catch-all to force all event call
-    def display_stoptile_event(self, event):
-        self.display_decision_event(event)
-
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         if event:
