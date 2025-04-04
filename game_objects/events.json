@@ -385,4 +385,175 @@
             }
         ]
     }
+
+    {
+        "name" : "Checkmate",
+        "description" : "You’re marching past the CDH and you notice a flight formed up outside. They don’t seem to recognize you right away. And your staff are urging you to greet them. What do you do?",
+        "rarity" : 0,
+        "phase" : [1],
+    
+    
+        "choices" : [
+            {
+                "text" : "Try to “Check” them",
+                "result" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : -1},
+    
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+    
+                "consequence": "You yell as loud as you can to impress your staff, but sadly you checked the wrong flight",
+                "hide": false
+            },
+        
+            {
+                "text" : "Check them properly",
+                "result" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 1, 
+                            "athletic" : 0, 
+                            "social" : 1},
+        
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 5, 
+                            "athletic" : 0, 
+                            "social" : 0},
+        
+                "Consequence": "You notice their CFL and recognize them from the pictures on the wall in front of your room. Having successfully checked the other flight first, everyone in your flight thanks you afterwards.",
+                "hide": true
+            },
+            {
+                    "text" : "Be Confused and stay silent",
+                    "result" : {"academic" : 0, 
+                                "bilingual" : 0, 
+                                "military" : 0, 
+                                "athletic" : 0, 
+                                "social" : 0},
+        
+                    "criteria" : {"academic" : 0, 
+                                "bilingual" : 0, 
+                                "military" : 0, 
+                                "athletic" : 0, 
+                                "social" : 0},
+        
+                    "consequence": "As you haven’t the slightest clue which flight it is, you’d rather stay silent than mess up.",
+                    "hide": false
+            }
+        ]
+    }
+    
+    {
+        "name" : "oui, non, ketchup, toaster.",
+        "description" : "Votre professeur de SOLET vous offre des séances supplémentaires.",
+        "rarity" : 0,
+        "phase" : [1],
+    
+    
+        "choices" : [
+            {
+                "text" : "Vous décidez de redoubler d’effort dans votre étude du français.",
+                "result" : {"academic" : 0, 
+                            "bilingual" : 2, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+    
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+    
+                "consequence": "Après avoir assisté à plusieurs cours supplémentaires, vous vous sentez revigoré et plus confiant face à l'obtention de votre profile BBB.",
+                "hide": false
+            },
+        
+            {
+                "text" : "Vous n’avez aucun besoin de ces heures d’études supplémentaires.",
+                "result" : {"academic" : 1, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 1, 
+                            "social" : 0},
+        
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 5, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+        
+                "Consequence": "Vous décidez que votre temps est mieux utilisé pour étudier et aller au gym.",
+                "hide": true
+            },
+            {
+                    "text" : "You understood nothing of what your teacher said, but it’s fine since you have the next four years to get better at french anyway.",
+                    "result" : {"academic" : 0, 
+                                "bilingual" : -1, 
+                                "military" : 0, 
+                                "athletic" : 0, 
+                                "social" : 0},
+        
+                    "criteria" : {"academic" : 0, 
+                                "bilingual" : 0, 
+                                "military" : 0, 
+                                "athletic" : 0, 
+                                "social" : 0},
+        
+                    "consequence": "You never went to any supplemental classes, thus you never got better, actually you got worse.",
+                    "hide": false
+            }
+        ]
+    }
+    
+    {
+        "name" : "The great lake Ontario.",
+        "description" : "Friends of yours decide they want to go for a swim in the lake.",
+        "rarity" : 0,
+        "phase" : [1],
+    
+    
+        "choices" : [
+            {
+                "text" : "You think it’s a great idea and you follow them.",
+                "result" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 1, 
+                            "social" : 0},
+    
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+    
+                "consequence": "Swimming was a blast and you tell eachother you should come again.",
+                "hide": false
+            },
+        
+            {
+                "text" : "Maybe another time, the lake is getting pretty cold anyway.",
+                "result" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : -1, 
+                            "social" : 0},
+        
+                "criteria" : {"academic" : 0, 
+                            "bilingual" : 0, 
+                            "military" : 0, 
+                            "athletic" : 0, 
+                            "social" : 0},
+        
+                "Consequence": "Not wanting to get hypothermia or catch anything from the lake you stay back and feel content in your decision, but at what cost.",
+                "hide": true
+            }
+    }
 ]
