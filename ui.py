@@ -38,14 +38,14 @@ EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 
 # event title rect and font
 EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
-EVENT_TITLE_SIZE: tuple[int] = (80, 10)
-EVENT_TITLE_FONT_SIZE: int = 50
+EVENT_TITLE_SIZE: tuple[int] = (80, 5)
+EVENT_TITLE_FONT_SIZE: int = 40
 EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
 EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
 EVENT_DESC_SIZE: tuple[int] = (70, 30)
-EVENT_DESC_FONT_SIZE: int = 30
+EVENT_DESC_FONT_SIZE: int = 25
 
 # button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 85
@@ -83,6 +83,136 @@ EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
     ],
 }
 
+
+def draw_text_with_wrap_centery(surface, text, color, rect, font, aa=True, bkg=None) -> str:
+    """Helper function that draws text and wrap it to fit the given `Rect`.
+    This returns any remaining text that will not fit into the `Rect`.
+    This will force all text to have the same `centery` as the given `rect`,
+    only use for short texts.
+
+    From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
+
+    Args:
+        surface (pygame.Surface): main surface
+        text (str): text to display
+        color (tuple[int]): color of the text
+        rect (pygame.Rect): `Rect` to display text on
+        font (pygame.font.Font): `Font` to use for text
+        aa (bool, optional): anti-aliasing toggle. Defaults to True.
+        bkg (_type_, optional): background. Defaults to None.
+
+    Returns:
+        str: left over string that could not fit into given rect
+    """
+    rect = pygame.Rect(rect)
+    y = rect.top
+    line_spacing = 2
+
+    # get the height of the font
+    font_height = font.size("Tg")[1]
+
+    # padding for L/R
+    padding = surface.get_width() / 100 * 3
+
+    while text:
+        i = 1
+
+        # determine if the row of text will be outside our area
+        if y + font_height > rect.bottom:
+            break
+
+        # determine maximum width of line
+        while font.size(text[:i])[0] < rect.width - padding and i < len(text):
+            i += 1
+
+        # if we've wrapped the text, then adjust the wrap to the last word
+        if i < len(text):
+            i = text.rfind(" ", 0, i) + 1
+
+        # render the line and blit it to the surface
+        if bkg:
+            image = font.render(text[:i], True, color, bkg)
+            image.set_colorkey(bkg)
+        else:
+            image = font.render(text[:i], aa, color)
+
+        text_rect = image.get_rect(center=rect.center)
+        text_rect.centery = rect.centery
+        surface.blit(image, text_rect)
+        y += font_height + line_spacing
+
+        # remove the text we just blitted
+        text = text[i:]
+
+    return text
+
+def draw_text_with_wrap_centery_increment(
+    surface, text, color, rect, font, aa=True, bkg=None
+) -> str:
+    """Helper function that draws text and wrap it to fit the given `Rect`.
+    This returns any remaining text that will not fit into the `Rect`.
+    Text rect's will start from given rect's top and will draw until the bottom,
+    incrementing y value.
+
+    From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
+
+    Args:
+        surface (pygame.Surface): main surface
+        text (str): text to display
+        color (tuple[int]): color of the text
+        rect (pygame.Rect): `Rect` to display text on
+        font (pygame.font.Font): `Font` to use for text
+        aa (bool, optional): anti-aliasing toggle. Defaults to True.
+        bkg (_type_, optional): background. Defaults to None.
+
+    Returns:
+        str: left over string that could not fit into given rect
+    """
+
+    # padding for L/R
+    padding_lr = surface.get_width() / 100 * 3
+
+    # padding for top/bottom
+    padding_tb = surface.get_height() / 100 * 5
+    rect = pygame.Rect(rect)
+
+    y = rect.top + padding_tb
+    line_spacing = 2
+
+    # get the height of the font
+    font_height = font.size("Tg")[1]
+
+    while text:
+        i = 1
+
+        # determine if the row of text will be outside our area
+        if y + font_height > rect.bottom + padding_tb:
+            break
+
+        # determine maximum width of line
+        while font.size(text[:i])[0] < rect.width - padding_lr and i < len(text):
+            i += 1
+
+        # if we've wrapped the text, then adjust the wrap to the last word
+        if i < len(text):
+            i = text.rfind(" ", 0, i) + 1
+
+        # render the line and blit it to the surface
+        if bkg:
+            image = font.render(text[:i], True, color, bkg)
+            image.set_colorkey(bkg)
+        else:
+            image = font.render(text[:i], aa, color)
+
+        text_rect = image.get_rect(center=rect.center)
+        text_rect.centery = y
+        surface.blit(image, text_rect)
+        y += font_height + line_spacing
+
+        # remove the text we just blitted
+        text = text[i:]
+
+    return text
 
 class UI:
 
@@ -370,68 +500,6 @@ class PauseMenu(Menu):
 
 class EventMenu(Menu):
 
-    def __draw_text_with_wrap(
-        self, surface, text, color, rect, font, aa=False, bkg=None
-    ) -> str:
-        """Helper function that draws text and wrap it to fit the given `Rect`.
-        This returns any remaining text that will not fit into the `Rect`.
-
-        From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
-
-        Args:
-            surface (pygame.Surface): main surface
-            text (str): text to display
-            color (tuple[int]): color of the text
-            rect (pygame.Rect): `Rect` to display text on
-            font (pygame.font.Font): `Font` to use for text
-            aa (bool, optional): anti-aliasing toggle. Defaults to False.
-            bkg (_type_, optional): background. Defaults to None.
-
-        Returns:
-            str: left over string that could not fit into given rect
-        """
-        rect = pygame.Rect(rect)
-        y = rect.top
-        line_spacing = 2
-
-        # get the height of the font
-        font_height = font.size("Tg")[1]
-
-        # padding for L/R
-        padding = surface.get_width() / 100 * 3
-
-        while text:
-            i = 1
-
-            # determine if the row of text will be outside our area
-            if y + font_height > rect.bottom:
-                break
-
-            # determine maximum width of line
-            while font.size(text[:i])[0] < rect.width - padding and i < len(text):
-                i += 1
-
-            # if we've wrapped the text, then adjust the wrap to the last word
-            if i < len(text):
-                i = text.rfind(" ", 0, i) + 1
-
-            # render the line and blit it to the surface
-            if bkg:
-                image = font.render(text[:i], True, color, bkg)
-                image.set_colorkey(bkg)
-            else:
-                image = font.render(text[:i], aa, color)
-
-            text_rect = image.get_rect(center=rect.center)
-            text_rect.centery = y
-            surface.blit(image, text_rect)
-            y += font_height + line_spacing
-
-            # remove the text we just blitted
-            text = text[i:]
-
-        return text
-
     def __is_choice_available(self, player_stat: dict, choice_stat: dict) -> bool:
         """Check if the `player_stat` is higher or equal than `choice_stat` dictionary.
         This assumes two given dict has the same keys.
@@ -497,7 +565,7 @@ class EventMenu(Menu):
 
         # prep event title
         event_title_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/franklin_gothic_bold.ttf", EVENT_TITLE_FONT_SIZE
+            "Resources/fonts/franklin_gothic_book_italic.ttf", EVENT_TITLE_FONT_SIZE
         )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
@@ -505,13 +573,15 @@ class EventMenu(Menu):
             0,
             tss_rect_adjusted.width,
             # TODO: set height such that the longest event title can fit
-            20 * screen_height,
+            15 * screen_height,
         )
         event_title_rect.centerx = tss_rect_adjusted.centerx
-        event_title_rect.top = tss_rect_adjusted.top + 15 * screen_height
+        event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
 
         # prep event description
-        event_desc_font: pygame.font.Font = pygame.font.Font("Resources/fonts/new_gothic_std_bold.otf", EVENT_DESC_FONT_SIZE)
+        event_desc_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/news_gothic_std_medium.otf", EVENT_DESC_FONT_SIZE
+        )
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
@@ -554,16 +624,20 @@ class EventMenu(Menu):
         # resized TSS image rect
         screen.blit(tss_resized, tss_rect_adjusted)
 
+        # border for event desc rect (TSS colour)
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, event_desc_rect, 3)
+
         # draw title on top
-        self.__draw_text_with_wrap(
+        draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.name),
             EVENT_FONT_COLOUR,
             event_title_rect,
             event_title_font,
         )
+
         # draw desc on top
-        self.__draw_text_with_wrap(
+        draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.description),
             EVENT_FONT_COLOUR,
@@ -646,7 +720,7 @@ class Button(object):
 
 class EventChoiceButton(Button):
     def __draw_text_with_wrap(
-        self, surface, text, color, rect, font, aa=False, bkg=None
+        self, surface, text, color, rect, font, aa=True, bkg=None
     ) -> str:
         """Helper function that draws text and wrap it to fit the given `Rect`.
         This returns any remaining text that will not fit into the `Rect`.
@@ -659,7 +733,7 @@ class EventChoiceButton(Button):
             color (tuple[int]): color of the text
             rect (pygame.Rect): `Rect` to display text on
             font (pygame.font.Font): `Font` to use for text
-            aa (bool, optional): anti-aliasing toggle. Defaults to False.
+            aa (bool, optional): anti-aliasing toggle. Defaults to True.
             bkg (_type_, optional): background. Defaults to None.
 
         Returns:
@@ -697,8 +771,7 @@ class EventChoiceButton(Button):
             else:
                 image = font.render(text[:i], aa, color)
 
-            text_rect = image.get_rect(center=rect.center)
-            text_rect.centery = y
+            text_rect = image.get_rect(centery=rect.centery)
             surface.blit(image, text_rect)
             y += font_height + line_spacing
 
@@ -749,7 +822,7 @@ class EventChoiceButton(Button):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
 
         # draw text on top
-        self.__draw_text_with_wrap(
+        draw_text_with_wrap_centery_increment(
             screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
         )
 
