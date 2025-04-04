@@ -69,6 +69,7 @@ class UI():
                            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
                            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
         self.sounds['click'].set_volume(0.5)
+        self.track = 0
 
 
     def update(self):
@@ -113,12 +114,20 @@ class UI():
             if self.player:
                 pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
                 pygame.mixer.music.play()
-                pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                pygame.mixer.music.queue("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.queue("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                pygame.mixer.music.queue("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                match self.track:
+                    case 0:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    case 1:                
+                        pygame.mixer.music.queue("Resources/sounds/Relaxation.ogg")
+                    case 2:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    case 3:
+                        pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                    case _:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                        print("Track Reset")
+                        self.track=0
+                self.track =+ 1
             else:
                 pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
                 pygame.mixer.music.play()
@@ -254,6 +263,8 @@ class UI():
                     self.return_state()
                 case 'Quit':
                     pygame.event.Event(quit)
+        if self.game_manager.is_game_over():
+            self.player=None
     
 
     def save_state(self):
