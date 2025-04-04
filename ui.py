@@ -56,9 +56,9 @@ EVENT_BUTTONS_FONT_SIZE: int = 18
 
 # event button colours
 # TODO: match the colours with TSS background
-EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (226, 72, 45)
-EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (160, 92, 80)
-EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (71, 30, 22)
+EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
+EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (173, 118, 113)
+EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
 EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (20, 20)
