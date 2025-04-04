@@ -112,10 +112,15 @@ class UI():
     def set_sound(self):
             if self.player:
                 pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.play(2)
+                pygame.mixer.music.play()
+                pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+                pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
                 pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
             else:
-                pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
+                pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
                 pygame.mixer.music.play()
 
 
