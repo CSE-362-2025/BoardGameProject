@@ -59,6 +59,17 @@ class UI():
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
+        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
+        self.sounds['click'].set_volume(0.5)
+
 
     def update(self):
         """Updates the screen"""
@@ -80,7 +91,9 @@ class UI():
         self.display_current_turn()
         for menu in self.open_menus:
             menu.draw(self.screen)
-
+        if not pygame.mixer.music.get_busy():
+            self.set_sound()
+        
             
 
         # If there's a message to display, show it
@@ -96,8 +109,19 @@ class UI():
             if button.type == "New Game" or button.type == "Load Game" or button.type == "Custom Char" or button.type == "Settings":
                 button.turn_on()
 
+    def set_sound(self):
+            if self.player:
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+                pygame.mixer.music.play(2)
+                pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+            else:
+                pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
+                pygame.mixer.music.play()
+
+
     def game_start(self):           
         self.game_manager.start_game()
+        self.set_sound()
         self.curr_background = self.backgrounds['wood']
         self.width =1
         self.return_state()
@@ -182,10 +206,12 @@ class UI():
             if button.visible:
                 result = button.handle_click(self.screen, pos)
                 if result:
+                    self.sounds['click'].play()
                     self.buttonevents.append(result)
         for menu in self.open_menus:
             result = menu.handle_click(self.screen, pos)
             if result:
+                self.sounds['click'].play()
                 self.buttonevents.append(result)
 
     def run(self):
@@ -210,8 +236,12 @@ class UI():
                         elif button.type == "Dice":
                             button.turn_on()
                 case 'New Game':
+                    self.sounds['start'].play()
                     self.game_start()
+                case 'Save':
+                    random.choice(list(self.sounds.values())).play()
                 case 'Pause':
+                    self.sounds['pause'].play()
                     self.save_state()
                     self.open_menus.append(PauseMenu("Pause"))
                 case 'Return':
