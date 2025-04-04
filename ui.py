@@ -204,10 +204,6 @@ class UI:
     # Pass in event and display decision choices
     def display_decision_event(self, event):
         if event:
-            self.display_message(
-                f"(starting event) {event.name}: {', '.join([choice['text'] for choice in event.choices])}"
-            )
-
             # * start the decision_event flow
             self.save_state()
             self.open_menus.append(
