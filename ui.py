@@ -605,7 +605,6 @@ class Button(object):
             if self.enabled:
                 screen_width = screen.get_width() / 100
                 screen_height = screen.get_height() / 100
-                font = pygame.font.Font(None, 16)
                 # Check if the click was inside the dice area
                 button_rect = pygame.Rect(
                     (self.position[0] - self.size[0] / 2) * screen_width,
