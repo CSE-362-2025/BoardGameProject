@@ -39,20 +39,20 @@ EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 # event title rect and font
 EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
 EVENT_TITLE_SIZE: tuple[int] = (80, 10)
-EVENT_TITLE_FONT_SIZE: int = 30
-EVENT_TITLE_FONT_COLOUR: tuple[int] = (173, 118, 113)
+EVENT_TITLE_FONT_SIZE: int = 50
+EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
 EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
 EVENT_DESC_SIZE: tuple[int] = (70, 30)
-EVENT_DESC_FONT_SIZE: int = 20
+EVENT_DESC_FONT_SIZE: int = 30
 
 # button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 85
 EVENT_BUTTONS_POS_Y_TOP_ROW: int = 70
 
 # event button text size
-EVENT_BUTTONS_FONT_SIZE: int = 18
+EVENT_BUTTONS_FONT_SIZE: int = 22
 
 # event button colours
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
@@ -497,7 +497,7 @@ class EventMenu(Menu):
 
         # prep event title
         event_title_font: pygame.font.Font = pygame.font.Font(
-            None, EVENT_TITLE_FONT_SIZE
+            "Resources/fonts/franklin_gothic_bold.ttf", EVENT_TITLE_FONT_SIZE
         )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
@@ -511,7 +511,7 @@ class EventMenu(Menu):
         event_title_rect.top = tss_rect_adjusted.top + 15 * screen_height
 
         # prep event description
-        event_desc_font: pygame.font.Font = pygame.font.Font(None, EVENT_DESC_FONT_SIZE)
+        event_desc_font: pygame.font.Font = pygame.font.Font("Resources/fonts/new_gothic_std_bold.otf", EVENT_DESC_FONT_SIZE)
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
@@ -556,11 +556,19 @@ class EventMenu(Menu):
 
         # draw title on top
         self.__draw_text_with_wrap(
-            screen, str(self.event.name), BLACK, event_title_rect, event_title_font
+            screen,
+            str(self.event.name),
+            EVENT_FONT_COLOUR,
+            event_title_rect,
+            event_title_font,
         )
         # draw desc on top
         self.__draw_text_with_wrap(
-            screen, str(self.event.description), BLACK, event_desc_rect, event_desc_font
+            screen,
+            str(self.event.description),
+            EVENT_FONT_COLOUR,
+            event_desc_rect,
+            event_desc_font,
         )
 
         # ensure buttons are drawn over menu
@@ -742,7 +750,7 @@ class EventChoiceButton(Button):
 
         # draw text on top
         self.__draw_text_with_wrap(
-            screen, self.button_text, BLACK, button_rect, button_font
+            screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
         )
 
 
