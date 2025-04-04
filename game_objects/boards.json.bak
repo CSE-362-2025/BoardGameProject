@@ -1,0 +1,194 @@
+[
+    {
+    "year" : 1,
+    "tiles" : 
+        [
+            {
+                "position": 1,
+                "tile_type": "StartTile",
+                "screen_position": [1,1]
+
+            },
+            {
+                "position": 2,
+                "tile_type": "BadTile",
+                "screen_position": [3,1]
+
+            },
+            {
+                "position": 3,
+                "tile_type": "EventTile",
+                "screen_position": [5,1]
+
+            },
+            {
+                "position": 4,
+                "tile_type": "EventTile",
+                "screen_position": [7,1]
+
+            },
+            {
+                "position": 5,
+                "tile_type": "GoodTile",
+                "screen_position": [9,1]
+
+            },
+            {
+                "position": 6,
+                "tile_type": "EventTile",
+                "screen_position": [11,1]
+
+            },
+            {
+                "position": 7,
+                "tile_type": "GoodTile",
+                "screen_position": [13,1]
+
+            },
+            {
+                "position": 8,
+                "tile_type": "EventTile",
+                "screen_position": [13,3]
+
+            },
+            {
+                "position": 9,
+                "tile_type": "StopTile",
+                "screen_position": [13,5],
+                "paths": [10, 100],
+                "event": {}
+
+            },
+            {
+                "position": 10,
+                "tile_type": "BadTile",
+                "screen_position": [11,5]
+
+            },
+            {
+                "position": 11,
+                "tile_type": "EventTile",
+                "screen_position": [9,5]
+
+            },
+            {
+                "position": 12,
+                "tile_type": "BadTile",
+                "screen_position": [7,5]
+
+            },
+            {
+                "position": 13,
+                "tile_type": "StopTile",
+                "screen_position": [5,5],
+                "paths": [],
+                "event": {}
+
+            },
+            {
+                "position": 14,
+                "tile_type": "GoodTile",
+                "screen_position": [3,5]
+
+            },
+            {
+                "position": 15,
+                "tile_type": "EventTile",
+                "screen_position": [2,6]
+
+            },
+            {
+                "position": 16,
+                "tile_type": "GoodTile",
+                "screen_position": [2,8]
+
+            },
+            {
+                "position": 17,
+                "tile_type": "EventTile",
+                "screen_position": [2,10]
+
+            },
+            {
+                "position": 110,
+                "tile_type": "EventTile",
+                "screen_position": [13,7]
+
+            },
+            {
+                "position": 111,
+                "tile_type": "EventTile",
+                "screen_position": [13,9]
+
+            },
+            {
+                "position": 112,
+                "tile_type": "EventTile",
+                "screen_position": [12,10]
+
+            },
+            {
+                "position": 113,
+                "tile_type": "StopTile",
+                "screen_position": [10,10],
+                "paths": [],
+                "event": {}
+
+            },
+            {
+                "position": 114,
+                "tile_type": "EventTile",
+                "screen_position": [8,10]
+
+            },
+            {
+                "position": 115,
+                "tile_type": "EventTile",
+                "screen_position": [6,10]
+
+            },
+            {
+                "position": 116,
+                "tile_type": "EventTile",
+                "screen_position": [4,10]
+
+            },
+            {
+                "position": 18,
+                "tile_type": "EventTile",
+                "screen_position": [2,12]
+
+            },
+            {
+                "position": 19,
+                "tile_type": "EventTile",
+                "screen_position": [3,14]
+            },
+            {
+                "position": 20,
+                "tile_type": "BadTile",
+                "screen_position": [5,14]
+            },
+            {
+                "position": 21,
+                "tile_type": "EventTile",
+                "screen_position": [7,14]
+            },
+            {
+                "position": 22,
+                "tile_type": "GoodTile",
+                "screen_position": [9,14]
+            },
+            {
+                "position": 23,
+                "tile_type": "EventTile",
+                "screen_position": [11,14]
+            },
+            {
+                "position": 24,
+                "tile_type": "EndTile",
+                "screen_position": [13,14]
+            }
+        ]
+    }
+]

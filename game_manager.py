@@ -249,7 +249,8 @@ class GameManager:
                 else:
                     break
 
-        
+        # adding return statement
+        return event
 
     def is_game_over(self):
         return self.turn_count >= 40
