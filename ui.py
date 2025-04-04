@@ -11,12 +11,12 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 # Adjust this based on your UI layout (percentage based)
 DICE_POS = (88, 88) 
-DICE_SIZE = (20, 20)
-MAIN1 = (15, 80)
-MAIN2 = (38, 80)
-MAIN3 = (62, 80)
-MAIN4 = (85, 80)
-MAINSIZE = (20,20)
+DICE_SIZE = (20, 15)
+MAIN1 = (15, 70)
+MAIN2 = (38, 70)
+MAIN3 = (62, 70)
+MAIN4 = (85, 70)
+MAINSIZE = (20,12)
 CARD1IN = (115, 17.5)
 CARD1OUT = (90, 17.5)
 CARD2IN = (115, 32.5)
@@ -37,7 +37,11 @@ class UI():
         self.game_manager = game_manager
         self.player = player
         self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
-        self.background_img = None
+        self.width = self.screen.get_width()
+        self.backgrounds = dict(title="Resources/Title_Screen.png",
+                            wood="Resources/background_wood.png")
+        self.curr_background = self.backgrounds['title']
+        self.background_img = pygame.transform.scale(pygame.image.load(self.curr_background),(self.screen.get_width(), self.screen.get_width()*(41/59)))
         self.font = pygame.font.Font(None, 16)
         self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"), 
                         Button(DICE_POS, DICE_SIZE, "Next Turn", False),
@@ -57,14 +61,18 @@ class UI():
         self.message_duration = 0  # Number of frames the message will stay on screen
 
     def update(self):
+        """Updates the screen"""
         board = self.game_manager.board
         players = self.game_manager.players
         """Updates and draws all necessary UI components."""  
-        # Draw the board, dice, and stats
-        self.screen.fill(BG_COLOR)  # Clear screen first
+        # Draw the board, dice, and stats, starting by filling the background with either an image or colour
         if self.background_img:
-            img = pygame.transform.scale(pygame.image.load(self.background_img),(self.screen.get_width(), self.screen.get_height()))
-            self.screen.blit(img)
+            if self.width != self.screen.get_width():
+                self.width = self.screen.get_width()
+                self.background_img = pygame.transform.scale(pygame.image.load(self.curr_background),(self.screen.get_width(), self.screen.get_width()*(41/59)))    
+            self.screen.blit(self.background_img, (0,0))
+        else:
+            self.screen.fill(BG_COLOR)
         if board:
             self.display_board(board, players)  # Call a method to draw the game board (implement as needed)
         self.display_buttons()   # Call a method to display the dice
@@ -90,6 +98,8 @@ class UI():
 
     def game_start(self):           
         self.game_manager.start_game()
+        self.curr_background = self.backgrounds['wood']
+        self.width =1
         self.return_state()
 
     def display_board(self, board, players):
@@ -145,9 +155,9 @@ class UI():
         # Example of displaying player stats in the bottom-left corner
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            info = (self.player.name, self.player.stats)
-            self.Buttons[0].update_info(info)
             portrait = self.player.get_portrait()
+            info = (self.player.name, self.player.stats, portrait)
+            self.Buttons[0].update_info(info)
             if portrait:
                 if self.screen.get_width()/1.75<self.screen.get_height():
                     width = self.screen.get_width()/100
@@ -288,13 +298,20 @@ class Button:
             screen_height = screen.get_height()/100
             font = pygame.font.Font(None, 16)
             # Draw dice background (square)
-            button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
             if self.image:
+                if screen_width/2<screen_height:
+                    button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]*screen_height-(self.size[1]/2)*screen_width), self.size[0]*screen_width, self.size[1]*screen_width)
+                    screen_height = screen_width
+                else:
+                    button_rect = pygame.Rect(self.position[0]*screen_width-(self.size[0]*screen_height),self.position[1]*screen_height-(self.size[1]*screen_height), self.size[0]*2*screen_height, self.size[1]*2*screen_height)
+                    screen_height = screen_height*2
+                    screen_width = screen_height
                 buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
             else:
+                button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
                 if self.enabled:
                     pygame.draw.rect(screen, WHITE, button_rect)  # Background of the button
                 pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the button
@@ -308,10 +325,17 @@ class Button:
             if self.enabled: 
                 screen_width = screen.get_width()/100
                 screen_height = screen.get_height()/100
-                font = pygame.font.Font(None, 16)
                 # Check if the click was inside the dice area
-                button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+                
+                if self.image:
+                    if screen_width/2<screen_height:
+                        button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]*screen_height-(self.size[1]/2)*screen_width), self.size[0]*screen_width, self.size[1]*screen_width)
+                    else:
+                        button_rect = pygame.Rect(self.position[0]*screen_width-(self.size[0]*screen_height),self.position[1]*screen_height-(self.size[1]*screen_height), self.size[0]*2*screen_height, self.size[1]*2*screen_height)
+                else:
+                    button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
                 if button_rect.collidepoint(pos):
+                    print(self.type)
                     return self.type
 
 class CardDisplays(Button):
@@ -333,8 +357,12 @@ class CardDisplays(Button):
             # Draw dice background (square)
             button_rect = pygame.Rect((self.position[0]-w)*screen_width,(self.position[1]-h)*screen_height, w*screen_width, h*screen_height)
             if self.image:
+                if screen_width/1.75<screen_height:
+                    screen_height = screen_width
+                else:
+                    screen_width = screen_height
                 buttonimg = pygame.transform.scale(pygame.image.load(self.image),(w*screen_width,h*screen_height))
-                buttonimg = self.add_stats(buttonimg.copy(), font)
+                buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -348,18 +376,25 @@ class CardDisplays(Button):
                 text_surface = self.add_stats(text_surface, text_rect)
                 screen.blit(text_surface, text_rect)  # Draw the text on the screen
 
-    def add_stats(self, buttonimg, font):
+    def add_stats(self, buttonimg):
         if self.info:
             width = buttonimg.get_width()/100
             height = buttonimg.get_height()/100
+            font = pygame.font.Font(None, int(height*8))
             name = font.render(str(self.info[0]), False, WHITE)
-            buttonimg.blit(name, (30*width, 20*height))
+            buttonimg.blit(name, (30*width, 25.5*height))
             base = 40
             for item in self.info[1]:
                 stat = font.render(str(item), True, BLACK)
+                val = font.render(str(self.info[1][item]), True, BLACK)
                 buttonimg.blit(stat, (50*width, base*height))
+                buttonimg.blit(val, (85*width, base*height))
                 base = base+10
-            
+            portrait = pygame.transform.scale(self.info[2],(width*40, width*40))
+            portrait_rect = portrait.get_rect(bottomleft=(0-width+10,(height*100)-width-5))
+            outline = portrait_rect.scale_by(0.67, 0.8)
+            pygame.draw.rect(buttonimg, BLACK, outline, 3)
+            buttonimg.blit(portrait,portrait_rect)
         return buttonimg
 
     def update_info(self, info):
