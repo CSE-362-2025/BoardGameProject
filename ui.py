@@ -722,11 +722,6 @@ class EventChoiceButton(Button):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
 
         # draw text on top
-        # button_text_surface: pygame.Surface = button_font.render(
-        #     self.button_text, True, EVENT_BUTTONS_FONT_SIZE
-        # )
-        # button_text_rect = button_text_surface.get_rect(center=button_rect.center)
-        # screen.blit(button_text_surface, button_text_rect)
         self.__draw_text_with_wrap(
             screen, self.button_text, BLACK, button_rect, button_font
         )
