@@ -35,6 +35,11 @@
 
 - Have a pool of events that 
 
+### EndScreen
+
+player.awards: Dict of stats with bool
+player.end_text: string of unique text
+
 ## To-do
 
 - Add a way to move in a different direction after a stop tile. (done ish)

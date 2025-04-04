@@ -18,7 +18,6 @@ class Player:
         self.position = 1
         self.curr_pos_draw = [0,0]
         self.next_pos_draw = [0,0]
-        self.events_played = []
         self.has_moved = True
         self.image=image
         self.portrait=portrait
@@ -35,10 +34,10 @@ class Player:
 
         else:
             self.stats = {  # Caps at 10 and can't go below 0
+                "academic": 5,                
                 "bilingual": 5,
+                "military": 5,                
                 "athletic": 5,
-                "military": 5,
-                "academic": 5,
                 "social": 5,
             }
         
@@ -57,8 +56,21 @@ class Player:
             "BoardY4": 0
         }
 
+        self.events_played = []
+        self.events_played_id = []  # stores event ids of events played
+
         # Every roll gets added to the list 
         self.rolls = []
+
+        # End Screen Information: Generated in generate_end() in game_manager.py
+        self.awards = {
+            "academic": False,                
+            "bilingual": False,
+            "military": False,                
+            "athletic": False,
+            "social": False,
+        }
+        self.end_text = ""
 
     def move(self, spaces):
         self.position += spaces
@@ -80,8 +92,10 @@ class Player:
     def store_event(self, event, choice_idx=None):
         if choice_idx is not None:
             self.events_played.append((event.id, choice_idx))
+            self.events_played_id.append(event.id)
         else:
             self.events_played.append((event.id, None))
+            self.events_played_id.append(event.id)
 
     def get_stats(self):
         return self.stats
