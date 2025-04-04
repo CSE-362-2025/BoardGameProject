@@ -39,13 +39,13 @@ EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 # event title rect and font
 EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
 EVENT_TITLE_SIZE: tuple[int] = (80, 10)
-EVENT_TITLE_FONT_SIZE: int = 90
+EVENT_TITLE_FONT_SIZE: int = 30
 EVENT_TITLE_FONT_COLOUR: tuple[int] = (173, 118, 113)
 
 # event description and font
 EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
 EVENT_DESC_SIZE: tuple[int] = (70, 30)
-EVENT_DESC_FONT_SIZE: int = 30
+EVENT_DESC_FONT_SIZE: int = 20
 
 # button y constant for two rows
 EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 85
@@ -55,13 +55,12 @@ EVENT_BUTTONS_POS_Y_TOP_ROW: int = 70
 EVENT_BUTTONS_FONT_SIZE: int = 18
 
 # event button colours
-# TODO: match the colours with TSS background
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
 EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (182, 133, 129)
 EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
-EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (13, 10)
+EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 15)
 
 # type str
 EVENT_BUTTONS_CHOICE_TYPE_STR: str = "Decision Event Choice"
@@ -72,15 +71,15 @@ EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
     1: [(50, EVENT_BUTTONS_POS_Y_TOP_ROW)],
     2: [(40, EVENT_BUTTONS_POS_Y_TOP_ROW), (60, EVENT_BUTTONS_POS_Y_TOP_ROW)],
     3: [
-        (35, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (30, EVENT_BUTTONS_POS_Y_TOP_ROW),
         (50, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (65, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (70, EVENT_BUTTONS_POS_Y_TOP_ROW),
     ],
     4: [
         (40, EVENT_BUTTONS_POS_Y_TOP_ROW),
         (60, EVENT_BUTTONS_POS_Y_TOP_ROW),
         (40, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (75, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (60, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
     ],
 }
 
@@ -389,7 +388,7 @@ class EventMenu(Menu):
             bkg (_type_, optional): background. Defaults to None.
 
         Returns:
-            _type_: _description_
+            str: left over string that could not fit into given rect
         """
         rect = pygame.Rect(rect)
         y = rect.top
@@ -399,13 +398,13 @@ class EventMenu(Menu):
         font_height = font.size("Tg")[1]
 
         # padding for L/R
-        padding = surface.get_width() / 100 * 10
+        padding = surface.get_width() / 100 * 3
 
         while text:
             i = 1
 
             # determine if the row of text will be outside our area
-            if y + font_height + padding > rect.bottom:
+            if y + font_height > rect.bottom:
                 break
 
             # determine maximum width of line
@@ -424,6 +423,7 @@ class EventMenu(Menu):
                 image = font.render(text[:i], aa, color)
 
             text_rect = image.get_rect(center=rect.center)
+            text_rect.centery = y
             surface.blit(image, text_rect)
             y += font_height + line_spacing
 
@@ -489,40 +489,45 @@ class EventMenu(Menu):
         # load TSS image
         tss = pygame.image.load(EVENT_RECT_TSS_PATH)
         tss.convert()
-        tss_rect: pygame.rect.Rect = tss.get_rect()
+        tss_rect: pygame.Rect = tss.get_rect()
 
         # fit TSS into event_rect
-        tss_rect_adjusted: pygame.rect.Rect = tss_rect.fit(event_rect)
+        tss_rect_adjusted: pygame.Rect = tss_rect.fit(event_rect)
         tss_resized = pygame.transform.scale(tss, tss_rect_adjusted.size)
 
-        screen.blit(tss_resized, tss_rect_adjusted)
-
-        # TODO: draw event title
+        # prep event title
         event_title_font: pygame.font.Font = pygame.font.Font(
             None, EVENT_TITLE_FONT_SIZE
         )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
-            tss_rect_adjusted.left + (10 * screen_width),
-            tss_rect_adjusted.top + (10 * screen_height),
-            tss_rect_adjusted.width - (20 * screen_width),
-            20,
+            0,
+            0,
+            tss_rect_adjusted.width,
+            # TODO: set height such that the longest event title can fit
+            20 * screen_height,
         )
-        # pygame.draw.rect(screen, (0,0,0,50), event_title_rect)
-        self.__draw_text_with_wrap(
-            screen, str(self.event.name), WHITE, event_title_rect, event_title_font
-        )
+        event_title_rect.centerx = tss_rect_adjusted.centerx
+        event_title_rect.top = tss_rect_adjusted.top + 15 * screen_height
 
-        # TODO: draw event desc
+        # prep event description
+        event_desc_font: pygame.font.Font = pygame.font.Font(None, EVENT_DESC_FONT_SIZE)
+        event_desc_rect: pygame.Rect = pygame.Rect(
+            0,
+            0,
+            tss_rect_adjusted.width,
+            # TODO: set height such that the longest event title can fit
+            30 * screen_height,
+        )
+        event_desc_rect.centerx = tss_rect_adjusted.centerx
+        event_desc_rect.top = event_title_rect.bottom
 
         # * create buttons for available options
-
         choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[
             len(self.event.choices)
         ]
-
         # reset every frame
-        self.buttons: EventChoiceButton = []
+        self.buttons: list[EventChoiceButton] = []
         for i, each_choice in enumerate(self.event.choices):
             # grab stat dict to compare
             curr_player_stat: dict = self.curr_player.stats
@@ -543,6 +548,21 @@ class EventMenu(Menu):
                 enabled=is_enabled,
             )
             self.buttons.append(each_choice_button)
+
+        # * ALL draw events
+
+        # resized TSS image rect
+        screen.blit(tss_resized, tss_rect_adjusted)
+
+        # draw title on top
+        self.__draw_text_with_wrap(
+            screen, str(self.event.name), BLACK, event_title_rect, event_title_font
+        )
+        # draw desc on top
+        self.__draw_text_with_wrap(
+            screen, str(self.event.description), BLACK, event_desc_rect, event_desc_font
+        )
+
         # ensure buttons are drawn over menu
         for each_button in self.buttons:
             each_button.display(screen)
@@ -635,7 +655,7 @@ class EventChoiceButton(Button):
             bkg (_type_, optional): background. Defaults to None.
 
         Returns:
-            _type_: _description_
+            str: left over string that could not fit into given rect
         """
         rect = pygame.Rect(rect)
         y = rect.top
@@ -643,6 +663,9 @@ class EventChoiceButton(Button):
 
         # get the height of the font
         font_height = font.size("Tg")[1]
+
+        # padding for L/R
+        padding = surface.get_width() / 100 * 3
 
         while text:
             i = 1
@@ -652,7 +675,7 @@ class EventChoiceButton(Button):
                 break
 
             # determine maximum width of line
-            while font.size(text[:i])[0] < rect.width and i < len(text):
+            while font.size(text[:i])[0] < rect.width - padding and i < len(text):
                 i += 1
 
             # if we've wrapped the text, then adjust the wrap to the last word
@@ -666,7 +689,9 @@ class EventChoiceButton(Button):
             else:
                 image = font.render(text[:i], aa, color)
 
-            surface.blit(image, (rect.left, y))
+            text_rect = image.get_rect(center=rect.center)
+            text_rect.centery = y
+            surface.blit(image, text_rect)
             y += font_height + line_spacing
 
             # remove the text we just blitted
