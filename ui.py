@@ -117,8 +117,8 @@ class UI():
                 match self.track:
                     case 0:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1:                
-                        pygame.mixer.music.queue("Resources/sounds/Relaxation.ogg")
+                    case 1: 
+                        pass
                     case 2:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
                     case 3:
