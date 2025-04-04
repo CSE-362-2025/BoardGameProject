@@ -32,14 +32,15 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 ## constants for event popup screen
 
 # Rect with TSS background
-EVENT_RECT_POS_CENTRE: tuple[int] = (50, 60)
-EVENT_RECT_SIZE: tuple[int] = (50, 80)
+EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
+EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 
 # event title rect and font
 EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
 EVENT_TITLE_SIZE: tuple[int] = (80, 10)
-EVENT_TITLE_FONT_SIZE: int = 50
+EVENT_TITLE_FONT_SIZE: int = 90
+EVENT_TITLE_FONT_COLOUR: tuple[int] = (173, 118, 113)
 
 # event description and font
 EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
@@ -47,8 +48,8 @@ EVENT_DESC_SIZE: tuple[int] = (70, 30)
 EVENT_DESC_FONT_SIZE: int = 30
 
 # button y constant for two rows
-EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 80
-EVENT_BUTTONS_POS_Y_TOP_ROW: int = 50
+EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 85
+EVENT_BUTTONS_POS_Y_TOP_ROW: int = 70
 
 # event button text size
 EVENT_BUTTONS_FONT_SIZE: int = 18
@@ -56,11 +57,11 @@ EVENT_BUTTONS_FONT_SIZE: int = 18
 # event button colours
 # TODO: match the colours with TSS background
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
-EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (173, 118, 113)
+EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (182, 133, 129)
 EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
-EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (20, 20)
+EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (13, 10)
 
 # type str
 EVENT_BUTTONS_CHOICE_TYPE_STR: str = "Decision Event Choice"
@@ -68,17 +69,17 @@ EVENT_BUTTONS_CHOICE_TYPE_STR: str = "Decision Event Choice"
 # mapping number of all choices -> their position tuple
 # TODO: placeholder value, match all position coordinates with event popup background image
 EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
-    1: [(50, EVENT_BUTTONS_POS_Y_BOTTOM_ROW)],
-    2: [(30, EVENT_BUTTONS_POS_Y_BOTTOM_ROW), (80, EVENT_BUTTONS_POS_Y_BOTTOM_ROW)],
+    1: [(50, EVENT_BUTTONS_POS_Y_TOP_ROW)],
+    2: [(40, EVENT_BUTTONS_POS_Y_TOP_ROW), (60, EVENT_BUTTONS_POS_Y_TOP_ROW)],
     3: [
-        (20, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (40, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (60, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (35, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (50, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (65, EVENT_BUTTONS_POS_Y_TOP_ROW),
     ],
     4: [
-        (15, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (35, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (55, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
+        (40, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (60, EVENT_BUTTONS_POS_Y_TOP_ROW),
+        (40, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
         (75, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
     ],
 }
@@ -312,9 +313,8 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
-                case "Decision Event Choice":
+                case "choice":
                     # one choice button has been clicked, clean up and back to menu
-                    # TODO: how does this work?, above constant isn't used anymore by event choice `Button` objects
                     self.open_menus.pop()
                     self.return_state()
                 case "Quit":
@@ -398,20 +398,23 @@ class EventMenu(Menu):
         """
         rect = pygame.Rect(rect)
         y = rect.top
-        line_spacing = -2
+        line_spacing = 2
 
         # get the height of the font
         font_height = font.size("Tg")[1]
+
+        # padding for L/R
+        padding = surface.get_width() / 100 * 10
 
         while text:
             i = 1
 
             # determine if the row of text will be outside our area
-            if y + font_height > rect.bottom:
+            if y + font_height + padding > rect.bottom:
                 break
 
             # determine maximum width of line
-            while font.size(text[:i])[0] < rect.width and i < len(text):
+            while font.size(text[:i])[0] < rect.width - padding and i < len(text):
                 i += 1
 
             # if we've wrapped the text, then adjust the wrap to the last word
@@ -420,12 +423,13 @@ class EventMenu(Menu):
 
             # render the line and blit it to the surface
             if bkg:
-                image = font.render(text[:i], 1, color, bkg)
+                image = font.render(text[:i], True, color, bkg)
                 image.set_colorkey(bkg)
             else:
                 image = font.render(text[:i], aa, color)
 
-            surface.blit(image, (rect.left, y))
+            text_rect = image.get_rect(center=rect.center)
+            surface.blit(image, text_rect)
             y += font_height + line_spacing
 
             # remove the text we just blitted
@@ -466,35 +470,6 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
 
-        # * create buttons for available options
-
-        choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[len(event.choices)]
-
-        for i, each_choice in enumerate(event.choices):
-            # grab stat dict to compare
-            curr_player_stat: dict = self.curr_player.stats
-            choice_criteria_stat: dict = each_choice["criteria"]
-
-            # check if current player can choose this choice
-            is_enabled: bool = self.__is_choice_available(
-                curr_player_stat, choice_criteria_stat
-            )
-
-            # TODO: create tss rect here
-
-            # TODO: pass the `Surface` of TSS rect to button
-            # create EventChoiceButton
-            each_choice_button: Button = EventChoiceButton(
-                tss_surface=None,
-                button_text=each_choice["text"],
-                centre=choice_button_pos[i],
-                size=EVENT_BUTTONS_CHOICE_SIZE,
-                # string to display on the button
-                _type=each_choice["text"],
-                enabled=is_enabled,
-            )
-            self.buttons.append(each_choice_button)
-
     def draw(self, screen):
         super().draw(screen)
 
@@ -510,7 +485,7 @@ class EventMenu(Menu):
             EVENT_RECT_POS_CENTRE[1] - EVENT_RECT_SIZE[1] / 2
         ) * screen_height
         event_rect_width = EVENT_RECT_SIZE[0] * screen_width
-        event_rect_height = EVENT_RECT_SIZE[1] * screen_height
+        event_rect_height = screen.get_height()
 
         event_rect: pygame.Rect = pygame.Rect(
             event_rect_left, event_rect_top, event_rect_width, event_rect_height
@@ -527,12 +502,55 @@ class EventMenu(Menu):
 
         screen.blit(tss_resized, tss_rect_adjusted)
 
-        # * draw event title
+        # TODO: draw event title
         event_title_font: pygame.font.Font = pygame.font.Font(
             None, EVENT_TITLE_FONT_SIZE
         )
+        # title rect with padding
+        event_title_rect: pygame.Rect = pygame.Rect(
+            tss_rect_adjusted.left + (10 * screen_width),
+            tss_rect_adjusted.top + (10 * screen_height),
+            tss_rect_adjusted.width - (20 * screen_width),
+            20,
+        )
+        # pygame.draw.rect(screen, (0,0,0,50), event_title_rect)
+        self.__draw_text_with_wrap(
+            screen, str(self.event.name), WHITE, event_title_rect, event_title_font
+        )
 
-        # * draw event desc
+        # TODO: draw event desc
+
+        # * create buttons for available options
+
+        choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[
+            len(self.event.choices)
+        ]
+
+        # reset every frame
+        self.buttons: EventChoiceButton = []
+        for i, each_choice in enumerate(self.event.choices):
+            # grab stat dict to compare
+            curr_player_stat: dict = self.curr_player.stats
+            choice_criteria_stat: dict = each_choice["criteria"]
+
+            # check if current player can choose this choice
+            is_enabled: bool = self.__is_choice_available(
+                curr_player_stat, choice_criteria_stat
+            )
+
+            # create EventChoiceButton
+            each_choice_button: Button = EventChoiceButton(
+                button_text=each_choice["text"],
+                centre=choice_button_pos[i],
+                size=EVENT_BUTTONS_CHOICE_SIZE,
+                # string to display on the button
+                _type="choice",
+                enabled=is_enabled,
+            )
+            self.buttons.append(each_choice_button)
+        # ensure buttons are drawn over menu
+        for each_button in self.buttons:
+            each_button.display(screen)
 
 
 class Button(object):
@@ -605,14 +623,70 @@ class Button(object):
 
 
 class EventChoiceButton(Button):
+    def __draw_text_with_wrap(
+        self, surface, text, color, rect, font, aa=False, bkg=None
+    ) -> str:
+        """Helper function that draws text and wrap it to fit the given `Rect`.
+        This returns any remaining text that will not fit into the `Rect`.
 
-    def __init__(self, button_text: str, tss_surface: pygame.Surface, *args, **kwargs):
-        self.tss_surface = tss_surface
+        From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
+
+        Args:
+            surface (pygame.Surface): main surface
+            text (str): text to display
+            color (tuple[int]): color of the text
+            rect (pygame.Rect): `Rect` to display text on
+            font (pygame.font.Font): `Font` to use for text
+            aa (bool, optional): anti-aliasing toggle. Defaults to False.
+            bkg (_type_, optional): background. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
+        rect = pygame.Rect(rect)
+        y = rect.top
+        line_spacing = -2
+
+        # get the height of the font
+        font_height = font.size("Tg")[1]
+
+        while text:
+            i = 1
+
+            # determine if the row of text will be outside our area
+            if y + font_height > rect.bottom:
+                break
+
+            # determine maximum width of line
+            while font.size(text[:i])[0] < rect.width and i < len(text):
+                i += 1
+
+            # if we've wrapped the text, then adjust the wrap to the last word
+            if i < len(text):
+                i = text.rfind(" ", 0, i) + 1
+
+            # render the line and blit it to the surface
+            if bkg:
+                image = font.render(text[:i], 1, color, bkg)
+                image.set_colorkey(bkg)
+            else:
+                image = font.render(text[:i], aa, color)
+
+            surface.blit(image, (rect.left, y))
+            y += font_height + line_spacing
+
+            # remove the text we just blitted
+            text = text[i:]
+
+        return text
+
+    def __init__(self, button_text: str, *args, **kwargs):
         self.button_text = button_text
         super().__init__(*args, **kwargs)
 
     def display(self, screen):
-        """Overridden, display button with choice-button-style
+        """Overridden, display button with choice-button-style.
+        Draw TSS backdrop with texts (title, description) first, then choice buttons.
 
         Args:
             screen (Surface): main game screen
@@ -625,7 +699,8 @@ class EventChoiceButton(Button):
         # ! DRY
         screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
-        font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
+
+        button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
 
         button_rect = pygame.rect.Rect(
             (self.position[0] - self.size[0] / 2) * screen_width,
@@ -647,11 +722,14 @@ class EventChoiceButton(Button):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
 
         # draw text on top
-        button_text_surface: pygame.Surface = font.render(
-            self.button_text, True, EVENT_BUTTONS_FONT_SIZE
+        # button_text_surface: pygame.Surface = button_font.render(
+        #     self.button_text, True, EVENT_BUTTONS_FONT_SIZE
+        # )
+        # button_text_rect = button_text_surface.get_rect(center=button_rect.center)
+        # screen.blit(button_text_surface, button_text_rect)
+        self.__draw_text_with_wrap(
+            screen, self.button_text, BLACK, button_rect, button_font
         )
-        button_text_rect = button_text_surface.get_rect(center=button_rect.center)
-        screen.blit(button_text_surface, button_text_rect)
 
 
 class CardDisplays(Button):
