@@ -36,20 +36,17 @@ EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 
+# margin for left/right in percentage
+EVENT_LR_MARGIN: int = 3
+# margin for top/bottom in percentage
+EVENT_TB_MARGIN: int = 2
+
 # event title rect and font
-EVENT_TITLE_POS_CENTRE: tuple[int] = (50, 10)
-EVENT_TITLE_SIZE: tuple[int] = (80, 5)
 EVENT_TITLE_FONT_SIZE: int = 40
 EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
-EVENT_DESC_POS_CENTRE: tuple[int] = (50, 30)
-EVENT_DESC_SIZE: tuple[int] = (70, 30)
 EVENT_DESC_FONT_SIZE: int = 25
-
-# button y constant for two rows
-EVENT_BUTTONS_POS_Y_BOTTOM_ROW: int = 85
-EVENT_BUTTONS_POS_Y_TOP_ROW: int = 70
 
 # event button text size
 EVENT_BUTTONS_FONT_SIZE: int = 22
@@ -60,28 +57,7 @@ EVENT_BUTTONS_FILL_ENABLED_COLOUR: tuple[int] = (182, 133, 129)
 EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
-EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 15)
-
-# type str
-EVENT_BUTTONS_CHOICE_TYPE_STR: str = "Decision Event Choice"
-
-# mapping number of all choices -> their position tuple
-# TODO: placeholder value, match all position coordinates with event popup background image
-EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
-    1: [(50, EVENT_BUTTONS_POS_Y_TOP_ROW)],
-    2: [(40, EVENT_BUTTONS_POS_Y_TOP_ROW), (60, EVENT_BUTTONS_POS_Y_TOP_ROW)],
-    3: [
-        (30, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (50, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (70, EVENT_BUTTONS_POS_Y_TOP_ROW),
-    ],
-    4: [
-        (40, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (60, EVENT_BUTTONS_POS_Y_TOP_ROW),
-        (40, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-        (60, EVENT_BUTTONS_POS_Y_BOTTOM_ROW),
-    ],
-}
+EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 10)
 
 
 def draw_text_with_wrap_centery(
@@ -611,10 +587,15 @@ class EventMenu(Menu):
         event_img_fit = event_img.get_rect().fit(event_img_rect)
         event_img_resized = pygame.transform.scale(event_img, event_img_fit.size)
 
-        # * create buttons for available options
-        choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[
-            len(self.event.choices)
-        ]
+        # top value for first button (desc box + margin)
+        ecb_top = event_desc_rect.bottom + screen_height * 0.5
+
+        # grab width for each button based on TSS rect's width
+        ecb_width = tss_rect_adjusted.width - EVENT_LR_MARGIN * screen_width
+
+        # calculate left for all ECB's
+        ecb_left = tss_rect_adjusted.left + EVENT_LR_MARGIN * screen_width
+
         # reset every frame
         self.buttons: list[EventChoiceButton] = []
         for i, each_choice in enumerate(self.event.choices):
@@ -627,13 +608,29 @@ class EventMenu(Menu):
                 curr_player_stat, choice_criteria_stat
             )
 
+            # increment top (ecb_top + ECB's height + margin)
+            current_ecb_top = ecb_top + (
+                +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
+            ) * int(i)
+
+            # calculate bottom for current button: current_ecb_top + ECB's height
+            current_ecb_bottom = (
+                current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            )
+
             # create EventChoiceButton
             each_choice_button: Button = EventChoiceButton(
+                centerx=event_title_rect.centerx,
+                height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                top=current_ecb_top,
+                left=ecb_left,
+                bottom=current_ecb_bottom,
+                width=ecb_width,
                 button_text=each_choice["text"],
                 event=self.event,
                 choice_idx=i,
                 curr_player=self.curr_player,
-                centre=choice_button_pos[i],
+                centre=None,
                 size=EVENT_BUTTONS_CHOICE_SIZE,
                 # string to display on the button
                 _type="choice",
@@ -746,8 +743,31 @@ class Button(object):
 class EventChoiceButton(Button):
 
     def __init__(
-        self, button_text: str, choice_idx: int, event, curr_player, *args, **kwargs
+        self,
+        centerx: int,
+        height: int,
+        top: int,
+        left: int,
+        bottom: int,
+        width: int,
+        button_text: str,
+        choice_idx: int,
+        event,
+        curr_player,
+        *args,
+        **kwargs,
     ):
+        # to dynamically draw buttons rather than constant percentage
+        self.centerx = centerx
+        self.height = height
+        self.top = top
+        self.left = left
+        self.bottom = bottom
+        self.width = width
+
+        # set center for parent's class
+        self.center = (centerx, self.top + self.height / 2)
+
         self.button_text = button_text
         self.choice_idx: int = choice_idx
         self.event = event
@@ -773,11 +793,17 @@ class EventChoiceButton(Button):
         button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
 
         button_rect = pygame.rect.Rect(
-            (self.position[0] - self.size[0] / 2) * screen_width,
-            (self.position[1] - self.size[1] / 2) * screen_height,
-            self.size[0] * screen_width,
+            self.left,
+            self.top,
+            self.width,
             self.size[1] * screen_height,
         )
+
+        # adjust rect with given value
+        button_rect.width = self.width
+        button_rect.top = self.top
+        button_rect.bottom = self.bottom
+        button_rect.centerx = self.centerx
 
         # draw button rect on screen
         fill_colour = (
@@ -796,7 +822,18 @@ class EventChoiceButton(Button):
             screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
         )
 
-    def handle_click(self, screen, pos):
+    def handle_click(self, screen, pos) -> str | None:
+        """Handle click for each EventChoiceButton, and return str literal
+        for `UI` to handle cleanup.
+
+        Args:
+            screen (Surface): main screen
+            pos (tuple[int]): mouse click event position
+
+        Returns:
+            str: str literal, if clicked. None otherwise.
+        """
+
         # ! TBD
         print(f"applying result for id={self.choice_idx}; text={self.button_text}")
         print(f"\tbefore: {self.curr_player.stats}")
@@ -807,8 +844,23 @@ class EventChoiceButton(Button):
         # ! TBD
         print(f"\tafter: {self.curr_player.stats}")
 
-        super().handle_click(screen, pos)
-        return "choice"
+        # ECB handle click
+        button_rect = pygame.rect.Rect(
+            self.left,
+            self.top,
+            self.width,
+            self.size[1] * screen.get_height() / 100,
+        )
+
+        # adjust rect with given value
+        button_rect.width = self.width
+        button_rect.top = self.top
+        button_rect.bottom = self.bottom
+        button_rect.centerx = self.centerx
+
+        if button_rect.collidepoint(pos):
+            return "choice"
+        return None
 
 
 class CardDisplays(Button):
