@@ -9,13 +9,13 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 
 # Adjust this based on your UI layout (percentage based)
-DICE_POS = (88, 88) 
+DICE_POS = (88, 88)
 DICE_SIZE = (20, 15)
 MAIN1 = (15, 70)
 MAIN2 = (38, 70)
 MAIN3 = (62, 70)
 MAIN4 = (85, 70)
-MAINSIZE = (20,12)
+MAINSIZE = (20, 12)
 CARD1IN = (115, 17.5)
 CARD1OUT = (90, 17.5)
 CARD2IN = (115, 32.5)
@@ -200,52 +200,90 @@ class UI:
     def __init__(self, game_manager=None, player=None):
         self.game_manager = game_manager
         self.player = player
-        self.screen = pygame.display.set_mode((WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode(
+            (WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE
+        )
         self.width = self.screen.get_width()
-        self.backgrounds = dict(title="Resources/Title_Screen.png",
-                            wood="Resources/background_wood.png")
-        self.curr_background = self.backgrounds['title']
-        self.background_img = pygame.transform.scale(pygame.image.load(self.curr_background),(self.screen.get_width(), self.screen.get_width()*(41/59)))
+        self.backgrounds = dict(
+            title="Resources/Title_Screen.png", wood="Resources/background_wood.png"
+        )
+        self.curr_background = self.backgrounds["title"]
+        self.background_img = pygame.transform.scale(
+            pygame.image.load(self.curr_background),
+            (self.screen.get_width(), self.screen.get_width() * (41 / 59)),
+        )
         self.font = pygame.font.Font(None, 16)
-        self.Buttons = [Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"), 
-                        Button(DICE_POS, DICE_SIZE, "Next Turn", False),
-                        Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-                        Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
-                        Button(MAIN3, MAINSIZE, "Custom Char", False, "Resources/CUSTOM_CHARA.jpg", False),
-                        Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-                        Button(PAUSE,PAUSESIZE, "Pause", True)
-                        ]
-        self.Buttons.insert(0, CardDisplays(CARD1IN, CARD1OUT, CARDSIZE, "Player Stats",image="Resources/rmc_card.png"))
-        self.Buttons.insert(1, CardDisplays(CARD2IN, CARD2OUT, CARDSIZE, "Leaderboard", image = "Resources/rmc_card.png"))
+        self.Buttons = [
+            Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
+            Button(DICE_POS, DICE_SIZE, "Next Turn", False),
+            Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
+            Button(
+                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
+            ),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                "Resources/CUSTOM_CHARA.jpg",
+                False,
+            ),
+            Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
+            Button(PAUSE, PAUSESIZE, "Pause", True),
+        ]
+        self.Buttons.insert(
+            0,
+            CardDisplays(
+                CARD1IN,
+                CARD1OUT,
+                CARDSIZE,
+                "Player Stats",
+                image="Resources/rmc_card.png",
+            ),
+        )
+        self.Buttons.insert(
+            1,
+            CardDisplays(
+                CARD2IN,
+                CARD2OUT,
+                CARDSIZE,
+                "Leaderboard",
+                image="Resources/rmc_card.png",
+            ),
+        )
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
-        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
-                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
-                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
-                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
-                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
-                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
-                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
-        self.sounds['click'].set_volume(0.5)
-
+        self.sounds = dict(
+            click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+            pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+            athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"),
+        )
+        self.sounds["click"].set_volume(0.5)
 
     def update(self):
         """Updates the screen"""
         board = self.game_manager.board
         players = self.game_manager.players
-        """Updates and draws all necessary UI components."""  
+        """Updates and draws all necessary UI components."""
         # Draw the board, dice, and stats, starting by filling the background with either an image or colour
         if self.background_img:
             if self.width != self.screen.get_width():
                 self.width = self.screen.get_width()
-                self.background_img = pygame.transform.scale(pygame.image.load(self.curr_background),(self.screen.get_width(), self.screen.get_width()*(41/59)))    
-            self.screen.blit(self.background_img, (0,0))
+                self.background_img = pygame.transform.scale(
+                    pygame.image.load(self.curr_background),
+                    (self.screen.get_width(), self.screen.get_width() * (41 / 59)),
+                )
+            self.screen.blit(self.background_img, (0, 0))
         else:
             self.screen.fill(BG_COLOR)
         if board:
@@ -259,8 +297,6 @@ class UI:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
             self.set_sound()
-        
-            
 
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -281,20 +317,19 @@ class UI:
                 button.turn_on()
 
     def set_sound(self):
-            if self.player:
-                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.play(2)
-                pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-            else:
-                pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
-                pygame.mixer.music.play()
+        if self.player:
+            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+            pygame.mixer.music.play(2)
+            pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+        else:
+            pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
+            pygame.mixer.music.play()
 
-
-    def game_start(self):           
+    def game_start(self):
         self.game_manager.start_game()
         self.set_sound()
-        self.curr_background = self.backgrounds['wood']
-        self.width =1
+        self.curr_background = self.backgrounds["wood"]
+        self.width = 1
         self.return_state()
 
     def display_board(self, board, players):
@@ -386,12 +421,12 @@ class UI:
             if button.visible:
                 result = button.handle_click(self.screen, pos)
                 if result:
-                    self.sounds['click'].play()
+                    self.sounds["click"].play()
                     self.buttonevents.append(result)
         for menu in self.open_menus:
             result = menu.handle_click(self.screen, pos)
             if result:
-                self.sounds['click'].play()
+                self.sounds["click"].play()
                 self.buttonevents.append(result)
 
     def run(self):
@@ -413,13 +448,13 @@ class UI:
                             button.turn_off()
                         elif button.type == "Dice":
                             button.turn_on()
-                case 'New Game':
-                    self.sounds['start'].play()
+                case "New Game":
+                    self.sounds["start"].play()
                     self.game_start()
-                case 'Save':
+                case "Save":
                     random.choice(list(self.sounds.values())).play()
-                case 'Pause':
-                    self.sounds['pause'].play()
+                case "Pause":
+                    self.sounds["pause"].play()
                     self.save_state()
                     self.open_menus.append(PauseMenu("Pause"))
                 case "Return":
@@ -710,19 +745,42 @@ class Button(object):
             font = pygame.font.Font(None, 16)
             # Draw dice background (square)
             if self.image:
-                if screen_width/2<screen_height:
-                    button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]*screen_height-(self.size[1]/2)*screen_width), self.size[0]*screen_width, self.size[1]*screen_width)
+                if screen_width / 2 < screen_height:
+                    button_rect = pygame.Rect(
+                        (self.position[0] - self.size[0] / 2) * screen_width,
+                        (
+                            self.position[1] * screen_height
+                            - (self.size[1] / 2) * screen_width
+                        ),
+                        self.size[0] * screen_width,
+                        self.size[1] * screen_width,
+                    )
                     screen_height = screen_width
                 else:
-                    button_rect = pygame.Rect(self.position[0]*screen_width-(self.size[0]*screen_height),self.position[1]*screen_height-(self.size[1]*screen_height), self.size[0]*2*screen_height, self.size[1]*2*screen_height)
-                    screen_height = screen_height*2
+                    button_rect = pygame.Rect(
+                        self.position[0] * screen_width
+                        - (self.size[0] * screen_height),
+                        self.position[1] * screen_height
+                        - (self.size[1] * screen_height),
+                        self.size[0] * 2 * screen_height,
+                        self.size[1] * 2 * screen_height,
+                    )
+                    screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(pygame.image.load(self.image),(self.size[0]*screen_width,self.size[1]*screen_height))
+                buttonimg = pygame.transform.scale(
+                    pygame.image.load(self.image),
+                    (self.size[0] * screen_width, self.size[1] * screen_height),
+                )
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
             else:
-                button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+                button_rect = pygame.Rect(
+                    (self.position[0] - self.size[0] / 2) * screen_width,
+                    (self.position[1] - self.size[1] / 2) * screen_height,
+                    self.size[0] * screen_width,
+                    self.size[1] * screen_height,
+                )
                 if self.enabled:
                     pygame.draw.rect(
                         screen, WHITE, button_rect
@@ -737,18 +795,38 @@ class Button(object):
 
     def handle_click(self, screen, pos):
         if self.visible:
-            if self.enabled: 
-                screen_width = screen.get_width()/100
-                screen_height = screen.get_height()/100
+            if self.enabled:
+                screen_width = screen.get_width() / 100
+                screen_height = screen.get_height() / 100
                 # Check if the click was inside the dice area
-                
+
                 if self.image:
-                    if screen_width/2<screen_height:
-                        button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]*screen_height-(self.size[1]/2)*screen_width), self.size[0]*screen_width, self.size[1]*screen_width)
+                    if screen_width / 2 < screen_height:
+                        button_rect = pygame.Rect(
+                            (self.position[0] - self.size[0] / 2) * screen_width,
+                            (
+                                self.position[1] * screen_height
+                                - (self.size[1] / 2) * screen_width
+                            ),
+                            self.size[0] * screen_width,
+                            self.size[1] * screen_width,
+                        )
                     else:
-                        button_rect = pygame.Rect(self.position[0]*screen_width-(self.size[0]*screen_height),self.position[1]*screen_height-(self.size[1]*screen_height), self.size[0]*2*screen_height, self.size[1]*2*screen_height)
+                        button_rect = pygame.Rect(
+                            self.position[0] * screen_width
+                            - (self.size[0] * screen_height),
+                            self.position[1] * screen_height
+                            - (self.size[1] * screen_height),
+                            self.size[0] * 2 * screen_height,
+                            self.size[1] * 2 * screen_height,
+                        )
                 else:
-                    button_rect = pygame.Rect((self.position[0]-self.size[0]/2)*screen_width,(self.position[1]-self.size[1]/2)*screen_height, self.size[0]*screen_width, self.size[1]*screen_height)
+                    button_rect = pygame.Rect(
+                        (self.position[0] - self.size[0] / 2) * screen_width,
+                        (self.position[1] - self.size[1] / 2) * screen_height,
+                        self.size[0] * screen_width,
+                        self.size[1] * screen_height,
+                    )
                 if button_rect.collidepoint(pos):
                     return self.type
 
@@ -890,52 +968,65 @@ class CardDisplays(Button):
 
     def display(self, screen):
         if self.visible:
-            screen_width = screen.get_width()/100
+            screen_width = screen.get_width() / 100
             screen_height = screen_width
-            w=21
-            h=14
+            w = 21
+            h = 14
             font = pygame.font.Font(None, 16)
             # Draw dice background (square)
-            button_rect = pygame.Rect((self.position[0]-w)*screen_width,(self.position[1]-h)*screen_height, w*screen_width, h*screen_height)
+            button_rect = pygame.Rect(
+                (self.position[0] - w) * screen_width,
+                (self.position[1] - h) * screen_height,
+                w * screen_width,
+                h * screen_height,
+            )
             if self.image:
-                if screen_width/1.75<screen_height:
+                if screen_width / 1.75 < screen_height:
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(pygame.image.load(self.image),(w*screen_width,h*screen_height))
+                buttonimg = pygame.transform.scale(
+                    pygame.image.load(self.image), (w * screen_width, h * screen_height)
+                )
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
             else:
                 if self.enabled:
-                    pygame.draw.rect(screen, WHITE, button_rect)  # Background of the button
+                    pygame.draw.rect(
+                        screen, WHITE, button_rect
+                    )  # Background of the button
                 pygame.draw.rect(screen, BLACK, button_rect, 3)  # Border for the button
                 # Draw value (centered in the square)
                 text_surface = font.render(str(self.type), True, BLACK)
-                text_rect = text_surface.get_rect(center=button_rect.center)  # Center the text inside the dice square
+                text_rect = text_surface.get_rect(
+                    center=button_rect.center
+                )  # Center the text inside the dice square
                 text_surface = self.add_stats(text_surface, text_rect)
                 screen.blit(text_surface, text_rect)  # Draw the text on the screen
 
     def add_stats(self, buttonimg):
         if self.info:
-            width = buttonimg.get_width()/100
-            height = buttonimg.get_height()/100
-            font = pygame.font.Font(None, int(height*8))
+            width = buttonimg.get_width() / 100
+            height = buttonimg.get_height() / 100
+            font = pygame.font.Font(None, int(height * 8))
             name = font.render(str(self.info[0]), False, WHITE)
-            buttonimg.blit(name, (30*width, 25.5*height))
+            buttonimg.blit(name, (30 * width, 25.5 * height))
             base = 40
             for item in self.info[1]:
                 stat = font.render(str(item), True, BLACK)
                 val = font.render(str(self.info[1][item]), True, BLACK)
-                buttonimg.blit(stat, (50*width, base*height))
-                buttonimg.blit(val, (85*width, base*height))
-                base = base+10
-            portrait = pygame.transform.scale(self.info[2],(width*40, width*40))
-            portrait_rect = portrait.get_rect(bottomleft=(0-width+10,(height*100)-width-5))
+                buttonimg.blit(stat, (50 * width, base * height))
+                buttonimg.blit(val, (85 * width, base * height))
+                base = base + 10
+            portrait = pygame.transform.scale(self.info[2], (width * 40, width * 40))
+            portrait_rect = portrait.get_rect(
+                bottomleft=(0 - width + 10, (height * 100) - width - 5)
+            )
             outline = portrait_rect.scale_by(0.67, 0.8)
             pygame.draw.rect(buttonimg, BLACK, outline, 3)
-            buttonimg.blit(portrait,portrait_rect)
+            buttonimg.blit(portrait, portrait_rect)
         return buttonimg
 
     def update_info(self, info):
@@ -943,15 +1034,20 @@ class CardDisplays(Button):
 
     def handle_click(self, screen, pos):
         if self.visible:
-            if self.enabled: 
-                screen_width = screen.get_width()/100
+            if self.enabled:
+                screen_width = screen.get_width() / 100
                 screen_height = screen_width
-                w=21
-                h=14
+                w = 21
+                h = 14
                 font = pygame.font.Font(None, 16)
-                    # Check if the click was inside the dice area
-                button_rect = pygame.Rect((self.position[0]-w)*screen_width,(self.position[1]-h)*screen_height, w*screen_width, h*screen_height)
-                if button_rect.collidepoint(pos):    
+                # Check if the click was inside the dice area
+                button_rect = pygame.Rect(
+                    (self.position[0] - w) * screen_width,
+                    (self.position[1] - h) * screen_height,
+                    w * screen_width,
+                    h * screen_height,
+                )
+                if button_rect.collidepoint(pos):
                     if not self.hovered:
                         self.position = self.moved
                         self.hovered = True
