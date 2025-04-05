@@ -745,66 +745,6 @@ class Button(object):
 
 
 class EventChoiceButton(Button):
-    def __draw_text_with_wrap(
-        self, surface, text, color, rect, font, aa=True, bkg=None
-    ) -> str:
-        """Helper function that draws text and wrap it to fit the given `Rect`.
-        This returns any remaining text that will not fit into the `Rect`.
-
-        From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
-
-        Args:
-            surface (pygame.Surface): main surface
-            text (str): text to display
-            color (tuple[int]): color of the text
-            rect (pygame.Rect): `Rect` to display text on
-            font (pygame.font.Font): `Font` to use for text
-            aa (bool, optional): anti-aliasing toggle. Defaults to True.
-            bkg (_type_, optional): background. Defaults to None.
-
-        Returns:
-            str: left over string that could not fit into given rect
-        """
-        rect = pygame.Rect(rect)
-        y = rect.top
-        line_spacing = -2
-
-        # get the height of the font
-        font_height = font.size("Tg")[1]
-
-        # padding for L/R
-        padding = surface.get_width() / 100 * 3
-
-        while text:
-            i = 1
-
-            # determine if the row of text will be outside our area
-            if y + font_height > rect.bottom:
-                break
-
-            # determine maximum width of line
-            while font.size(text[:i])[0] < rect.width - padding and i < len(text):
-                i += 1
-
-            # if we've wrapped the text, then adjust the wrap to the last word
-            if i < len(text):
-                i = text.rfind(" ", 0, i) + 1
-
-            # render the line and blit it to the surface
-            if bkg:
-                image = font.render(text[:i], 1, color, bkg)
-                image.set_colorkey(bkg)
-            else:
-                image = font.render(text[:i], aa, color)
-
-            text_rect = image.get_rect(centery=rect.centery)
-            surface.blit(image, text_rect)
-            y += font_height + line_spacing
-
-            # remove the text we just blitted
-            text = text[i:]
-
-        return text
 
     def __init__(self, button_text: str, *args, **kwargs):
         self.button_text = button_text
