@@ -92,6 +92,7 @@ class GameManager:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
             self.current_player.change_stats(effects[1])
             self.ui.display_message(f"{effects[0]}")
+            self.ui.display_non_decision_event(effects)
 
         elif tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
@@ -249,7 +250,8 @@ class GameManager:
                 else:
                     break
 
-        
+        # adding return statement
+        return event
 
     def is_game_over(self):
         return self.turn_count >= 40
