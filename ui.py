@@ -590,13 +590,15 @@ class EventMenu(Menu):
             0,
             0,
             tss_rect_adjusted.width // 2,
-            30 * screen_height,
+            28 * screen_height,
         )
         event_desc_rect.topleft = (
             (event_title_rect.bottomleft[0] + event_title_rect.bottomright[0]) / 2,
             event_title_rect.bottom,
         )
         event_desc_rect.top = event_title_rect.bottom
+        # move to the left of the screen
+        event_desc_rect.left -= screen.get_width() / 100 * 0.5
 
         # prep box for image insert
         event_img_rect: pygame.Rect = pygame.Rect(
@@ -604,8 +606,8 @@ class EventMenu(Menu):
         )
         # move image box to the left of the desc box
         event_img_rect.topleft = event_title_rect.bottomleft
-        # move to the right for 0.5% of the screen
-        event_img_rect.left += screen.get_width() / 100 * 0.5
+        # move to the right for 0.2% of the screen
+        event_img_rect.left += screen.get_width() / 100 * 0.2
         # TODO: replace this with a pool of event desc images
         event_img = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
         event_img.convert()
