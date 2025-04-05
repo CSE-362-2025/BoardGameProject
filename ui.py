@@ -218,40 +218,12 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(
-                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
-            ),
-            Button(
-                MAIN3,
-                MAINSIZE,
-                "Custom Char",
-                False,
-                "Resources/CUSTOM_CHARA.jpg",
-                False,
-            ),
+            Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
+            Button(MAIN3,MAINSIZE,"Custom Char",False,"Resources/CUSTOM_CHARA.jpg",False,),
             Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),
-        ]
-        self.Buttons.insert(
-            0,
-            CardDisplays(
-                CARD1IN,
-                CARD1OUT,
-                CARDSIZE,
-                "Player Stats",
-                image="Resources/rmc_card.png",
-            ),
-        )
-        self.Buttons.insert(
-            1,
-            CardDisplays(
-                CARD2IN,
-                CARD2OUT,
-                CARDSIZE,
-                "Leaderboard",
-                image="Resources/rmc_card.png",
-            ),
-        )
+            Button(PAUSE, PAUSESIZE, "Pause", True),]
+        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
+        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -370,6 +342,7 @@ class UI:
                     event=event,
                 )
             )
+    
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -377,8 +350,10 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event.name}: {event.description}")
-        self.game_manager.accept_event(event)
+        self.display_message(f"{event[0]}: {event[1]}")
+        for button in self.Buttons:
+            if button.type == "Next Turn":
+                button.turn_on()
 
     def display_computer_non_decision_event(self, event):
         # Display the result of the computer's non-decision event
@@ -465,6 +440,7 @@ class UI:
                     # one choice button has been clicked, clean up and back to menu
                     self.open_menus.pop()
                     self.return_state()
+                    self.game_manager.switch_turn()
                 case "Quit":
                     pygame.event.Event(quit)
 
