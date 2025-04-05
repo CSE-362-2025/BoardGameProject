@@ -84,13 +84,15 @@ EVENT_BUTTONS_CHOICE_POS: dict[int, list[tuple]] = {
 }
 
 
-def draw_text_with_wrap_centery(surface, text, color, rect, font, aa=True, bkg=None) -> str:
+def draw_text_with_wrap_centery(
+    surface, text, color, rect, font, aa=True, bkg=None
+) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
     This returns any remaining text that will not fit into the `Rect`.
     This will force all text to have the same `centery` as the given `rect`,
     only use for short texts.
 
-    From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
+    Derived from Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
 
     Args:
         surface (pygame.Surface): main surface
@@ -146,6 +148,7 @@ def draw_text_with_wrap_centery(surface, text, color, rect, font, aa=True, bkg=N
 
     return text
 
+
 def draw_text_with_wrap_centery_increment(
     surface, text, color, rect, font, aa=True, bkg=None
 ) -> str:
@@ -154,7 +157,7 @@ def draw_text_with_wrap_centery_increment(
     Text rect's will start from given rect's top and will draw until the bottom,
     incrementing y value.
 
-    From Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
+    Derived from Pygame's WiKi: https://www.pygame.org/wiki/TextWrap
 
     Args:
         surface (pygame.Surface): main surface
@@ -213,6 +216,7 @@ def draw_text_with_wrap_centery_increment(
         text = text[i:]
 
     return text
+
 
 class UI:
 
@@ -578,19 +582,36 @@ class EventMenu(Menu):
         event_title_rect.centerx = tss_rect_adjusted.centerx
         event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
 
-        # prep event description
+        # prep event description box, right half below the title box
         event_desc_font: pygame.font.Font = pygame.font.Font(
             "Resources/fonts/news_gothic_std_medium.otf", EVENT_DESC_FONT_SIZE
         )
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
-            tss_rect_adjusted.width,
-            # TODO: set height such that the longest event title can fit
+            tss_rect_adjusted.width // 2,
             30 * screen_height,
         )
-        event_desc_rect.centerx = tss_rect_adjusted.centerx
+        event_desc_rect.topleft = (
+            (event_title_rect.bottomleft[0] + event_title_rect.bottomright[0]) / 2,
+            event_title_rect.bottom,
+        )
         event_desc_rect.top = event_title_rect.bottom
+
+        # prep box for image insert
+        event_img_rect: pygame.Rect = pygame.Rect(
+            0, 0, tss_rect_adjusted.width // 2, 25 * screen_height
+        )
+        # move image box to the left of the desc box
+        event_img_rect.topleft = event_title_rect.bottomleft
+        # move to the right for 0.5% of the screen
+        event_img_rect.left += screen.get_width() / 100 * 0.5
+        # TODO: replace this with a pool of event desc images
+        event_img = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        event_img.convert()
+        # fit this image into img_rect
+        event_img_fit = event_img.get_rect().fit(event_img_rect)
+        event_img_resized = pygame.transform.scale(event_img, event_img_fit.size)
 
         # * create buttons for available options
         choice_button_pos: list[tuple] = EVENT_BUTTONS_CHOICE_POS[
@@ -644,6 +665,9 @@ class EventMenu(Menu):
             event_desc_rect,
             event_desc_font,
         )
+
+        # draw desc image
+        screen.blit(event_img_resized, event_img_fit)
 
         # ensure buttons are drawn over menu
         for each_button in self.buttons:
