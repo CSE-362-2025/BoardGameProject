@@ -802,14 +802,14 @@ class EventChoiceButton(Button):
 
     def handle_click(self, screen, pos):
         # ! TBD
-        print("applying result")
-        print(f"before: {self.curr_player.stats}")
+        print("applying result:")
+        print(f"\tbefore: {self.curr_player.stats}")
 
         # apply the consequence
         self.event.apply_result(self.curr_player, self.choice_idx)
 
         # ! TBD
-        print(f"after: {self.curr_player.stats}")
+        print(f"\tafter: {self.curr_player.stats}")
 
         super().handle_click(screen, pos)
         return "choice"
