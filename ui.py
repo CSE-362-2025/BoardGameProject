@@ -634,6 +634,9 @@ class EventMenu(Menu):
             # create EventChoiceButton
             each_choice_button: Button = EventChoiceButton(
                 button_text=each_choice["text"],
+                event=self.event,
+                choice_idx=i,
+                curr_player=self.curr_player,
                 centre=choice_button_pos[i],
                 size=EVENT_BUTTONS_CHOICE_SIZE,
                 # string to display on the button
@@ -746,8 +749,13 @@ class Button(object):
 
 class EventChoiceButton(Button):
 
-    def __init__(self, button_text: str, *args, **kwargs):
+    def __init__(
+        self, button_text: str, choice_idx: int, event, curr_player, *args, **kwargs
+    ):
         self.button_text = button_text
+        self.choice_idx: int = choice_idx
+        self.event = event
+        self.curr_player = curr_player
         super().__init__(*args, **kwargs)
 
     def display(self, screen):
@@ -791,6 +799,20 @@ class EventChoiceButton(Button):
         draw_text_with_wrap_centery_increment(
             screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
         )
+
+    def handle_click(self, screen, pos):
+        # ! TBD
+        print("applying result")
+        print(f"before: {self.curr_player.stats}")
+
+        # apply the consequence
+        self.event.apply_result(self.curr_player, self.choice_idx)
+
+        # ! TBD
+        print(f"after: {self.curr_player.stats}")
+
+        super().handle_click(screen, pos)
+        return "choice"
 
 
 class CardDisplays(Button):
