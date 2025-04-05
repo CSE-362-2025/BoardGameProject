@@ -395,9 +395,6 @@ class UI:
                     for button in self.Buttons:
                         if button.type == "Dice":
                             button.turn_off()
-                        # TODO: comment below to disable other buttons in EventMenu
-                        elif button.type == "Next Turn":
-                            button.turn_on()
                 case "Next Turn":
                     self.game_manager.switch_turn()
                     for button in self.Buttons:
