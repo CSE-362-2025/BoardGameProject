@@ -1,7 +1,7 @@
 [
     {
     "year" : 1,
-    "tiles" :
+    "tiles" : 
         [
             {
                 "position": 1,
@@ -11,7 +11,7 @@
             },
             {
                 "position": 2,
-                "tile_type": "EventTile",
+                "tile_type": "BadTile",
                 "screen_position": [22.5,10]
 
             },
@@ -29,7 +29,7 @@
             },
             {
                 "position": 5,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [60,10]
 
             },
@@ -41,7 +41,7 @@
             },
             {
                 "position": 7,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [80,20]
 
             },
@@ -58,36 +58,36 @@
                     "choices" : [
                         {
                             "text" : "You have a creative soul that hungers for knowledge. The RMC Arts program offers a variety of bachelors that could interest you with their depth of knowledge.",
-                            "result" : {"bilingual" : 1,
-                                        "athletic" : 0,
-                                        "academic" : -1,
-                                        "military" : 0,
+                            "result" : {"bilingual" : 1, 
+                                        "athletic" : 0, 
+                                        "academic" : -1, 
+                                        "military" : 0, 
                                         "social" : 1},
-
-                            "criteria" : {"bilingual" : 0,
-                                        "athletic" : 0,
-                                        "academic" : 0,
-                                        "military" : 0,
+            
+                            "criteria" : {"bilingual" : 0, 
+                                        "athletic" : 0, 
+                                        "academic" : 0, 
+                                        "military" : 0, 
                                         "social" : 0},
-
+            
                             "consequence": "You’ve decided the Arts program is for you. Essays and papers were always more your thing than labs.",
                             "hide": false
                     },
-
+            
                     {
                         "text" : "You have a logical mind that incessantly analyses your surroundings. The RMC STEM program is for you. Test your intellect with a demanding curriculum.",
-                        "result" : {"bilingual" : 0,
-                                    "athletic" : 0,
-                                    "academic" : 1,
-                                    "military" : 1,
+                        "result" : {"bilingual" : 0, 
+                                    "athletic" : 0, 
+                                    "academic" : 1, 
+                                    "military" : 1, 
                                     "social" : -1},
-
-                        "criteria" : {"bilingual" : 0,
-                                    "athletic" : 0,
-                                    "academic" : 3,
-                                    "military" : 0,
+            
+                        "criteria" : {"bilingual" : 0, 
+                                    "athletic" : 0, 
+                                    "academic" : 3, 
+                                    "military" : 0, 
                                     "social" : 0},
-
+            
                         "Consequence": "You’ve decided the STEM program is for you. Labs and math were always more your thing than essays.",
                         "hide": false
                     }
@@ -97,7 +97,7 @@
             },
             {
                 "position": 9,
-                "tile_type": "EventTile",
+                "tile_type": "BadTile",
                 "screen_position": [60,25]
 
             },
@@ -109,7 +109,7 @@
             },
             {
                 "position": 11,
-                "tile_type": "EventTile",
+                "tile_type": "BadTile",
                 "screen_position": [40,25]
 
             },
@@ -127,72 +127,72 @@
                     "choices" : [
                         {
                             "text" : "Want to test your pride and physical capabilities, join one of RMC’s many varsity teams.",
-                            "result" : {"bilingual" : 0,
-                                        "athletic" : 2,
-                                        "academic" : 0,
-                                        "military" : -1,
+                            "result" : {"bilingual" : 0, 
+                                        "athletic" : 2, 
+                                        "academic" : 0, 
+                                        "military" : -1, 
                                         "social" : 1},
-
-                            "criteria" : {"bilingual" : 0,
-                                        "athletic" : 4,
-                                        "academic" : 2,
-                                        "military" : 0,
+            
+                            "criteria" : {"bilingual" : 0, 
+                                        "athletic" : 4, 
+                                        "academic" : 2, 
+                                        "military" : 0, 
                                         "social" : 2},
-
+            
                             "consequence": "Always a sporty person you decide to test your mantle with one of the RMC varsity teams. Possible drinking and shenanigans are ahead.",
                             "hide": false
                     },
-
+            
                     {
                         "text" : "You’ve always felt enamoured with Drill, this is your chance to learn and represent the school.",
-                        "result" : {"bilingual" : 1,
-                                    "athletic" : 0,
-                                    "academic" : 0,
-                                    "military" : 2,
+                        "result" : {"bilingual" : 1, 
+                                    "athletic" : 0, 
+                                    "academic" : 0, 
+                                    "military" : 2, 
                                     "social" : -1},
-
-                        "criteria" : {"bilingual" : 0,
-                                    "athletic" : 2,
-                                    "academic" : 2,
-                                    "military" : 4,
+            
+                        "criteria" : {"bilingual" : 0, 
+                                    "athletic" : 2, 
+                                    "academic" : 2, 
+                                    "military" : 4, 
                                     "social" : 0},
-
+            
                         "Consequence": "You have now joined the dill team, you might lose some time with your friends, but fortunately for you, that never mattered to you.",
                         "hide": false
                     },
 
                     {
                         "text" : "Interested in meeting new people, having the opportunity to go on trips or you just like wargames and DnD. Joining a Club is for you.",
-                        "result" : {"bilingual" : 0,
-                                    "athletic" : 0,
-                                    "academic" : 0,
-                                    "military" : 0,
+                        "result" : {"bilingual" : 0, 
+                                    "athletic" : 0, 
+                                    "academic" : 0, 
+                                    "military" : 0, 
                                     "social" : 1},
-
-                        "criteria" : {"bilingual" : 2,
-                                    "athletic" : 2,
-                                    "academic" : 2,
-                                    "military" : 2,
+            
+                        "criteria" : {"bilingual" : 2, 
+                                    "athletic" : 2, 
+                                    "academic" : 2, 
+                                    "military" : 2, 
                                     "social" : 2},
-
+            
                         "Consequence": "Now that you’ve joined a club you get to meet plenty of new people from other first years to the CWC.",
                         "hide": false
                     },
 
                     {
                         "text" : "You believe your time would be better spent not joining anything, you get to choose how you allocate it.",
-                        "result" : {"bilingual" : 0,
-                                    "athletic" : 0,
-                                    "academic" : 0,
-                                    "military" : 0,
+                        "result" : {"bilingual" : 0, 
+                                    "athletic" : 0, 
+                                    "academic" : 0, 
+                                    "military" : 0, 
                                     "social" : -1},
-
-                        "criteria" : {"bilingual" : 0,
-                                    "athletic" : 0,
-                                    "academic" : 0,
-                                    "military" : 0,
+            
+                        "criteria" : {"bilingual" : 0, 
+                                    "athletic" : 0, 
+                                    "academic" : 0, 
+                                    "military" : 0, 
                                     "social" : 0},
-
+            
                         "Consequence": "You isolate yourself by not joining anything, but you don't mind since you’re free to allocate your time off however you want.",
                         "hide": false
                     }
@@ -201,7 +201,7 @@
             },
             {
                 "position": 13,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [20,25]
 
             },
@@ -213,7 +213,7 @@
             },
             {
                 "position": 15,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [10,45]
 
             },
@@ -254,36 +254,36 @@
                     "choices" : [
                         {
                             "text" : "You’ve never been the biggest fan of cardio, you tell yourself you’ll go to the gym later instead.",
-                            "result" : {"bilingual" : 0,
-                                        "athletic" : -1,
-                                        "academic" : 0,
-                                        "military" : 0,
+                            "result" : {"bilingual" : 0, 
+                                        "athletic" : -1, 
+                                        "academic" : 0, 
+                                        "military" : 0, 
                                         "social" : 0},
-
-                            "criteria" : {"bilingual" : 0,
-                                        "athletic" : 0,
-                                        "academic" : 0,
-                                        "military" : 0,
+            
+                            "criteria" : {"bilingual" : 0, 
+                                        "athletic" : 0, 
+                                        "academic" : 0, 
+                                        "military" : 0, 
                                         "social" : 0},
-
+            
                             "consequence": "As you fall back to sleep your eyes close, you can still hear you fyop staff admonishing you for your laziness.",
                             "hide": false
                     },
-
+            
                     {
                         "text" : "Why not go on a run, you’re already awake and it will feel good to get some exercise in before breakfast.",
-                        "result" : {"bilingual" : 0,
-                                    "athletic" : 1,
-                                    "academic" : 0,
-                                    "military" : 0,
+                        "result" : {"bilingual" : 0, 
+                                    "athletic" : 1, 
+                                    "academic" : 0, 
+                                    "military" : 0, 
                                     "social" : 0},
-
-                        "criteria" : {"bilingual" : 0,
-                                    "athletic" : 3,
-                                    "academic" : 0,
-                                    "military" : 0,
+            
+                        "criteria" : {"bilingual" : 0, 
+                                    "athletic" : 3, 
+                                    "academic" : 0, 
+                                    "military" : 0, 
                                     "social" : 0},
-
+            
                         "Consequence": "Feeling energised from the run you are brimming with energy for the day.",
                         "hide": false
                     }
@@ -299,7 +299,7 @@
             },
             {
                 "position": 115,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [25,60]
 
             },
@@ -316,7 +316,7 @@
             },
             {
                 "position": 18,
-                "tile_type": "EventTile",
+                "tile_type": "BadTile",
                 "screen_position": [30,75]
             },
             {
@@ -326,7 +326,7 @@
             },
             {
                 "position": 20,
-                "tile_type": "EventTile",
+                "tile_type": "GoodTile",
                 "screen_position": [50,75]
             },
             {
