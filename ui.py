@@ -342,10 +342,6 @@ class UI:
                     event=event,
                 )
             )
-            print("appended into `open_menus`, ending display_decision_event()")
-            print(
-                f"\t{event.name}: {', '.join([choice['text'] for choice in event.choices])}"
-            )
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -802,7 +798,7 @@ class EventChoiceButton(Button):
 
     def handle_click(self, screen, pos):
         # ! TBD
-        print("applying result:")
+        print(f"applying result for id={self.choice_idx}; text={self.button_text}")
         print(f"\tbefore: {self.curr_player.stats}")
 
         # apply the consequence
