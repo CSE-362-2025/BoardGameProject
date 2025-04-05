@@ -46,7 +46,6 @@ class Player:
         self.position += spaces
 
     def change_stats(self, stats):
-
         # keeps it above 0 and below 10
         for key in stats:
             if self.stats[key] + stats[key] > 10:
@@ -72,22 +71,23 @@ class Player:
         screen_width = screen.get_width()/100
         screen_height = screen.get_height()/100
         PLAYER_RADIUS = position[2][1]
+        movespeed=0.3
         font = pygame.font.Font(None, 16)
         self.next_pos_draw = [(position[0])*screen_width,(position[1])*screen_height]
-        if self.next_pos_draw[0]-(0.2*screen_width+0.1) < self.curr_pos_draw[0] <self.next_pos_draw[0]+(0.2*screen_width+0.1):
+        if self.next_pos_draw[0]-(movespeed*screen_width+0.1) < self.curr_pos_draw[0] <self.next_pos_draw[0]+(movespeed*screen_width+0.1):
             self.curr_pos_draw[0] = self.next_pos_draw[0]       
         else:
             if self.next_pos_draw[0] < self.curr_pos_draw[0]:
-                self.curr_pos_draw[0] = self.curr_pos_draw[0]-(0.2*screen_width)
+                self.curr_pos_draw[0] = self.curr_pos_draw[0]-(movespeed*screen_width)
             else:
-                self.curr_pos_draw[0] = self.curr_pos_draw[0]+(0.2*screen_width)
-        if self.next_pos_draw[1]-(0.2*screen_height+0.1) < self.curr_pos_draw[1] <self.next_pos_draw[1]+(0.2*screen_height+0.1):
+                self.curr_pos_draw[0] = self.curr_pos_draw[0]+(movespeed*screen_width)
+        if self.next_pos_draw[1]-(movespeed*screen_height+0.1) < self.curr_pos_draw[1] <self.next_pos_draw[1]+(movespeed*screen_height+0.1):
             self.curr_pos_draw[1] = self.next_pos_draw[1]
         else:
             if self.next_pos_draw[1] < self.curr_pos_draw[1]:
-                self.curr_pos_draw[1] = self.curr_pos_draw[1]-(0.2*screen_height)
+                self.curr_pos_draw[1] = self.curr_pos_draw[1]-(movespeed*screen_height)
             else:
-                self.curr_pos_draw[1] = self.curr_pos_draw[1]+(0.2*screen_height)
+                self.curr_pos_draw[1] = self.curr_pos_draw[1]+(movespeed*screen_height)
         if self.image:
             playerimg = pygame.transform.scale(pygame.image.load(self.image),(PLAYER_RADIUS,PLAYER_RADIUS*2))
             screen.blit(playerimg,(self.curr_pos_draw[0]-PLAYER_RADIUS/2, self.curr_pos_draw[1]-PLAYER_RADIUS*1.5))
