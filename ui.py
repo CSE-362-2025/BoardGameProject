@@ -206,7 +206,7 @@ class UI:
         )
         self.width = self.screen.get_width()
         self.backgrounds = dict(
-            title="Resources/Title_Screen.png", wood="Resources/background_wood.png"
+            title="Resources/Title_Screen.png", wood="Resources/background_wood.png", year1="Resources/board_year1.png",
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -241,6 +241,7 @@ class UI:
                            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
         self.sounds['click'].set_volume(0.5)
         self.track = 0
+        self.year = 0
 
 
     def update(self):
@@ -319,6 +320,14 @@ class UI:
         self.return_state()
 
     def display_board(self, board, players):
+        self.year = self.game_manager.year
+        match self.year:
+            case 0:
+                if self.curr_background != self.backgrounds["year1"]:
+                    self.curr_background = self.backgrounds["year1"]
+                    self.width=1
+            case _:
+                self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
 
     def display_stats(self):
