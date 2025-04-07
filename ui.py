@@ -206,7 +206,7 @@ class UI:
         )
         self.width = self.screen.get_width()
         self.backgrounds = dict(
-            title="Resources/Title_Screen.png", wood="Resources/background_wood.png"
+            title="Resources/Title_Screen.png", wood="Resources/background_wood.png", year1="Resources/board_year1.png",
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -230,18 +230,19 @@ class UI:
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
-        self.sounds = dict(
-            click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
-            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-            pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
-            athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
-            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
-            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
-            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
-            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"),
-        )
-        self.sounds["click"].set_volume(0.5)
+        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
+        self.sounds['click'].set_volume(0.5)
+        self.track = 0
+        self.year = 0
+
 
     def update(self):
         """Updates the screen"""
@@ -290,13 +291,26 @@ class UI:
                 button.turn_on()
 
     def set_sound(self):
-        if self.player:
-            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-            pygame.mixer.music.play(2)
-            pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-        else:
-            pygame.mixer.music.load("Resources/sounds/Music Box.ogg")
-            pygame.mixer.music.play()
+            if self.player:
+                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+                pygame.mixer.music.play()
+                match self.track:
+                    case 0:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    case 1: 
+                        pass
+                    case 2:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    case 3:
+                        pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                    case _:
+                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                        print("Track Reset")
+                        self.track=0
+                self.track =+ 1
+            else:
+                pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
+                pygame.mixer.music.play()
 
     def game_start(self):
         self.game_manager.start_game()
@@ -306,6 +320,14 @@ class UI:
         self.return_state()
 
     def display_board(self, board, players):
+        self.year = self.game_manager.year
+        match self.year:
+            case 0:
+                if self.curr_background != self.backgrounds["year1"]:
+                    self.curr_background = self.backgrounds["year1"]
+                    self.width=1
+            case _:
+                self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
 
     def display_stats(self):
@@ -443,6 +465,9 @@ class UI:
                     self.game_manager.switch_turn()
                 case "Quit":
                     pygame.event.Event(quit)
+        if self.game_manager.is_game_over():
+            self.player=None
+    
 
     def save_state(self):
         for button in self.Buttons:
