@@ -927,16 +927,6 @@ class EventChoiceButton(Button):
             str: str literal, if clicked. None otherwise.
         """
 
-        # ! TBD
-        print(f"applying result for id={self.choice_idx}; text={self.button_text}")
-        print(f"\tbefore: {self.curr_player.stats}")
-
-        # apply the consequence
-        self.event.apply_result(self.curr_player, self.choice_idx)
-
-        # ! TBD
-        print(f"\tafter: {self.curr_player.stats}")
-
         # ECB handle click
         button_rect = pygame.rect.Rect(
             self.left,
@@ -952,6 +942,15 @@ class EventChoiceButton(Button):
         button_rect.centerx = self.centerx
 
         if button_rect.collidepoint(pos):
+            # ! TBD
+            print(f"applying result for id={self.choice_idx}; text={self.button_text}")
+            print(f"\tbefore: {self.curr_player.stats}")
+
+            # apply the consequence
+            self.event.apply_result(self.curr_player, self.choice_idx)
+
+            # ! TBD
+            print(f"\tafter: {self.curr_player.stats}")
             return "choice"
         return None
 
