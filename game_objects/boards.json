@@ -49,7 +49,7 @@
                 "position": 8,
                 "tile_type": "StopTile",
                 "screen_position": [78,28],
-                "paths": [9, 109],
+                "paths": [109, 9],
                 "event": {
                     "name" : "What kind of student are you?",
                     "description" : "You've just joined this beautiful academic institution, thus you have to study something. You get to choose your academic path for the next 4 years.",

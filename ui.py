@@ -351,6 +351,7 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
+                    game_manager=self.game_manager
                 )
             )
     
@@ -531,8 +532,10 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, image=None, event=None):
+    def __init__(self, name, curr_player, game_manager, image=None, event=None):
         super().__init__(name, image)
+
+        self.game_manager = game_manager
 
         if event is None:
             raise RuntimeError("EventMenu(): the received `event` is None")
@@ -673,6 +676,7 @@ class EventMenu(Menu):
                 # string to display on the button
                 _type="choice",
                 enabled=is_enabled,
+                game_manager=self.game_manager
             )
             self.buttons.append(each_choice_button)
 
@@ -836,6 +840,7 @@ class EventChoiceButton(Button):
         choice_idx: int,
         event,
         curr_player,
+        game_manager,
         *args,
         **kwargs,
     ):
@@ -846,6 +851,9 @@ class EventChoiceButton(Button):
         self.left = left
         self.bottom = bottom
         self.width = width
+
+        # tmp fix
+        self.game_manager = game_manager
 
         # set center for parent's class
         self.center = (centerx, self.top + self.height / 2)
@@ -936,7 +944,7 @@ class EventChoiceButton(Button):
             print(f"\tbefore: {self.curr_player.stats}")
 
             # apply the consequence
-            self.event.apply_result(self.curr_player, self.choice_idx)
+            self.game_manager.event_choice(self.event, self.choice_idx)
 
             # ! TBD
             print(f"\tafter: {self.curr_player.stats}")
