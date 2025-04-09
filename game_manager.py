@@ -34,6 +34,8 @@ class GameManager:
 
         roll = dice_value
 
+        print(f"Rolled {roll}")
+
         if self.current_player.branch:
             self.current_player.branch = False
             self.current_player.position = self.current_player.next_pos
@@ -67,9 +69,9 @@ class GameManager:
 
         print(f"Player Position after move: {self.current_player.position}")
 
-        # VERY TEMP
-        if self.current_player.position > 22:
-            self.current_player.position = 22
+        # # VERY TEMP
+        # if self.current_player.position > 22:
+        #     self.current_player.position = 22
 
         tile = self.board.get_tile(self.current_player.position)
 
@@ -77,11 +79,11 @@ class GameManager:
             self.current_player.on_alt_path = False
             self.current_player.position -= 100  # Puts the position back on "main" path
             tile = self.board.get_tile(self.current_player.position)
-            print(tile.position, self.current_player.position)
+            # print(tile.position, self.current_player.position)
 
         if not tile:          
-            tile = self.board.tiles[self.board.size-1]
-            self.current_player.position = self.board.size-1
+            self.current_player.position = self.board.size
+            tile = self.board.tiles[len(self.board.tiles) - 1]
 
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
@@ -198,6 +200,7 @@ class GameManager:
     # used by the ui after human picks event choice
     def event_choice(self, event, choice_idx):
         event.apply_result(self.current_player, choice_idx)
+        print(f"Player's choice {choice_idx}")
 
         if event.branch:
             pos = self.current_player.position
@@ -206,13 +209,6 @@ class GameManager:
 
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
-
-    # def branching_event_choice(self, event, choice_idx):
-    #     event.apply_result(self.current_player, choice_idx)
-    #     pos = self.current_player.position
-    #     self.current_player.next_pos = (self.board.tiles[pos].paths[choice_idx-1]) - 1
-    #     self.current_player.store_event(event, choice_idx)  # store event in player's history
-    #     self.ui.display_board(self.board, self.players)
 
     # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity

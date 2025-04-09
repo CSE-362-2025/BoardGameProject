@@ -13,7 +13,7 @@ class Board:
     
     def __init__(self, tiles, year):
         self.tiles = tiles
-        self.size = len(tiles)
+        self.size = tiles[len(tiles)-1].position
         self.year = year
 
     # returns tile at position
