@@ -264,20 +264,20 @@ class UI:
             self.display_board(
                 board, players
             )  # Call a method to draw the game board (implement as needed)
+            
+        # If there's a message to display, show it
+        if self.message_duration > 0:
+            text_surface = self.font.render(self.message, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=(self.screen.get_width()/2, self.screen.get_width()*(41/150)))
+            self.screen.blit(text_surface, text_rect)
+            self.message_duration -= 1
+
         self.display_buttons()  # Call a method to display the dice
-        self.display_stats()  # Call a method to display player stats, if any
         self.display_current_turn()
         for menu in self.open_menus:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
             self.set_sound()
-
-        # If there's a message to display, show it
-        if self.message_duration > 0:
-            text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(bottomleft=(25, 500))
-            self.screen.blit(text_surface, text_rect)
-            self.message_duration -= 1
 
     def main_menu(self):
         self.save_state()
@@ -330,17 +330,6 @@ class UI:
                 self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
 
-    def display_stats(self):
-        # Example of displaying player stats in the top-right corner
-        self.font = pygame.font.Font(None, 16)
-        if self.player:
-            stats_text = f"{self.player.name}'s Stats: {self.player.stats}"  # You can customize this to show actual stats
-            stats_surface = self.font.render(stats_text, True, FONT_COLOR)
-            stats_rect = stats_surface.get_rect(
-                topright=(self.screen.get_width() - 10, 10)
-            )
-            self.screen.blit(stats_surface, stats_rect)
-
     def roll_dice(self):
         self.dice_value = self.game_manager.roll_dice()  # Roll dice
         self.display_roll(self.dice_value)  # Update display after rolling
@@ -389,7 +378,7 @@ class UI:
         self.message_duration = duration
 
     def display_current_turn(self):
-        # Example of displaying player stats in the bottom-left corner
+        # Displays player stats
         self.font = pygame.font.Font(None, 16)
         if self.player:
             portrait = self.player.get_portrait()
