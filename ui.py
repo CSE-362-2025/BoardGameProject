@@ -406,7 +406,7 @@ class UI:
                     break
             move_over = 0
             for player in range(len(playerlist)-1):
-                start += 1
+                start -= 1
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
@@ -421,8 +421,19 @@ class UI:
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            playerlist={}
+            player_sort = []
             for player in self.game_manager.players:
+                player_sort.append(player)
+            for player in range(len(player_sort)-1):
+                next = player_sort[player]
+                for remainder in range(len(player_sort)-player):
+                    if next.position < player_sort[remainder+player].position:
+                        hold = player_sort[remainder+player]
+                        player_sort[remainder+player] = next
+                        player_sort[player] = hold
+                        next = player_sort[player]
+            playerlist={}
+            for player in player_sort:
                 playerlist.update({player.name:random.randint(1,10)})
             info = ("Leaderboard", playerlist, self.the_meeple)
             self.Buttons[1].update_info(info)
