@@ -11,7 +11,7 @@ FONT_COLOR = (255, 255, 255)  # White text
 
 class Player:
 
-    def __init__(self, name, color, stats=None, image=None, portrait=None):
+    def __init__(self, name, color, stats=None, image="Resources/test_meeple.png", portrait="Resources/test_meeple.png", next_up="Resources/test_meeple.png"):
 
         self.name = name
         self.color = color
@@ -20,8 +20,9 @@ class Player:
         self.next_pos_draw = [0,0]
         self.events_played = []
         self.has_moved = True
-        self.image=image
-        self.portrait=portrait
+        self.image= pygame.image.load(image)
+        self.portrait= pygame.image.load(portrait)
+        self.next_up = pygame.image.load(next_up)
         self.at_end = False
 
         # For branching
@@ -89,15 +90,14 @@ class Player:
             else:
                 self.curr_pos_draw[1] = self.curr_pos_draw[1]+(movespeed*screen_height)
         if self.image:
-            playerimg = pygame.transform.scale(pygame.image.load(self.image),(PLAYER_RADIUS,PLAYER_RADIUS*2))
+            playerimg = pygame.transform.scale(self.image,(PLAYER_RADIUS,PLAYER_RADIUS*2))
             screen.blit(playerimg,(self.curr_pos_draw[0]-PLAYER_RADIUS/2, self.curr_pos_draw[1]-PLAYER_RADIUS*1.5))
         else:
             pygame.draw.circle(screen, self.color, (self.curr_pos_draw[0], self.curr_pos_draw[1]), PLAYER_RADIUS)
 
     def get_portrait(self):
         if self.portrait:
-            portrait = pygame.image.load(self.portrait)
-            return portrait
+            return self.portrait
         else:
             return False
 

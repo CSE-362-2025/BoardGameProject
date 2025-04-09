@@ -405,9 +405,9 @@ class UI:
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
-                image = pygame.transform.scale(pygame.image.load(playerlist[start].image), (width * 5, width * 10))
+                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
                 image_rect = image.get_rect(
-                    bottomleft=(((15 + (move_over*4))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
                 )
                 self.screen.blit(image, image_rect)
 
@@ -573,6 +573,8 @@ class EventMenu(Menu):
         self.curr_player = curr_player
         self.event = event
         self.buttons: list[Button] = []
+        self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
+        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
 
     def draw(self, screen):
         super().draw(screen)
@@ -596,7 +598,7 @@ class EventMenu(Menu):
         )
 
         # load TSS image
-        tss = pygame.image.load(EVENT_RECT_TSS_PATH)
+        tss = self.tss
         tss.convert()
         tss_rect: pygame.Rect = tss.get_rect()
 
@@ -646,7 +648,7 @@ class EventMenu(Menu):
         # move to the right for 0.2% of the screen
         event_img_rect.left += screen.get_width() / 100 * 0.2
         # TODO: replace this with a pool of event desc images
-        event_img = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        event_img = self.event_image
         event_img.convert()
         # fit this image into img_rect
         event_img_fit = event_img.get_rect().fit(event_img_rect)
@@ -747,7 +749,10 @@ class Button(object):
         self.position = centre  # Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
         self.type: str = _type
-        self.image = image
+        if image:
+            self.image = pygame.image.load(image)
+        else:
+            self.image = None
         self.enabled = enabled
 
     def turn_on(self):
@@ -785,10 +790,7 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(
-                    pygame.image.load(self.image),
-                    (self.size[0] * screen_width, self.size[1] * screen_height),
-                )
+                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -1002,9 +1004,7 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(
-                    pygame.image.load(self.image), (w * screen_width, h * screen_height)
-                )
+                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
