@@ -242,6 +242,7 @@ class UI:
         self.sounds['click'].set_volume(0.5)
         self.track = 0
         self.year = 0
+        self.the_meeple = pygame.image.load("Resources/test_meeple.png")
 
 
     def update(self):
@@ -420,7 +421,7 @@ class UI:
             playerlist={}
             for player in self.game_manager.players:
                 playerlist.update({player.name:random.randint(1,10)})
-            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+            info = ("Leaderboard", playerlist, self.the_meeple)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
