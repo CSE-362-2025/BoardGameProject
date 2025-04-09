@@ -261,9 +261,7 @@ class UI:
         else:
             self.screen.fill(BG_COLOR)
         if board:
-            self.display_board(
-                board, players
-            )  # Call a method to draw the game board (implement as needed)
+            self.display_board(board, players)  # Call a method to draw the game board
             
         # If there's a message to display, show it
         if self.message_duration > 0:
@@ -274,6 +272,7 @@ class UI:
 
         self.display_buttons()  # Call a method to display the dice
         self.display_current_turn()
+        self.display_leaderboard()
         for menu in self.open_menus:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
@@ -389,11 +388,39 @@ class UI:
                     width = self.screen.get_width() / 100
                 else:
                     width = self.screen.get_height() / 60
-                portrait = pygame.transform.scale(portrait, (width * 20, width * 20))
+                portrait = pygame.transform.rotate(portrait, 16)
+                portrait = pygame.transform.scale(portrait, (width * 28, width * 28))
                 portrait_rect = portrait.get_rect(
-                    bottomleft=(0 - width, self.screen.get_height() - width)
+                    bottomleft=(0 - 40, self.screen.get_height() + 30)
                 )
                 self.screen.blit(portrait, portrait_rect)
+            playerlist = self.game_manager.players
+            for player in range(len(playerlist)):
+                if self.player == playerlist[player]:
+                    start = player
+                    break
+            move_over = 0
+            for player in range(len(playerlist)-1):
+                start += 1
+                move_over += 1
+                if start >= len(playerlist):
+                    start = 0
+                image = pygame.transform.scale(pygame.image.load(playerlist[start].image), (width * 5, width * 10))
+                image_rect = image.get_rect(
+                    bottomleft=(((15 + (move_over*4))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                )
+                self.screen.blit(image, image_rect)
+
+
+
+    def display_leaderboard(self):
+        self.font = pygame.font.Font(None, 16)
+        if self.player:
+            playerlist={}
+            for player in self.game_manager.players:
+                playerlist.update({player.name:random.randint(1,10)})
+            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+            self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
         self.player = player
@@ -1007,15 +1034,13 @@ class CardDisplays(Button):
             for item in self.info[1]:
                 stat = font.render(str(item), True, BLACK)
                 val = font.render(str(self.info[1][item]), True, BLACK)
-                buttonimg.blit(stat, (50 * width, base * height))
+                buttonimg.blit(stat, (60 * width, base * height))
                 buttonimg.blit(val, (85 * width, base * height))
                 base = base + 10
-            portrait = pygame.transform.scale(self.info[2], (width * 40, width * 40))
+            portrait = pygame.transform.scale(self.info[2], (width * 50, width * 50))
             portrait_rect = portrait.get_rect(
-                bottomleft=(0 - width + 10, (height * 100) - width - 5)
+                bottomleft=(0 - width + 10, (height * 100) - width + 5)
             )
-            outline = portrait_rect.scale_by(0.67, 0.8)
-            pygame.draw.rect(buttonimg, BLACK, outline, 3)
             buttonimg.blit(portrait, portrait_rect)
         return buttonimg
 
