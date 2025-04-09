@@ -69,7 +69,7 @@ class Player:
 
     def draw(self, screen, position):   
         screen_width = screen.get_width()/100
-        screen_height = screen.get_height()/100
+        screen_height = screen_width * (41/59)
         PLAYER_RADIUS = position[2][1]
         movespeed=0.3
         font = pygame.font.Font(None, 16)
