@@ -247,6 +247,9 @@ class UI:
 
     def update(self):
         """Updates the screen"""
+        #first make sure aspect ratio is good
+        if self.width != self.screen.get_width():
+            pygame.display.set_mode((int(self.screen.get_width()), int(self.screen.get_width()*(41/59))), pygame.RESIZABLE)
         board = self.game_manager.board
         players = self.game_manager.players
         """Updates and draws all necessary UI components."""
