@@ -71,9 +71,9 @@ class GameManager:
 
         print(f"{self.current_player.name}'s Position after move: {self.current_player.position}")
 
-        # VERY TEMP
-        if self.current_player.position > 22:
-            self.current_player.position = 22
+        # # VERY TEMP
+        # if self.current_player.position > 22:
+        #     self.current_player.position = 22
 
         tile = self.board.get_tile(self.current_player.position)
 
@@ -81,14 +81,15 @@ class GameManager:
             self.current_player.on_alt_path = False
             self.current_player.position -= 100  # Puts the position back on "main" path
             tile = self.board.get_tile(self.current_player.position)
-            print(tile.position, self.current_player.position)
+            # print(tile.position, self.current_player.position)
 
         if not tile:          
-            tile = self.board.tiles[self.board.size-1]
-            self.current_player.position = self.board.size-1
+            self.current_player.position = self.board.size
+            tile = self.board.tiles[len(self.board.tiles) - 1]
 
         self.current_player.tile_counts[tile.get_type()] += 1
         print(self.current_player.tile_counts[tile.get_type()])
+
 
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
@@ -99,6 +100,7 @@ class GameManager:
             effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
             self.current_player.change_stats(effects[1])
             self.ui.display_message(f"{effects[0]}")
+            self.ui.display_non_decision_event(effects)
 
         elif tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
@@ -238,6 +240,7 @@ class GameManager:
     # used by the UI after human picks event choice
     def event_choice(self, event, choice_idx):
         event.apply_result(self.current_player, choice_idx)
+        print(f"Player's choice {choice_idx}")
 
         if event.branch:
             pos = self.current_player.position
@@ -247,6 +250,8 @@ class GameManager:
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
+
+    # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity
     def get_random_event(self): 
         number = random.randint(1,20)
@@ -282,7 +287,8 @@ class GameManager:
                 else:
                     break
 
-        
+        # adding return statement
+        return event
 
     def is_game_over(self):
         return self.turn_count >= 40

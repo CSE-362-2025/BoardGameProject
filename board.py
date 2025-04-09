@@ -13,7 +13,7 @@ class Board:
     
     def __init__(self, tiles, year):
         self.tiles = tiles
-        self.size = len(tiles)
+        self.size = tiles[len(tiles)-1].position
         self.year = year
 
     # returns tile at position
@@ -32,7 +32,7 @@ class Board:
 
     def draw(self, screen, players):
         screen_width = screen.get_width()/100
-        screen_height = screen.get_height()/100
+        screen_height = screen.get_width()/100 * (41/59)
         font = pygame.font.Font(None, 16)
         # Draw tiles
         TILE_SIZE = (screen_width*8, screen_height*8)

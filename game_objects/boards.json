@@ -6,31 +6,31 @@
             {
                 "position": 1,
                 "tile_type": "StartTile",
-                "screen_position": [10,10]
+                "screen_position": [17,12]
 
             },
             {
                 "position": 2,
                 "tile_type": "BadTile",
-                "screen_position": [22.5,10]
+                "screen_position": [28,14]
 
             },
             {
                 "position": 3,
                 "tile_type": "EventTile",
-                "screen_position": [35,10]
+                "screen_position": [37,12]
 
             },
             {
                 "position": 4,
                 "tile_type": "EventTile",
-                "screen_position": [47.5,10]
+                "screen_position": [46,13]
 
             },
             {
                 "position": 5,
                 "tile_type": "GoodTile",
-                "screen_position": [60,10]
+                "screen_position": [55,12]
 
             },
             {
@@ -42,17 +42,17 @@
             {
                 "position": 7,
                 "tile_type": "GoodTile",
-                "screen_position": [80,20]
+                "screen_position": [80,19]
 
             },
             {
                 "position": 8,
                 "tile_type": "StopTile",
-                "screen_position": [70,25],
-                "paths": [9, 109],
+                "screen_position": [78,28],
+                "paths": [109, 9],
                 "event": {
                     "name" : "What kind of student are you?",
-                    "description" : "You just joined this beautiful academic institution, thus you have to study something.You get to choose your academic path for the next 4 years.",
+                    "description" : "You've just joined this beautiful academic institution, thus you have to study something. You get to choose your academic path for the next 4 years.",
                     "branch": true,
 
                     "choices" : [
@@ -70,7 +70,7 @@
                                         "military" : 0, 
                                         "social" : 0},
             
-                            "consequence": "You’ve decided the Arts program is for you. Essays and papers were always more your thing than labs.",
+                            "consequence": "You've decided the Arts program is for you. Essays and papers were always more your thing than labs.",
                             "hide": false
                     },
             
@@ -88,7 +88,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You’ve decided the STEM program is for you. Labs and math were always more your thing than essays.",
+                        "Consequence": "You've decided the STEM program is for you. Labs and math were always more your thing than essays.",
                         "hide": false
                     }
                  ]
@@ -98,25 +98,25 @@
             {
                 "position": 9,
                 "tile_type": "BadTile",
-                "screen_position": [60,25]
+                "screen_position": [62.2,27.8]
 
             },
             {
                 "position": 10,
                 "tile_type": "EventTile",
-                "screen_position": [50,25]
+                "screen_position": [52.2,27.9]
 
             },
             {
                 "position": 11,
                 "tile_type": "BadTile",
-                "screen_position": [40,25]
+                "screen_position": [42.4,27.5]
 
             },
             {
                 "position": 12,
                 "tile_type": "StopTile",
-                "screen_position": [30,25],
+                "screen_position": [32,27.5],
                 "paths": [],
                 "branch": false,
                 "event": {
@@ -126,7 +126,7 @@
 
                     "choices" : [
                         {
-                            "text" : "Want to test your pride and physical capabilities, join one of RMC’s many varsity teams.",
+                            "text" : "Want to test your pride and physical capabilities, join one of RMC's many varsity teams.",
                             "result" : {"bilingual" : 0, 
                                         "athletic" : 2, 
                                         "academic" : 0, 
@@ -144,7 +144,7 @@
                     },
             
                     {
-                        "text" : "You’ve always felt enamoured with Drill, this is your chance to learn and represent the school.",
+                        "text" : "You've always felt enamoured with Drill, this is your chance to learn and represent the school.",
                         "result" : {"bilingual" : 1, 
                                     "athletic" : 0, 
                                     "academic" : 0, 
@@ -175,7 +175,7 @@
                                     "military" : 2, 
                                     "social" : 2},
             
-                        "Consequence": "Now that you’ve joined a club you get to meet plenty of new people from other first years to the CWC.",
+                        "Consequence": "Now that you've joined a club you get to meet plenty of new people from other first years to the CWC.",
                         "hide": false
                     },
 
@@ -193,7 +193,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You isolate yourself by not joining anything, but you don't mind since you’re free to allocate your time off however you want.",
+                        "Consequence": "You isolate yourself by not joining anything, but you don't mind since you're free to allocate your time off however you want.",
                         "hide": false
                     }
                  ]
@@ -202,49 +202,49 @@
             {
                 "position": 13,
                 "tile_type": "GoodTile",
-                "screen_position": [20,25]
+                "screen_position": [22.2,27.2]
 
             },
             {
                 "position": 14,
                 "tile_type": "EventTile",
-                "screen_position": [10,35]
+                "screen_position": [12.2,34.8]
 
             },
             {
                 "position": 15,
                 "tile_type": "GoodTile",
-                "screen_position": [10,45]
+                "screen_position": [12.3,46.9]
 
             },
             {
                 "position": 109,
                 "tile_type": "EventTile",
-                "screen_position": [70,40]
+                "screen_position": [86.5,38.2]
 
             },
             {
                 "position": 110,
                 "tile_type": "EventTile",
-                "screen_position": [70,50]
+                "screen_position": [77.5,44.7]
 
             },
             {
                 "position": 111,
                 "tile_type": "EventTile",
-                "screen_position": [65,60]
+                "screen_position": [81.2,56]
 
             },
             {
                 "position": 112,
                 "tile_type": "EventTile",
-                "screen_position": [55,60]
+                "screen_position": [69,56]
 
             },
             {
                 "position": 113,
                 "tile_type": "StopTile",
-                "screen_position": [45,60],
+                "screen_position": [57,52],
                 "paths": [],
                 "event": {
                     "name" : "To Run or Not to Run",
@@ -253,7 +253,7 @@
 
                     "choices" : [
                         {
-                            "text" : "You’ve never been the biggest fan of cardio, you tell yourself you’ll go to the gym later instead.",
+                            "text" : "You've never been the biggest fan of cardio, you tell yourself you'll go to the gym later instead.",
                             "result" : {"bilingual" : 0, 
                                         "athletic" : -1, 
                                         "academic" : 0, 
@@ -271,7 +271,7 @@
                     },
             
                     {
-                        "text" : "Why not go on a run, you’re already awake and it will feel good to get some exercise in before breakfast.",
+                        "text" : "Why not go on a run, you're already awake and it will feel good to get some exercise in before breakfast.",
                         "result" : {"bilingual" : 0, 
                                     "athletic" : 1, 
                                     "academic" : 0, 
@@ -294,50 +294,50 @@
             {
                 "position": 114,
                 "tile_type": "EventTile",
-                "screen_position": [35,60]
+                "screen_position": [45.5,52.7]
 
             },
             {
                 "position": 115,
                 "tile_type": "GoodTile",
-                "screen_position": [25,60]
+                "screen_position": [34,51]
 
             },
             {
                 "position": 16,
                 "tile_type": "EventTile",
-                "screen_position": [15,60]
+                "screen_position": [17.9,62]
 
             },
             {
                 "position": 17,
                 "tile_type": "EventTile",
-                "screen_position": [20,75]
+                "screen_position": [22,71.1]
             },
             {
                 "position": 18,
                 "tile_type": "BadTile",
-                "screen_position": [30,75]
+                "screen_position": [35.5,69.5]
             },
             {
                 "position": 19,
                 "tile_type": "EventTile",
-                "screen_position": [40,75]
+                "screen_position": [50,72.8]
             },
             {
                 "position": 20,
                 "tile_type": "GoodTile",
-                "screen_position": [50,75]
+                "screen_position": [64,71]
             },
             {
                 "position": 21,
                 "tile_type": "EventTile",
-                "screen_position": [60,75]
+                "screen_position": [77,70.5]
             },
             {
                 "position": 22,
                 "tile_type": "EndTile",
-                "screen_position": [70,85]
+                "screen_position": [89,69]
             }
         ]
     }
