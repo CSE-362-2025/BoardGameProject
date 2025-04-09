@@ -11,6 +11,7 @@ from tiles import Tile, StopTile
 from player import Player
 from event import Event
 import json
+from statistics import mean
 
 
 class GameManager:
@@ -88,8 +89,6 @@ class GameManager:
             tile = self.board.tiles[len(self.board.tiles) - 1]
 
         self.current_player.tile_counts[tile.get_type()] += 1
-        print(self.current_player.tile_counts[tile.get_type()])
-
 
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
@@ -181,8 +180,9 @@ class GameManager:
     def end_game(self):
         print("THE GAME IS OVER")
 
-    # Generates the end game summaries for the player
-    def generate_end(self):
+
+    #  gives awards to players with the highest stats
+    def generate_awards(self):
 
         stats = ["academic", "bilingual", "military", "athletic", "social"]
 
@@ -212,6 +212,31 @@ class GameManager:
             
             for player in max_players:
                 player.awards[stat] = True
+
+
+    # #  writes an endgame summary to player object in player.end_text
+    # def generate_endgame_summary(self):
+
+    #     def check_roll_stats(player, most):
+    #         if most:
+    #             i = 0
+                
+
+
+    #     first_player_idx = random.randint(0, 3)
+    #     player = self.players[first_player_idx]
+    #     i = 0
+
+    #     while i < 4:
+
+
+
+    #         if player.rolls.mean()
+
+    #         player = self.players[first_player_idx+i % len(self.players)]
+    #         i += 1
+
+
 
     def switch_turn(self):
         self.turn_count += 1
@@ -344,7 +369,7 @@ class GameManager:
         }]
 
         
-
+    # Write more
     def generate_bad_tile_effects(self):
 
         number = random.randint(1,5)
