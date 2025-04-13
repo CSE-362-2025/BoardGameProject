@@ -324,98 +324,306 @@ class GameManager:
         number = random.randint(1,5)
 
         if number == 1:
-            return ["French Lessons! (+1 Biligual)", {
-            "bilingual": 1,
-            "athletic": 0,
-            "academic": 0,
-            "military": 0,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You took extra french lessons! (+1 Biligual)", {
+                "bilingual": 1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
+            elif number == 2:
+                return ["You spoke to someone in your second language! (+1 Biligual)", {
+                "bilingual": 1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
+            else:
+                return ["You wrote a bilingual email! (+1 Biligual)", {
+                "bilingual": 1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
+
 
         elif number == 2:
-            return ["Gym! (+1 Athletic)", {
-            "bilingual": 0,
-            "athletic": 1,
-            "academic": 0,
-            "military": 0,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You ran a 5k! (+1 Athletic)", {
+                "bilingual": 0,
+                "athletic": 1,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
+            
+            elif number == 2:
+                return ["You did a workout! (+1 Athletic)", {
+                "bilingual": 0,
+                "athletic": 1,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
+            
+            else:
+                return ["You went to gym class! (+1 Athletic)", {
+                "bilingual": 0,
+                "athletic": 1,
+                "academic": 0,
+                "military": 0,
+                "social": 0 
+                }]
 
         elif number == 3:
-            return ["Study! (+1 Academic)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": 1,
-            "military": 0,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You did well on a test! (+1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 1,
+                "military": 0,
+                "social": 0 
+                }]
+            
+            elif number == 2:
+                return ["You completed a project for class! (+1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 1,
+                "military": 0,
+                "social": 0 
+                }]
+            
+            else:
+                return ["You did a presentation for school! (+1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 1,
+                "military": 0,
+                "social": 0 
+                }]
 
         elif number == 4:
-            return ["Inspection! (+1 Military)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": 0,
-            "military": 1,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You did a drill practice! (+1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 1,
+                "social": 0 
+                }]
+            
+            elif number == 2:
+                return ["You had an inspection this morning! (+1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 1,
+                "social": 0 
+                }]
+            
+            else:
+                return ["You polished your oxfords! (+1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 1,
+                "social": 0 
+                }]
 
         else:
-            return ["Hang out with friends! (+1 Social)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": 0,
-            "military": 0,
-            "social": 1
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You answered a question correctly in class! (+1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 1
+            }]  
+
+            elif number == 2:
+                return ["You went to the mess! (+1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 1
+            }]
+
+            else: 
+                return ["You hung out with friends! (+1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 1
+            }]
 
         
-    # Write more
     def generate_bad_tile_effects(self):
 
         number = random.randint(1,5)
 
         if number == 1:
-            return ["Failed French Test. (-1 Bilingual)", {
-            "bilingual": -1,
-            "athletic": 0,
-            "academic": 0,
-            "military": 0,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You forgot your french homework! (-1 Bilingual)", {
+                "bilingual": -1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0
+            }]
+
+            elif number == 2:
+                return ["You said \"je suis fini\" instead of \"j'ai fini\" and all the francos laughed at you! (-1 Bilingual)", {
+                "bilingual": -1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0
+            }]
+
+            else:
+                return ["You failed your french test! (-1 Bilingual)", {
+                "bilingual": -1,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": 0
+            }]
 
         elif number == 2:
-            return ["Failed PPT Run. (-1 Athletic)", {
-            "bilingual": 0,
-            "athletic": -1,
-            "academic": 0,
-            "military": 0,
-            "social": 0
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You failed the PPT Run! (-1 Athletic)", {
+                "bilingual": 0,
+                "athletic": -1,
+                "academic": 0,
+                "military": 0,
+                "social": 0
+            }]
+
+            elif number == 2:
+                return ["You got dunked on in gym class! (-1 Athletic)", {
+                "bilingual": 0,
+                "athletic": -1,
+                "academic": 0,
+                "military": 0,
+                "social": 0
+            }]
+
+            else:
+                return ["You lost every intramural game this season! (-1 Athletic)", {
+                "bilingual": 0,
+                "athletic": -1,
+                "academic": 0,
+                "military": 0,
+                "social": 0
         }]
 
         elif number == 3:
-            return ["Failed Math Test. (-1 Academic)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": -1,
-            "military": 0,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You got a 2/20 on your math quiz. Yikes! (-1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": -1,
+                "military": 0,
+                "social": 0
+            }]
+
+            elif number == 2:
+                return ["You failed PSE103. Nobody even thought that was possible! (-1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": -1,
+                "military": 0,
+                "social": 0
+            }]
+            
+            else:
+                return ["You got a 0 on your history proposal. Better cite some better sources! (-1 Academic)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": -1,
+                "military": 0,
+                "social": 0
+            }]
 
         elif number == 4:
-            return ["5s and Gs. (-1 Military)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": 0,
-            "military": -1,
-            "social": 0
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You forgot to polish your oxfords and got called out by the duty officer! (-1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": -1,
+                "social": 0
+            }]
+
+            elif number == 2:
+                return ["You forgot to salute an officer! (-1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": -1,
+                "social": 0
+            }]
+            
+            else:
+                return ["You turned the wrong way doing drill! (-1 Military)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": -1,
+                "social": 0
+            }]
 
         else:
-            return ["Said Something Dumb in Class. (-1 Social)", {
-            "bilingual": 0,
-            "athletic": 0,
-            "academic": 0,
-            "military": 0,
-            "social": -1
-        }]
+            number = random.randint(1,3)
+
+            if number == 1:
+                return ["You dropped your tray in the CDH and food went everywhere! (-1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": -1
+            }]
+
+            elif number == 2:
+                return ["You just realise that you haven't spoken to another human in over a week! (-1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": -1
+            }]
+
+            else:
+                return ["You said something dumb in class and everyone laughed! (-1 Social)", {
+                "bilingual": 0,
+                "athletic": 0,
+                "academic": 0,
+                "military": 0,
+                "social": -1
+            }]
 
