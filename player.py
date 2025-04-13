@@ -47,14 +47,6 @@ class Player:
             "BadTile": 0,
             "EventTile": 0
         }
-        
-        # Turn count for each board, increments when it is player's turn and player is not at the end of the board
-        self.turns = {
-            "BoardY1": 0,
-            "BoardY2": 0,
-            "BoardY3": 0,
-            "BoardY4": 0
-        }
 
         self.events_played = []
         self.events_played_id = []  # stores event ids of events played

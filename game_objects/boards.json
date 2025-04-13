@@ -49,10 +49,10 @@
                 "position": 8,
                 "tile_type": "StopTile",
                 "screen_position": [78,28],
-                "paths": [9, 109],
+                "paths": [109, 9],
                 "event": {
                     "name" : "What kind of student are you?",
-                    "description" : "You just joined this beautiful academic institution, thus you have to study something.You get to choose your academic path for the next 4 years.",
+                    "description" : "You've just joined this beautiful academic institution, thus you have to study something. You get to choose your academic path for the next 4 years.",
                     "branch": true,
 
                     "choices" : [
@@ -70,7 +70,7 @@
                                         "military" : 0, 
                                         "social" : 0},
             
-                            "consequence": "You’ve decided the Arts program is for you. Essays and papers were always more your thing than labs.",
+                            "consequence": "You've decided the Arts program is for you. Essays and papers were always more your thing than labs.",
                             "hide": false
                     },
             
@@ -88,7 +88,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You’ve decided the STEM program is for you. Labs and math were always more your thing than essays.",
+                        "Consequence": "You've decided the STEM program is for you. Labs and math were always more your thing than essays.",
                         "hide": false
                     }
                  ]
@@ -126,7 +126,7 @@
 
                     "choices" : [
                         {
-                            "text" : "Want to test your pride and physical capabilities, join one of RMC’s many varsity teams.",
+                            "text" : "Want to test your pride and physical capabilities, join one of RMC's many varsity teams.",
                             "result" : {"bilingual" : 0, 
                                         "athletic" : 2, 
                                         "academic" : 0, 
@@ -144,7 +144,7 @@
                     },
             
                     {
-                        "text" : "You’ve always felt enamoured with Drill, this is your chance to learn and represent the school.",
+                        "text" : "You've always felt enamoured with Drill, this is your chance to learn and represent the school.",
                         "result" : {"bilingual" : 1, 
                                     "athletic" : 0, 
                                     "academic" : 0, 
@@ -175,7 +175,7 @@
                                     "military" : 2, 
                                     "social" : 2},
             
-                        "Consequence": "Now that you’ve joined a club you get to meet plenty of new people from other first years to the CWC.",
+                        "Consequence": "Now that you've joined a club you get to meet plenty of new people from other first years to the CWC.",
                         "hide": false
                     },
 
@@ -193,7 +193,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You isolate yourself by not joining anything, but you don't mind since you’re free to allocate your time off however you want.",
+                        "Consequence": "You isolate yourself by not joining anything, but you don't mind since you're free to allocate your time off however you want.",
                         "hide": false
                     }
                  ]
@@ -253,7 +253,7 @@
 
                     "choices" : [
                         {
-                            "text" : "You’ve never been the biggest fan of cardio, you tell yourself you’ll go to the gym later instead.",
+                            "text" : "You've never been the biggest fan of cardio, you tell yourself you'll go to the gym later instead.",
                             "result" : {"bilingual" : 0, 
                                         "athletic" : -1, 
                                         "academic" : 0, 
@@ -271,7 +271,7 @@
                     },
             
                     {
-                        "text" : "Why not go on a run, you’re already awake and it will feel good to get some exercise in before breakfast.",
+                        "text" : "Why not go on a run, you're already awake and it will feel good to get some exercise in before breakfast.",
                         "result" : {"bilingual" : 0, 
                                     "athletic" : 1, 
                                     "academic" : 0, 

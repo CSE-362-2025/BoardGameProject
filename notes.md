@@ -54,7 +54,14 @@ player.end_text: string of unique text
 
 - In Event generation function, make it so it remembers what events have been done so that it is fairly balanced
 
-- 10 EventTile, 4 Good, 3 Bad
-
 - Grid with x -> positive to right and y -> positive down
+
+
+- Create boards in board.json minus screen position
+
+- Finish end_game_summary
+
+- Add more goodtile and badtile effects
+
+- 
 

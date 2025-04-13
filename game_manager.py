@@ -11,6 +11,7 @@ from tiles import Tile, StopTile
 from player import Player
 from event import Event
 import json
+from statistics import mean
 
 
 class GameManager:
@@ -71,9 +72,9 @@ class GameManager:
 
         print(f"{self.current_player.name}'s Position after move: {self.current_player.position}")
 
-        # VERY TEMP
-        if self.current_player.position > 22:
-            self.current_player.position = 22
+        # # VERY TEMP
+        # if self.current_player.position > 22:
+        #     self.current_player.position = 22
 
         tile = self.board.get_tile(self.current_player.position)
 
@@ -81,14 +82,13 @@ class GameManager:
             self.current_player.on_alt_path = False
             self.current_player.position -= 100  # Puts the position back on "main" path
             tile = self.board.get_tile(self.current_player.position)
-            print(tile.position, self.current_player.position)
+            # print(tile.position, self.current_player.position)
 
         if not tile:          
-            tile = self.board.tiles[self.board.size-1]
-            self.current_player.position = self.board.size-1
+            self.current_player.position = self.board.size
+            tile = self.board.tiles[len(self.board.tiles) - 1]
 
         self.current_player.tile_counts[tile.get_type()] += 1
-        print(self.current_player.tile_counts[tile.get_type()])
 
         # Handle events based on tile type
         if tile.get_type() == "EventTile":
@@ -180,8 +180,9 @@ class GameManager:
     def end_game(self):
         print("THE GAME IS OVER")
 
-    # Generates the end game summaries for the player
-    def generate_end(self):
+
+    #  gives awards to players with the highest stats
+    def generate_awards(self):
 
         stats = ["academic", "bilingual", "military", "athletic", "social"]
 
@@ -212,6 +213,31 @@ class GameManager:
             for player in max_players:
                 player.awards[stat] = True
 
+
+    # #  writes an endgame summary to player object in player.end_text
+    # def generate_endgame_summary(self):
+
+    #     def check_roll_stats(player, most):
+    #         if most:
+    #             i = 0
+                
+
+
+    #     first_player_idx = random.randint(0, 3)
+    #     player = self.players[first_player_idx]
+    #     i = 0
+
+    #     while i < 4:
+
+
+
+    #         if player.rolls.mean()
+
+    #         player = self.players[first_player_idx+i % len(self.players)]
+    #         i += 1
+
+
+
     def switch_turn(self):
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
@@ -239,6 +265,7 @@ class GameManager:
     # used by the UI after human picks event choice
     def event_choice(self, event, choice_idx):
         event.apply_result(self.current_player, choice_idx)
+        print(f"Player's choice {choice_idx}")
 
         if event.branch:
             pos = self.current_player.position
@@ -248,6 +275,8 @@ class GameManager:
         self.current_player.store_event(event, choice_idx)  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
+
+    # gets a random event from the list of events that 
     # meets the criteria of the player's stats, must take into account rarity
     def get_random_event(self): 
         number = random.randint(1,20)
@@ -340,7 +369,7 @@ class GameManager:
         }]
 
         
-
+    # Write more
     def generate_bad_tile_effects(self):
 
         number = random.randint(1,5)

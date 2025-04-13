@@ -7,7 +7,7 @@
 
         "choices" : [
             {
-                "text" : "You decide you won't go right now, you’re busy with school and the COR can wait.",
+                "text" : "You decide you won't go right now, you're busy with school and the COR can wait.",
                 "result" : {"academic" : 0, 
                             "bilingual" : 0, 
                             "military" : -1, 
@@ -20,12 +20,12 @@
                             "athletic" : 0, 
                             "social" : 0},
 
-                "consequence": "You procrastinate and forget to go to the COR this week, maybe you’ll do it next week.",
+                "consequence": "You procrastinate and forget to go to the COR this week, maybe you'll do it next week.",
                 "hide": false
             },
 
             {
-                "text" : "You know that when it comes to the COR and administration stuff it’s always better to get it over with as fast as you can.",
+                "text" : "You know that when it comes to the COR and administration stuff it's always better to get it over with as fast as you can.",
                 "result" : {"academic" : 0, 
                             "bilingual" : 0, 
                             "military" : 1, 
@@ -46,7 +46,7 @@
 
     {
         "name" : "Another Important Inspection",
-        "description" : "You have an important inspection tomorrow morning. You don’t really want to spend all evening cleaning as you have much better things to do, however you are willing to if it means having the best room.",
+        "description" : "You have an important inspection tomorrow morning. You don't really want to spend all evening cleaning as you have much better things to do, however you are willing to if it means having the best room.",
         "rarity" : 0,
         "phase" : [1],
     
@@ -88,7 +88,7 @@
             },
                 
             {
-                "text" : "I’m behind on my school work, I need to study.",
+                "text" : "I'm behind on my school work, I need to study.",
                 "result" : {"academic" : 2, 
                             "bilingual" : 0, 
                             "military" : -1, 
@@ -119,7 +119,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "You spent more time planning to mess someone up than on your own room, while you successfully got someone else in trouble, you’ve lost the respect of your friends.",
+                "Consequence": "You spent more time planning to mess someone up than on your own room, while you successfully got someone else in trouble, you've lost the respect of your friends.",
                 "hide": false
             }
         ]
@@ -134,7 +134,7 @@
     
         "choices" : [
             {
-                "text" : "You’re tired and the movie sounds boring, so you say no since you have class the next day.",
+                "text" : "You're tired and the movie sounds boring, so you say no since you have class the next day.",
                 "result" : {"academic" : 1, 
                             "bilingual" : 0, 
                             "military" : 0, 
@@ -152,7 +152,7 @@
             },
         
             {
-                "text" : "You decide that it would be a fun time and you’ve wanted to blow off some steam lately.",
+                "text" : "You decide that it would be a fun time and you've wanted to blow off some steam lately.",
                 "result" : {"academic" : 0, 
                             "bilingual" : 0, 
                             "military" : 0, 
@@ -227,14 +227,14 @@
                                 "athletic" : 0, 
                                 "social" : 2},
         
-                    "consequence": "You spend the rest of phone time on the line with your loved ones. You talk about all the cool stuff you did in the last week and your friends and family are super impressed. They tell you that they are proud of you and that they can’t wait to see you again.",
+                    "consequence": "You spend the rest of phone time on the line with your loved ones. You talk about all the cool stuff you did in the last week and your friends and family are super impressed. They tell you that they are proud of you and that they can't wait to see you again.",
                     "hide": false
             }    
         ]
     },
 
     {
-        "name" : "Exploring the campus’s history.",
+        "name" : "Exploring the campus's history.",
         "description" : "A friend of yours has invited you to go around the campus to sightsee and explore all the historical landmarks peppered on the grounds of the college.",
         "rarity" : 0,
         "phase" : [1],
@@ -259,7 +259,7 @@
             },
         
             {
-                "text" : "You’ve never been too interested in architecture or historical buildings, thus you decide to spend your time doing other things",
+                "text" : "You've never been too interested in architecture or historical buildings, thus you decide to spend your time doing other things",
                 "result" : {"academic" : 0, 
                             "bilingual" : 0, 
                             "military" : 0, 
@@ -299,7 +299,7 @@
                             "athletic" : 0, 
                             "social" : 0},
     
-                "consequence": "You scream for your friend over the deafening music in the hallway. Luckily they hear you call for them the first time and tell you the answer you were looking for : \"THE FLAG GOES ON THE LEFT\". You think you're safe. But. Your FYOP Staff saw the whole interaction go down and they are baffled as to how you didn’t know the answer to that stupid question. They give you a giant log with the letter SFQ on them and you log that thing around for the rest of the day.",
+                "consequence": "You scream for your friend over the deafening music in the hallway. Luckily they hear you call for them the first time and tell you the answer you were looking for : \"THE FLAG GOES ON THE LEFT\". You think you're safe. But. Your FYOP Staff saw the whole interaction go down and they are baffled as to how you didn't know the answer to that stupid question. They give you a giant log with the letter SFQ on them and you log that thing around for the rest of the day.",
                 "hide": false
             },
         
@@ -317,7 +317,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "As you’re about to ask the staff walking in the hallway, you notice your flightmates all wearing their flag on the left. You decide to copy them. When the time comes, you’re out of your room and everyone seems to be up to standard, all with their canadian flags on the left of their combats.",
+                "Consequence": "As you're about to ask the staff walking in the hallway, you notice your flightmates all wearing their flag on the left. You decide to copy them. When the time comes, you're out of your room and everyone seems to be up to standard, all with their canadian flags on the left of their combats.",
                 "hide": false
             }
         ]
