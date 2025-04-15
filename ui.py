@@ -395,7 +395,7 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
 
@@ -445,26 +445,33 @@ class UI:
                     start = player
                     break
             move_over = 0
-            for player in range(len(playerlist)-1):
+            for player in range(len(playerlist) - 1):
                 start += 1
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
-                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
+                image = pygame.transform.scale(
+                    playerlist[start].next_up, (width * 8, width * 10)
+                )
                 image_rect = image.get_rect(
-                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                    bottomleft=(
+                        ((35 - (move_over * 5)) * self.screen.get_width() / 100),
+                        self.screen.get_height() - 10,
+                    )
                 )
                 self.screen.blit(image, image_rect)
-
-
 
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            playerlist={}
+            playerlist = {}
             for player in self.game_manager.players:
-                playerlist.update({player.name:random.randint(1,10)})
-            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+                playerlist.update({player.name: random.randint(1, 10)})
+            info = (
+                "Leaderboard",
+                playerlist,
+                pygame.image.load("Resources/test_meeple.png"),
+            )
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
@@ -613,7 +620,43 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, game_manager, image=None, event=None, is_conseq=False):
+    def __get_change_dict(
+        self, player_stat_after: dict, event_choice_index: int
+    ) -> dict | None:
+        """Get copy of player stats dict, modified to include before/after.
+
+        For each category of stats:
+            original_format: "{stat}"
+            format: "{before} -> {after}"
+
+        Args:
+            player_stat_after (dict): current player's stat after result is applied
+            event_choice_index (int): index representing which choice the player chose
+
+        Returns:
+            dict | None: new dict with the new format
+
+        """
+        if player_stat_after is None:
+            return None
+
+        ret: dict[str, str] = {}
+        for each_cat in player_stat_after:
+            # get current value
+            resulting_value: int = int(player_stat_after[each_cat])
+            # get resulting stat
+            change_value: int = int(self.event.choices[event_choice_index - 1]["result"][each_cat]
+)            # calculate stats before :(
+            value_before: int = resulting_value - change_value
+
+            # add new format into returning dict
+            ret[each_cat] = f"{value_before} -> {resulting_value}"
+
+        return ret
+
+    def __init__(
+        self, name, curr_player, game_manager, image=None, event=None, is_conseq=False
+    ):
         super().__init__(name, image)
 
         self.game_manager = game_manager
@@ -631,8 +674,11 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
-        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        self.event_image = pygame.image.load(
+            "Resources/gunsalute-scarlets-mckenzie.jpg"
+        )
         self.is_conseq: bool = is_conseq
+        self.conseq_choice_idx = None
 
     def draw(self, screen):
         super().draw(screen)
@@ -761,7 +807,7 @@ class EventMenu(Menu):
                     # string to display on the button
                     _type="choice",
                     enabled=is_enabled,
-                game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
                 self.buttons.append(each_choice_button)
         else:
@@ -786,7 +832,7 @@ class EventMenu(Menu):
                     enabled=False,
                     centre=None,
                     is_conseq_disp=True,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
 
@@ -794,8 +840,12 @@ class EventMenu(Menu):
             # for now, on the right half of the immediate bottom from the first button
             conseq_text_box_button = self.buttons[0]
 
-            next_button_top = conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height
-            next_button_bottom = next_button_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            next_button_top = (
+                conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height
+            )
+            next_button_bottom = (
+                next_button_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            )
             self.buttons.append(
                 EventChoiceButton(
                     centerx=event_desc_rect.centerx,
@@ -813,24 +863,28 @@ class EventMenu(Menu):
                     enabled=True,
                     centre=None,
                     is_conseq_disp=True,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
 
             # display stat change on the card
             conseq_stat_display = ConsequenceCardDisplay(
-                None,
-                EVENT_CONSEQ_CARD_OUT,
-                CARDSIZE,
-                "Consequence Stats",
+                centre=None,
+                centre_moved=EVENT_CONSEQ_CARD_OUT,
+                size=None,
+                type="Consequence Stats",
                 image="Resources/rmc_card.png",
             )
-            # TODO: stats dict should contain before/after
+
+            stat_change_dict: dict = self.__get_change_dict(
+                self.game_manager.current_player.stats, self.conseq_choice_idx
+            )
             conseq_stat_display_info = (
                 self.game_manager.current_player.name,
-                self.game_manager.current_player.stats,
-                self.game_manager.current_player.get_portrait()
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
             )
+
             conseq_stat_display.update_info(conseq_stat_display_info)
             self.buttons.append(conseq_stat_display)
 
@@ -919,7 +973,10 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
+                buttonimg = pygame.transform.scale(
+                    self.image,
+                    (self.size[0] * screen_width, self.size[1] * screen_height),
+                )
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -1105,7 +1162,9 @@ class EventChoiceButton(Button):
             # check if initial pop up (event choices)
             if not self.is_conseq_disp:
                 # ! TBD
-                print(f"applying result for id={self.choice_idx}; text={self.button_text}")
+                print(
+                    f"applying result for id={self.choice_idx}; text={self.button_text}"
+                )
                 print(f"\tbefore: {self.curr_player.stats}")
 
                 # TODO: apply consequence once in `EventMenu`
@@ -1151,7 +1210,9 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
+                buttonimg = pygame.transform.scale(
+                    self.image, (w * screen_width, h * screen_height)
+                )
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
@@ -1218,9 +1279,11 @@ class CardDisplays(Button):
                         self.hovered = False
                     return self.type
 
+
 class ConsequenceCardDisplay(CardDisplays):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.position = self.moved
         self.hovered = True
+        self.enabled = False
