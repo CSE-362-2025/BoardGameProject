@@ -29,6 +29,8 @@ class GameManager:
         self.current_player = None
         self.turn_count = 0
 
+        self.has_gpu = False
+
     # plays all logic for playing human turn
     def play_turn(self, dice_value):
 
@@ -182,10 +184,13 @@ class GameManager:
     def end_game(self):
         print("THE GAME IS OVER")
         self.generate_awards()
-        self.ai_summary()
+        self.generate_end_text()
+        if self.has_gpu:
+            self.ai_summary()
         for player in self.players:
             print(f"{player.name} awards: {player.awards}")
-            print(f"{player.name} ai summary: {player.ai_summary}")
+            if self.has_gpu:
+                print(f"{player.name} ai summary: {player.ai_summary}")
 
 
     #  gives awards to players with the highest stats
@@ -221,6 +226,37 @@ class GameManager:
                 player.awards[stat] = True
 
 
+    #  writes an endgame summary to player object in player.end_text
+    def generate_end_text(self):
+
+
+        # returns true if player had the highest average rolls
+        def has_most_rolls(self, check_player):
+
+            max = check_player.rolls.mean()
+
+            for player in self.players:
+                if player.name == check_player.name:
+                    continue
+                else:
+                    if max < player.rolls.mean():
+                        return False
+                    
+            return True
+
+
+        first_player_idx = random.randint(0, 3)
+        player = self.players[first_player_idx]
+        i = 0
+
+        while i < 4:
+            pass
+                
+        
+
+        return
+
+
     # Uses a Large Language Model to write a summary about events played for each player
     def ai_summary(self):
 
@@ -244,27 +280,7 @@ class GameManager:
             player.ai_summary = summary
 
 
-    # #  writes an endgame summary to player object in player.end_text
-    # def generate_endgame_summary(self):
 
-    #     def check_roll_stats(player, most):
-    #         if most:
-    #             i = 0
-                
-
-
-    #     first_player_idx = random.randint(0, 3)
-    #     player = self.players[first_player_idx]
-    #     i = 0
-
-    #     while i < 4:
-
-
-
-    #         if player.rolls.mean()
-
-    #         player = self.players[first_player_idx+i % len(self.players)]
-    #         i += 1
 
 
 
