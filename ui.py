@@ -1,6 +1,6 @@
-import pygame
 import random
 
+import pygame
 
 # Constants
 WINDOW_SIZE_X = 1080
@@ -47,14 +47,14 @@ EVENT_LR_MARGIN: int = 3
 EVENT_TB_MARGIN: int = 2
 
 # event title rect and font
-EVENT_TITLE_FONT_SIZE: int = 40
+EVENT_TITLE_FONT_SIZE: int = 50
 EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
-EVENT_DESC_FONT_SIZE: int = 25
+EVENT_DESC_FONT_SIZE: int = 30
 
 # event button text size
-EVENT_BUTTONS_FONT_SIZE: int = 22
+EVENT_BUTTONS_FONT_SIZE: int = 25
 
 # event button colours
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
@@ -72,6 +72,7 @@ def draw_text_with_wrap_centery(
     surface, text, color, rect, font, aa=True, bkg=None
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
+
     This returns any remaining text that will not fit into the `Rect`.
     This will force all text to have the same `centery` as the given `rect`,
     only use for short texts.
@@ -89,6 +90,7 @@ def draw_text_with_wrap_centery(
 
     Returns:
         str: left over string that could not fit into given rect
+
     """
     rect = pygame.Rect(rect)
     y = rect.top
@@ -134,7 +136,7 @@ def draw_text_with_wrap_centery(
 
 
 def draw_text_with_wrap_centery_increment(
-    surface, text, color, rect, font, aa=True, bkg=None
+    surface, text, color, rect, font, aa=True, bkg=None, is_dry_run=False
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
     This returns any remaining text that will not fit into the `Rect`.
@@ -151,16 +153,17 @@ def draw_text_with_wrap_centery_increment(
         font (pygame.font.Font): `Font` to use for text
         aa (bool, optional): anti-aliasing toggle. Defaults to True.
         bkg (_type_, optional): background. Defaults to None.
+        is_dry_run (bool, optional): if set, won't render. Defaults to False.
 
     Returns:
         str: left over string that could not fit into given rect
     """
 
     # padding for L/R
-    padding_lr = surface.get_width() / 100 * 3
+    padding_lr = surface.get_width() / 100 * 1
 
     # padding for top/bottom
-    padding_tb = surface.get_height() / 100 * 3
+    padding_tb = surface.get_height() / 100 * 2.5
     rect = pygame.Rect(rect)
 
     y = rect.top + padding_tb
@@ -193,13 +196,56 @@ def draw_text_with_wrap_centery_increment(
 
         text_rect = image.get_rect(center=rect.center)
         text_rect.centery = y
-        surface.blit(image, text_rect)
+        if not is_dry_run:
+            surface.blit(image, text_rect)
         y += font_height + line_spacing
 
         # remove the text we just blitted
         text = text[i:]
 
     return text
+
+
+def get_font_size_to_fit_all(
+    screen: pygame.Surface,
+    rect: pygame.Rect,
+    text: str,
+    colour: tuple[int],
+    initial_font_size: int,
+    font_family: str = None,
+) -> int:
+    """Find a font size that fits all of given string into the rect.
+
+    This finds the font size that can fit all given text and returns
+    the font size. This will render the font on the given rect.
+    Currently, font-size decrements by 1.
+
+    Args:
+        screen (pygame.Surface): the base surface
+        rect (pygame.Rect): rect obj to fit text in
+        text (str): text to render
+        colour (tuple[int]): colour of the text
+        initial_font_size (int): Initial font size to use
+        font_family (str, optional): path to specific font to use. Defaults to None.
+
+    Returns:
+        int: font size value found
+
+    """
+    step_size: int = 1
+    curr_font_size = initial_font_size
+    while True:
+        each_font: pygame.font.Font = pygame.font.Font(font_family, curr_font_size)
+        # try to draw text
+        remaining: str = draw_text_with_wrap_centery_increment(
+            screen, text, colour, rect, each_font, is_dry_run=True
+        )
+        if len(remaining) == 0:
+            break
+
+        curr_font_size -= step_size
+
+    return curr_font_size
 
 
 class UI:
@@ -303,13 +349,17 @@ class UI:
         else:
             self.screen.fill(BG_COLOR)
         if board:
-            self.display_board(
-                board, players
-            )  # Call a method to draw the game board (implement as needed)
+            self.display_board(board, players)  # Call a method to draw the game board
 
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
             text_rect = text_surface.get_rect(
                 center=(
                     self.screen.get_width() / 2,
@@ -656,8 +706,9 @@ class EventMenu(Menu):
             # get current value
             resulting_value: int = int(player_stat_after[each_cat])
             # get resulting stat
-            change_value: int = int(self.event.choices[event_choice_index - 1]["result"][each_cat]
-)            # calculate stats before :(
+            change_value: int = int(
+                self.event.choices[event_choice_index - 1]["result"][each_cat]
+            )  # calculate stats before :(
             value_before: int = resulting_value - change_value
 
             # add new format into returning dict
@@ -722,24 +773,17 @@ class EventMenu(Menu):
         tss_resized = pygame.transform.scale(tss, tss_rect_adjusted.size)
 
         # prep event title
-        event_title_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/franklin_gothic_book_italic.ttf", EVENT_TITLE_FONT_SIZE
-        )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
             0,
             0,
             tss_rect_adjusted.width,
-            # TODO: set height such that the longest event title can fit
-            15 * screen_height,
+            10 * screen_height,
         )
         event_title_rect.centerx = tss_rect_adjusted.centerx
         event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
 
         # prep event description box, right half below the title box
-        event_desc_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/news_gothic_std_medium.otf", EVENT_DESC_FONT_SIZE
-        )
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
@@ -908,6 +952,17 @@ class EventMenu(Menu):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, event_desc_rect, 3)
 
         # draw title on top
+        event_title_font_size_fitting: int = get_font_size_to_fit_all(
+            screen,
+            event_title_rect,
+            str(self.event.name),
+            EVENT_FONT_COLOUR,
+            EVENT_TITLE_FONT_SIZE,
+            font_family="Resources/fonts/franklin_gothic_book_italic.ttf"
+        )
+        event_title_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/franklin_gothic_book_italic.ttf", event_title_font_size_fitting
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.name),
@@ -917,6 +972,17 @@ class EventMenu(Menu):
         )
 
         # draw desc on top
+        fitting_font_size: int = get_font_size_to_fit_all(
+            screen,
+            event_desc_rect,
+            str(self.event.description),
+            EVENT_FONT_COLOUR,
+            EVENT_DESC_FONT_SIZE,
+            font_family="Resources/fonts/news_gothic_std_medium.otf",
+        )
+        event_desc_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/news_gothic_std_medium.otf", fitting_font_size
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.description),
@@ -1103,10 +1169,7 @@ class EventChoiceButton(Button):
             return
 
         # ! DRY
-        screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
-
-        button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
 
         button_rect = pygame.rect.Rect(
             self.left,
@@ -1137,6 +1200,16 @@ class EventChoiceButton(Button):
         pygame.draw.rect(screen, fill_colour, button_rect)
         # border
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
+
+        # find font-size to fit all text
+        fitting_font_size: int = get_font_size_to_fit_all(
+            screen,
+            button_rect,
+            self.button_text,
+            EVENT_FONT_COLOUR,
+            EVENT_BUTTONS_FONT_SIZE,
+        )
+        button_font = pygame.font.Font(None, fitting_font_size)
 
         # draw text on top
         draw_text_with_wrap_centery_increment(
