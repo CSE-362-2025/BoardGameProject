@@ -140,8 +140,8 @@
                                         "social" : 1},
             
                             "criteria" : {"bilingual" : 0, 
-                                        "athletic" : 4, 
-                                        "academic" : 2, 
+                                        "athletic" : 3, 
+                                        "academic" : 1, 
                                         "military" : 0, 
                                         "social" : 2},
             
@@ -157,10 +157,10 @@
                                     "military" : 2, 
                                     "social" : -1},
             
-                        "criteria" : {"bilingual" : 0, 
-                                    "athletic" : 2, 
+                        "criteria" : {"bilingual" : 1, 
+                                    "athletic" : 0, 
                                     "academic" : 2, 
-                                    "military" : 4, 
+                                    "military" : 3, 
                                     "social" : 0},
             
                         "consequence": "You have now joined the drill team, you might lose some time with your friends, but fortunately for you, that never mattered to you.",
@@ -175,10 +175,10 @@
                                     "military" : 0, 
                                     "social" : 1},
             
-                        "criteria" : {"bilingual" : 2, 
-                                    "athletic" : 2, 
-                                    "academic" : 2, 
-                                    "military" : 2, 
+                        "criteria" : {"bilingual" : 1, 
+                                    "athletic" : 1, 
+                                    "academic" : 1, 
+                                    "military" : 1, 
                                     "social" : 2},
             
                         "consequence": "Now that you've joined a club you get to meet plenty of new people from other first years to the CWC.",
@@ -285,7 +285,7 @@
                                     "social" : 0},
             
                         "criteria" : {"bilingual" : 0, 
-                                    "athletic" : 3, 
+                                    "athletic" : 2, 
                                     "academic" : 0, 
                                     "military" : 0, 
                                     "social" : 0},
