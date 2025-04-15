@@ -1,6 +1,6 @@
-import pygame
 import random
 
+import pygame
 
 # Constants
 WINDOW_SIZE_X = 1080
@@ -47,14 +47,14 @@ EVENT_LR_MARGIN: int = 3
 EVENT_TB_MARGIN: int = 2
 
 # event title rect and font
-EVENT_TITLE_FONT_SIZE: int = 40
+EVENT_TITLE_FONT_SIZE: int = 50
 EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
-EVENT_DESC_FONT_SIZE: int = 25
+EVENT_DESC_FONT_SIZE: int = 30
 
 # event button text size
-EVENT_BUTTONS_FONT_SIZE: int = 22
+EVENT_BUTTONS_FONT_SIZE: int = 25
 
 # event button colours
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
@@ -72,6 +72,7 @@ def draw_text_with_wrap_centery(
     surface, text, color, rect, font, aa=True, bkg=None
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
+
     This returns any remaining text that will not fit into the `Rect`.
     This will force all text to have the same `centery` as the given `rect`,
     only use for short texts.
@@ -89,6 +90,7 @@ def draw_text_with_wrap_centery(
 
     Returns:
         str: left over string that could not fit into given rect
+
     """
     rect = pygame.Rect(rect)
     y = rect.top
@@ -760,16 +762,12 @@ class EventMenu(Menu):
         tss_resized = pygame.transform.scale(tss, tss_rect_adjusted.size)
 
         # prep event title
-        event_title_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/franklin_gothic_book_italic.ttf", EVENT_TITLE_FONT_SIZE
-        )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
             0,
             0,
             tss_rect_adjusted.width,
-            # TODO: set height such that the longest event title can fit
-            15 * screen_height,
+            10 * screen_height,
         )
         event_title_rect.centerx = tss_rect_adjusted.centerx
         event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
@@ -943,6 +941,17 @@ class EventMenu(Menu):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, event_desc_rect, 3)
 
         # draw title on top
+        event_title_font_size_fitting: int = get_font_size_to_fit_all(
+            screen,
+            event_title_rect,
+            str(self.event.name),
+            EVENT_FONT_COLOUR,
+            EVENT_TITLE_FONT_SIZE,
+            font_family="Resources/fonts/franklin_gothic_book_italic.ttf"
+        )
+        event_title_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/franklin_gothic_book_italic.ttf", event_title_font_size_fitting
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.name),
