@@ -7,7 +7,7 @@ def main():
     # Initialize pygame
     pygame.init()
     pygame.mixer.init()
-    
+
     # Set up display
     pygame.display.set_caption("Board Game")
 
@@ -48,7 +48,6 @@ def main():
         # Update the screen (can be flipped to update only parts of the screen)
         pygame.display.flip()  # Update the entire screen
         clock.tick(60)
-        # print(clock.get_fps())
 
     pygame.quit()  # Quit the game and close the window
 
