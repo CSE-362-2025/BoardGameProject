@@ -38,7 +38,7 @@
                             "athletic" : 0, 
                             "social" : 0},
 
-                "Consequence": "Your eagerness to sign papers impresses the COR staff making their day better.",
+                "consequence": "Your eagerness to sign papers impresses the COR staff making their day better.",
                 "hide": false
             }
         ]
@@ -83,7 +83,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "you had fun all night, but your room looks like a mess for the inspection.",
+                "consequence": "you had fun all night, but your room looks like a mess for the inspection.",
                 "hide": false
             },
                 
@@ -119,7 +119,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "You spent more time planning to mess someone up than on your own room, while you successfully got someone else in trouble, you've lost the respect of your friends.",
+                "consequence": "You spent more time planning to mess someone up than on your own room, while you successfully got someone else in trouble, you've lost the respect of your friends.",
                 "hide": false
             }
         ]
@@ -165,7 +165,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "The movie was great and you had an amazing time with your friends, you really enjoyed spending that time off and you realise how important these moments are.",
+                "consequence": "The movie was great and you had an amazing time with your friends, you really enjoyed spending that time off and you realise how important these moments are.",
                 "hide": false
             }
         ]
@@ -210,7 +210,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "Your staff is baffled as to why you are shining your shoes instead of playing on your phone. They suspect that you might be a super cadet… But man do those oxfords look shiny.",
+                "consequence": "Your staff is baffled as to why you are shining your shoes instead of playing on your phone. They suspect that you might be a super cadet… But man do those oxfords look shiny.",
                 "hide": false
             },
             {
@@ -272,7 +272,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "Looking out from your window you look at the college and wonder if you made the right decision.",
+                "consequence": "Looking out from your window you look at the college and wonder if you made the right decision.",
                 "hide": false
             }
         ]
@@ -317,7 +317,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "As you're about to ask the staff walking in the hallway, you notice your flightmates all wearing their flag on the left. You decide to copy them. When the time comes, you're out of your room and everyone seems to be up to standard, all with their canadian flags on the left of their combats.",
+                "consequence": "As you're about to ask the staff walking in the hallway, you notice your flightmates all wearing their flag on the left. You decide to copy them. When the time comes, you're out of your room and everyone seems to be up to standard, all with their canadian flags on the left of their combats.",
                 "hide": false
             }
         ]
@@ -363,7 +363,7 @@
                             "athletic" : 0, 
                             "social" : 0},
         
-                "Consequence": "With a stern face you walk past the Cmdt and pull the stiffest salute imaginable. The Cmdt Salutes you back and bids you a good day. Salute Secured. Mission, Accomplished.",
+                "consequence": "With a stern face you walk past the Cmdt and pull the stiffest salute imaginable. The Cmdt Salutes you back and bids you a good day. Salute Secured. Mission, Accomplished.",
                 "hide": false
             },
             {

@@ -94,7 +94,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You've decided the STEM program is for you. Labs and math were always more your thing than essays.",
+                        "consequence": "You've decided the STEM program is for you. Labs and math were always more your thing than essays.",
                         "hide": false
                     }
                  ]
@@ -163,7 +163,7 @@
                                     "military" : 4, 
                                     "social" : 0},
             
-                        "Consequence": "You have now joined the dill team, you might lose some time with your friends, but fortunately for you, that never mattered to you.",
+                        "consequence": "You have now joined the drill team, you might lose some time with your friends, but fortunately for you, that never mattered to you.",
                         "hide": false
                     },
 
@@ -181,7 +181,7 @@
                                     "military" : 2, 
                                     "social" : 2},
             
-                        "Consequence": "Now that you've joined a club you get to meet plenty of new people from other first years to the CWC.",
+                        "consequence": "Now that you've joined a club you get to meet plenty of new people from other first years to the CWC.",
                         "hide": false
                     },
 
@@ -199,7 +199,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "You isolate yourself by not joining anything, but you don't mind since you're free to allocate your time off however you want.",
+                        "consequence": "You isolate yourself by not joining anything, but you don't mind since you're free to allocate your time off however you want.",
                         "hide": false
                     }
                  ]
@@ -290,7 +290,7 @@
                                     "military" : 0, 
                                     "social" : 0},
             
-                        "Consequence": "Feeling energised from the run you are brimming with energy for the day.",
+                        "consequence": "Feeling energised from the run you are brimming with energy for the day.",
                         "hide": false
                     }
                  ]
