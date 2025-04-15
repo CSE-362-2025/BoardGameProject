@@ -197,6 +197,48 @@ def draw_text_with_wrap_centery_increment(
     return text
 
 
+def get_font_size_to_fit_all(
+    screen: pygame.Surface,
+    rect: pygame.Rect,
+    text: str,
+    colour: tuple[int],
+    initial_font_size: int,
+    font_family: str = None,
+) -> int:
+    """Find a font size that fits all of given string into the rect.
+
+    This finds the font size that can fit all given text and returns
+    the font size. This will render the font on the given rect.
+    Currently, font-size decrements by 1.
+
+    Args:
+        screen (pygame.Surface): the base surface
+        rect (pygame.Rect): rect obj to fit text in
+        text (str): text to render
+        colour (tuple[int]): colour of the text
+        initial_font_size (int): Initial font size to use
+        font_family (str, optional): path to specific font to use. Defaults to None.
+
+    Returns:
+        int: font size value found
+
+    """
+    step_size: int = 1
+    curr_font_size = initial_font_size
+    while True:
+        each_font: pygame.font.Font = pygame.font.Font(font_family, curr_font_size)
+        # try to draw text
+        remaining: str = draw_text_with_wrap_centery_increment(
+            screen, text, colour, rect, each_font, is_dry_run=True
+        )
+        if len(remaining) == 0:
+            break
+
+        curr_font_size -= step_size
+
+    return curr_font_size
+
+
 class UI:
 
     # player is current player, changes during switch_turn()
@@ -208,7 +250,9 @@ class UI:
         )
         self.width = self.screen.get_width()
         self.backgrounds = dict(
-            title="Resources/Title_Screen.png", wood="Resources/background_wood.png", year1="Resources/board_year1.png",
+            title="Resources/Title_Screen.png",
+            wood="Resources/background_wood.png",
+            year1="Resources/board_year1.png",
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -220,31 +264,60 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
-            Button(MAIN3,MAINSIZE,"Custom Char",False,"Resources/CUSTOM_CHARA.jpg",False,),
+            Button(
+                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
+            ),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                "Resources/CUSTOM_CHARA.jpg",
+                False,
+            ),
             Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),]
-        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
-        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
+            Button(PAUSE, PAUSESIZE, "Pause", True),
+        ]
+        self.Buttons.insert(
+            0,
+            CardDisplays(
+                CARD1IN,
+                CARD1OUT,
+                CARDSIZE,
+                "Player Stats",
+                image="Resources/rmc_card.png",
+            ),
+        )
+        self.Buttons.insert(
+            1,
+            CardDisplays(
+                CARD2IN,
+                CARD2OUT,
+                CARDSIZE,
+                "Leaderboard",
+                image="Resources/rmc_card.png",
+            ),
+        )
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
-        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
-                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
-                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
-                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
-                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
-                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
-                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
-        self.sounds['click'].set_volume(0.5)
+        self.sounds = dict(
+            click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+            pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+            athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"),
+        )
+        self.sounds["click"].set_volume(0.5)
         self.track = 0
         self.year = 0
-
 
     def update(self):
         """Updates the screen"""
@@ -268,7 +341,12 @@ class UI:
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(center=(self.screen.get_width()/2, self.screen.get_width()*(41/150)))
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -292,26 +370,26 @@ class UI:
                 button.turn_on()
 
     def set_sound(self):
-            if self.player:
-                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.play()
-                match self.track:
-                    case 0:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1:
-                        pass
-                    case 2:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 3:
-                        pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-                    case _:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                        print("Track Reset")
-                        self.track=0
-                self.track =+ 1
-            else:
-                pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
-                pygame.mixer.music.play()
+        if self.player:
+            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+            pygame.mixer.music.play()
+            match self.track:
+                case 0:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 1:
+                    pass
+                case 2:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 3:
+                    pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                case _:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    print("Track Reset")
+                    self.track = 0
+            self.track = +1
+        else:
+            pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
+            pygame.mixer.music.play()
 
     def game_start(self):
         self.game_manager.start_game()
@@ -326,7 +404,7 @@ class UI:
             case 0:
                 if self.curr_background != self.backgrounds["year1"]:
                     self.curr_background = self.backgrounds["year1"]
-                    self.width=1
+                    self.width = 1
             case _:
                 self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
@@ -352,10 +430,9 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
-
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -403,26 +480,33 @@ class UI:
                     start = player
                     break
             move_over = 0
-            for player in range(len(playerlist)-1):
+            for player in range(len(playerlist) - 1):
                 start += 1
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
-                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
+                image = pygame.transform.scale(
+                    playerlist[start].next_up, (width * 8, width * 10)
+                )
                 image_rect = image.get_rect(
-                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                    bottomleft=(
+                        ((35 - (move_over * 5)) * self.screen.get_width() / 100),
+                        self.screen.get_height() - 10,
+                    )
                 )
                 self.screen.blit(image, image_rect)
-
-
 
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            playerlist={}
+            playerlist = {}
             for player in self.game_manager.players:
-                playerlist.update({player.name:random.randint(1,10)})
-            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+                playerlist.update({player.name: random.randint(1, 10)})
+            info = (
+                "Leaderboard",
+                playerlist,
+                pygame.image.load("Resources/test_meeple.png"),
+            )
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
@@ -485,8 +569,7 @@ class UI:
                 case "Quit":
                     pygame.event.Event(quit)
         if self.game_manager.is_game_over():
-            self.player=None
-
+            self.player = None
 
     def save_state(self):
         for button in self.Buttons:
@@ -579,46 +662,9 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
-        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
-
-    def __get_font_size_to_fit_all(self, screen: pygame.Surface, rect: pygame.Rect, text: str, colour: tuple[int], initial_font_size: int, font_family: str = None) -> int:
-        """Find a font size that fits all of given string into the rect.
-
-        This finds the font size that can fit all given text and returns
-        the font size. This will render the font on the given rect.
-        Currently, font-size decrements by 1.
-
-        Args:
-            screen (pygame.Surface): the base surface
-            rect (pygame.Rect): rect obj to fit text in
-            text (str): text to render
-            colour (tuple[int]): colour of the text
-            initial_font_size (int): Initial font size to use
-            font_family (str, optional): path to specific font to use. Defaults to None.
-
-        Returns:
-            int: font size value found
-
-        """
-        step_size: int = 1
-        curr_font_size = initial_font_size
-        while True:
-            each_font: pygame.font.Font = pygame.font.Font(font_family, curr_font_size)
-            # try to draw text
-            remaining: str = draw_text_with_wrap_centery_increment(
-                screen,
-                text,
-                colour,
-                rect,
-                each_font,
-                is_dry_run=True
-            )
-            if len(remaining) == 0:
-                break
-
-            curr_font_size -= step_size
-
-        return curr_font_size
+        self.event_image = pygame.image.load(
+            "Resources/gunsalute-scarlets-mckenzie.jpg"
+        )
 
     def draw(self, screen):
         super().draw(screen)
@@ -743,7 +789,7 @@ class EventMenu(Menu):
                 # string to display on the button
                 _type="choice",
                 enabled=is_enabled,
-                game_manager=self.game_manager
+                game_manager=self.game_manager,
             )
             self.buttons.append(each_choice_button)
 
@@ -765,13 +811,13 @@ class EventMenu(Menu):
         )
 
         # draw desc on top
-        fitting_font_size: int = self.__get_font_size_to_fit_all(
+        fitting_font_size: int = get_font_size_to_fit_all(
             screen,
             event_desc_rect,
             str(self.event.description),
             EVENT_FONT_COLOUR,
             EVENT_DESC_FONT_SIZE,
-            font_family="Resources/fonts/news_gothic_std_medium.otf"
+            font_family="Resources/fonts/news_gothic_std_medium.otf",
         )
         event_desc_font: pygame.font.Font = pygame.font.Font(
             "Resources/fonts/news_gothic_std_medium.otf", fitting_font_size
@@ -843,7 +889,10 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
+                buttonimg = pygame.transform.scale(
+                    self.image,
+                    (self.size[0] * screen_width, self.size[1] * screen_height),
+                )
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -984,6 +1033,9 @@ class EventChoiceButton(Button):
         # border
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
 
+        # find font-size to fit all text
+        fitting_font_size: int = None
+
         # draw text on top
         draw_text_with_wrap_centery_increment(
             screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
@@ -1060,7 +1112,9 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
+                buttonimg = pygame.transform.scale(
+                    self.image, (w * screen_width, h * screen_height)
+                )
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
