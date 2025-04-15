@@ -32,6 +32,9 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
+# consequence RMC card display position
+EVENT_CONSEQ_CARD_OUT = (100, 17.5)
+
 # Rect with TSS background
 EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
@@ -814,6 +817,23 @@ class EventMenu(Menu):
                 )
             )
 
+            # display stat change on the card
+            conseq_stat_display = ConsequenceCardDisplay(
+                None,
+                EVENT_CONSEQ_CARD_OUT,
+                CARDSIZE,
+                "Consequence Stats",
+                image="Resources/rmc_card.png",
+            )
+            # TODO: stats dict should contain before/after
+            conseq_stat_display_info = (
+                self.game_manager.current_player.name,
+                self.game_manager.current_player.stats,
+                self.game_manager.current_player.get_portrait()
+            )
+            conseq_stat_display.update_info(conseq_stat_display_info)
+            self.buttons.append(conseq_stat_display)
+
         # * ALL draw events
 
         # resized TSS image rect
@@ -1197,3 +1217,10 @@ class CardDisplays(Button):
                         self.position = self.main
                         self.hovered = False
                     return self.type
+
+class ConsequenceCardDisplay(CardDisplays):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.position = self.moved
+        self.hovered = True
