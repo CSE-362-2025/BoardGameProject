@@ -1,4 +1,5 @@
 import random
+import os
 
 import pygame
 
@@ -329,7 +330,7 @@ class UI:
 
     def update(self):
         """Updates the screen"""
-        #first make sure aspect ratio is good
+        # first make sure aspect ratio is good
         if self.width != self.screen.get_width():
             pygame.display.set_mode((int(self.screen.get_width()), int(self.screen.get_width()*(41/59))), pygame.RESIZABLE)
         if self.player:
@@ -502,7 +503,7 @@ class UI:
                     start = player
                     break
             move_over = 0
-            for player in range(len(playerlist)-1):
+            for player in range(len(playerlist) - 1):
                 start -= 1
                 move_over += 1
                 if start >= len(playerlist):
@@ -524,17 +525,17 @@ class UI:
             player_sort = []
             for player in self.game_manager.players:
                 player_sort.append(player)
-            for player in range(len(player_sort)-1):
+            for player in range(len(player_sort) - 1):
                 next = player_sort[player]
-                for remainder in range(len(player_sort)-player):
-                    if next.position < player_sort[remainder+player].position:
-                        hold = player_sort[remainder+player]
-                        player_sort[remainder+player] = next
+                for remainder in range(len(player_sort) - player):
+                    if next.position < player_sort[remainder + player].position:
+                        hold = player_sort[remainder + player]
+                        player_sort[remainder + player] = next
                         player_sort[player] = hold
                         next = player_sort[player]
-            playerlist={}
+            playerlist = {}
             for player in player_sort:
-                playerlist.update({player.name:random.randint(1,10)})
+                playerlist.update({player.name: random.randint(1, 10)})
             info = ("Leaderboard", playerlist, self.the_meeple)
             self.Buttons[1].update_info(info)
 
@@ -670,6 +671,30 @@ class PauseMenu(Menu):
 
 class EventMenu(Menu):
 
+    def __get_random_image_from_path(self, parent_dir_path: str) -> str | None:
+        """Return a path string (by Python to be OS-independent) of a image file to use.
+
+        Randomly selects a file from the given parent directory.
+        The `parent_dir_path` must be valid and contain only images.
+
+        Args:
+            parent_dir_path (str): Path to the dir that contains images to select from.
+
+        Returns:
+            str | None: full path to the selected image, None on error.
+
+        """
+        dir_list = os.listdir(parent_dir_path)
+        # only keep files
+        dir_list = [
+            f for f in dir_list if os.path.isfile(os.path.join(parent_dir_path, f))
+        ]
+        # choose a random one
+        ret = random.choice(dir_list)
+
+        # join path
+        return os.path.join(parent_dir_path, ret)
+
     def __is_choice_available(self, player_stat: dict, choice_stat: dict) -> bool:
         """Check if the `player_stat` is higher or equal than `choice_stat` dictionary.
         This assumes two given dict has the same keys.
@@ -742,11 +767,18 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
-        self.event_image = pygame.image.load(
-            "Resources/gunsalute-scarlets-mckenzie.jpg"
-        )
         self.is_conseq: bool = is_conseq
         self.conseq_choice_idx = None
+
+        # choose a random image for event desc
+        desc_image_path = os.path.join("Resources", "event_popup_images")
+        self.image_desc_path: str = self.__get_random_image_from_path(desc_image_path)
+        # fallback image
+        if self.image_desc_path is None:
+            self.image_desc_path = os.path.join(
+                "Resources", "gunsalute-scarlets-mckenzie.jpg"
+            )
+        self.event_image = pygame.image.load(self.image_desc_path)
 
     def draw(self, screen):
         super().draw(screen)
@@ -964,10 +996,11 @@ class EventMenu(Menu):
             str(self.event.name),
             EVENT_FONT_COLOUR,
             EVENT_TITLE_FONT_SIZE,
-            font_family="Resources/fonts/franklin_gothic_book_italic.ttf"
+            font_family="Resources/fonts/franklin_gothic_book_italic.ttf",
         )
         event_title_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/franklin_gothic_book_italic.ttf", event_title_font_size_fitting
+            "Resources/fonts/franklin_gothic_book_italic.ttf",
+            event_title_font_size_fitting,
         )
         draw_text_with_wrap_centery_increment(
             screen,
