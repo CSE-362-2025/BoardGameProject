@@ -622,8 +622,6 @@ class UI:
                 case "Quit to Title":
                     self.open_menus.pop()
                     self.main_menu()
-        if self.game_manager.is_game_over():
-            self.player = None
 
     def save_state(self):
         for button in self.Buttons:
@@ -923,7 +921,7 @@ class EventMenu(Menu):
                     left=ecb_left,
                     bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
                     width=ecb_width,
-                    button_text=self.event.choices[self.conseq_choice_idx]["Consequence"],
+                    button_text=self.event.choices[self.conseq_choice_idx]["consequence"],
                     event=self.event,
                     choice_idx=None,
                     curr_player=self.curr_player,

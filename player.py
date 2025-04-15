@@ -35,11 +35,11 @@ class Player:
 
         else:
             self.stats = {  # Caps at 10 and can't go below 0
-                "academic": 5,                
-                "bilingual": 5,
-                "military": 5,                
-                "athletic": 5,
-                "social": 5,
+                "academic": 2,                
+                "bilingual": 2,
+                "military": 2,                
+                "athletic": 2,
+                "social": 2,
             }
         
         # Increment when landing on specific tile
