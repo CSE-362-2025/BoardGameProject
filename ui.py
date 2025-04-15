@@ -329,6 +329,7 @@ class UI:
 
     def main_menu(self):
         self.save_state()
+        self.player = None
         for button in self.Buttons:
             if (
                 button.type == "New Game"
@@ -339,7 +340,7 @@ class UI:
                 button.turn_on()
         self.curr_background = self.backgrounds["title"]
         self.width = 1
-        self.player = None
+        self.set_sound()
 
     def set_sound(self):
         if self.player:
