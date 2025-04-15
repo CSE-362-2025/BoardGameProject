@@ -31,6 +31,10 @@ BLACK = (0, 0, 0)
 TURN_SIZE = 80
 TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
+# to show effect tile
+EFFECT_DISPLAY_FONT_SIZE: int = 16
+EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
+
 ## constants for event popup screen
 
 # consequence RMC card display position
@@ -473,7 +477,18 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event[0]}")
+        # self.display_message(f"{event[0]}")
+
+        # display button for displaying effect description
+        self.Buttons.append(
+            EffectTileDisplayButton(
+                button_text=str(event[0]),
+                _type="TileEffect",
+                centre=(50, 40),
+                size=EFFECT_DISPLAY_SIZE
+            )
+        )
+
         for button in self.Buttons:
             if button.type == "Next Turn":
                 button.turn_on()
@@ -598,6 +613,9 @@ class UI:
                             button.turn_off()
                         elif button.type == "Dice":
                             button.turn_on()
+                        elif button.type == "TileEffect":
+                            # remove message of Tile Effect
+                            self.Buttons.remove(button)
                 case "New Game":
                     self.sounds["start"].play()
                     self.game_start()
@@ -921,7 +939,9 @@ class EventMenu(Menu):
                     left=ecb_left,
                     bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
                     width=ecb_width,
-                    button_text=self.event.choices[self.conseq_choice_idx]["consequence"],
+                    button_text=self.event.choices[self.conseq_choice_idx][
+                        "consequence"
+                    ],
                     event=self.event,
                     choice_idx=None,
                     curr_player=self.curr_player,
@@ -1159,6 +1179,45 @@ class Button(object):
                     )
                 if button_rect.collidepoint(pos):
                     return self.type
+
+
+class EffectTileDisplayButton(Button):
+
+    def __init__(self, button_text: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.enabled = False
+        self.button_text = button_text
+
+    def display(self, screen):
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+        button_rect = pygame.Rect(
+            (self.position[0] - self.size[0] / 2) * screen_width,
+            (self.position[1] - self.size[1] / 2) * screen_height,
+            self.size[0] * screen_width,
+            self.size[1] * screen_height,
+        )
+
+        # draw button rect
+        pygame.draw.rect(screen, EVENT_RECT_TSS_BG_COLOUR, button_rect)
+        # draw button rect border
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
+
+        # draw text on top
+        fitting_font_size = get_font_size_to_fit_all(
+            screen,
+            button_rect,
+            self.button_text,
+            EVENT_FONT_COLOUR,
+            32
+        )
+        button_font = pygame.font.Font(None, fitting_font_size)
+        draw_text_with_wrap_centery_increment(
+            screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
+        )
+
+    def handle_click(self, screen, pos):
+        return ""
 
 
 class EventChoiceButton(Button):
