@@ -115,7 +115,7 @@ class GameManager:
                 else self.generate_bad_tile_effects()
             )
             self.current_player.change_stats(effects[1])
-            self.ui.display_message(f"{effects[0]}")
+            # self.ui.display_message(f"{effects[0]}")
             self.ui.display_non_decision_event(effects)
 
         else:
