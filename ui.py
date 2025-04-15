@@ -413,7 +413,7 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event[0]}: {event[1]}")
+        self.display_message(f"{event[0]}")
         for button in self.Buttons:
             if button.type == "Next Turn":
                 button.turn_on()
