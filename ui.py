@@ -281,9 +281,13 @@ class UI:
         self.sounds["click"].set_volume(0.5)
         self.track = 0
         self.year = 0
+        self.the_meeple = pygame.image.load("Resources/test_meeple.png")
 
     def update(self):
         """Updates the screen"""
+        #first make sure aspect ratio is good
+        if self.width != self.screen.get_width():
+            pygame.display.set_mode((int(self.screen.get_width()), int(self.screen.get_width()*(41/59))), pygame.RESIZABLE)
         board = self.game_manager.board
         players = self.game_manager.players
         """Updates and draws all necessary UI components."""
@@ -445,8 +449,8 @@ class UI:
                     start = player
                     break
             move_over = 0
-            for player in range(len(playerlist) - 1):
-                start += 1
+            for player in range(len(playerlist)-1):
+                start -= 1
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
@@ -464,14 +468,21 @@ class UI:
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            playerlist = {}
+            player_sort = []
             for player in self.game_manager.players:
-                playerlist.update({player.name: random.randint(1, 10)})
-            info = (
-                "Leaderboard",
-                playerlist,
-                pygame.image.load("Resources/test_meeple.png"),
-            )
+                player_sort.append(player)
+            for player in range(len(player_sort)-1):
+                next = player_sort[player]
+                for remainder in range(len(player_sort)-player):
+                    if next.position < player_sort[remainder+player].position:
+                        hold = player_sort[remainder+player]
+                        player_sort[remainder+player] = next
+                        player_sort[player] = hold
+                        next = player_sort[player]
+            playerlist={}
+            for player in player_sort:
+                playerlist.update({player.name:random.randint(1,10)})
+            info = ("Leaderboard", playerlist, self.the_meeple)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
