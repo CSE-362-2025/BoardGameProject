@@ -32,10 +32,14 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
+# consequence RMC card display position
+EVENT_CONSEQ_CARD_OUT = (100, 17.5)
+
 # Rect with TSS background
 EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
+EVENT_RECT_TSS_BG_COLOUR: tuple[int] = (173, 118, 113)
 
 # margin for left/right in percentage
 EVENT_LR_MARGIN: int = 3
@@ -59,6 +63,9 @@ EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
 EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 10)
+
+# delimiter for ECB.handle_click()
+EVENT_BUTTON_RET_STR_DELIMITER: str = "|"
 
 
 def draw_text_with_wrap_centery(
@@ -347,6 +354,12 @@ class UI:
                     self.screen.get_width() * (41 / 150),
                 )
             )
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -533,9 +546,18 @@ class UI:
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
         if len(self.buttonevents) > 0:
+
             next_event = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next_event)
             print(next_event)
+
+            if "choice" in next_event and len(self.open_menus) == 1:
+                # choice button is clicked, init consequence display
+                self.open_menus[0].is_conseq = True
+                self.open_menus[0].conseq_choice_idx = int(
+                    str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+
             match next_event:
                 case "Dice":
                     self.roll_dice()
@@ -561,8 +583,10 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
-                case "choice":
-                    # one choice button has been clicked, clean up and back to menu
+                case "":
+                    pass
+                case "event_done":
+                    # event (pop-up + consequence display) done, clean up and move on
                     self.open_menus.pop()
                     self.return_state()
                     self.game_manager.switch_turn()
@@ -644,7 +668,44 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, game_manager, image=None, event=None):
+    def __get_change_dict(
+        self, player_stat_after: dict, event_choice_index: int
+    ) -> dict | None:
+        """Get copy of player stats dict, modified to include before/after.
+
+        For each category of stats:
+            original_format: "{stat}"
+            format: "{before} -> {after}"
+
+        Args:
+            player_stat_after (dict): current player's stat after result is applied
+            event_choice_index (int): index representing which choice the player chose
+
+        Returns:
+            dict | None: new dict with the new format
+
+        """
+        if player_stat_after is None:
+            return None
+
+        ret: dict[str, str] = {}
+        for each_cat in player_stat_after:
+            # get current value
+            resulting_value: int = int(player_stat_after[each_cat])
+            # get resulting stat
+            change_value: int = int(
+                self.event.choices[event_choice_index - 1]["result"][each_cat]
+            )  # calculate stats before :(
+            value_before: int = resulting_value - change_value
+
+            # add new format into returning dict
+            ret[each_cat] = f"{value_before} -> {resulting_value}"
+
+        return ret
+
+    def __init__(
+        self, name, curr_player, game_manager, image=None, event=None, is_conseq=False
+    ):
         super().__init__(name, image)
 
         self.game_manager = game_manager
@@ -665,6 +726,8 @@ class EventMenu(Menu):
         self.event_image = pygame.image.load(
             "Resources/gunsalute-scarlets-mckenzie.jpg"
         )
+        self.is_conseq: bool = is_conseq
+        self.conseq_choice_idx = None
 
     def draw(self, screen):
         super().draw(screen)
@@ -750,48 +813,126 @@ class EventMenu(Menu):
         # calculate left for all ECB's
         ecb_left = tss_rect_adjusted.left + EVENT_LR_MARGIN * screen_width
 
-        # reset every frame
+        # populate buttons with choice
         self.buttons: list[EventChoiceButton] = []
-        for i, each_choice in enumerate(self.event.choices):
-            # grab stat dict to compare
-            curr_player_stat: dict = self.curr_player.stats
-            choice_criteria_stat: dict = each_choice["criteria"]
+        if not self.is_conseq:
+            for i, each_choice in enumerate(self.event.choices):
+                # grab stat dict to compare
+                curr_player_stat: dict = self.curr_player.stats
+                choice_criteria_stat: dict = each_choice["criteria"]
 
-            # check if current player can choose this choice
-            is_enabled: bool = self.__is_choice_available(
-                curr_player_stat, choice_criteria_stat
+                # check if current player can choose this choice
+                is_enabled: bool = self.__is_choice_available(
+                    curr_player_stat, choice_criteria_stat
+                )
+
+                # increment top (ecb_top + ECB's height + margin)
+                current_ecb_top = ecb_top + (
+                    +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
+                ) * int(i)
+
+                # calculate bottom for current button: current_ecb_top + ECB's height
+                current_ecb_bottom = (
+                    current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+                )
+
+                # create EventChoiceButton
+                each_choice_button: Button = EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=current_ecb_top,
+                    left=ecb_left,
+                    bottom=current_ecb_bottom,
+                    width=ecb_width,
+                    button_text=each_choice["text"],
+                    event=self.event,
+                    choice_idx=i,
+                    curr_player=self.curr_player,
+                    centre=None,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    # string to display on the button
+                    _type="choice",
+                    enabled=is_enabled,
+                    game_manager=self.game_manager,
+                )
+                self.buttons.append(each_choice_button)
+        else:
+            # consequence text box
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=ecb_top,
+                    left=ecb_left,
+                    bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
+                    width=ecb_width,
+                    button_text=self.event.choices[0]["consequence"],
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=(
+                        EVENT_BUTTONS_CHOICE_SIZE[0],
+                        EVENT_BUTTONS_CHOICE_SIZE[1] * 2,
+                    ),
+                    _type="event_conseq_text",
+                    enabled=False,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # increment top (ecb_top + ECB's height + margin)
-            current_ecb_top = ecb_top + (
-                +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
-            ) * int(i)
+            # add next_turn button here
+            # for now, on the right half of the immediate bottom from the first button
+            conseq_text_box_button = self.buttons[0]
 
-            # calculate bottom for current button: current_ecb_top + ECB's height
-            current_ecb_bottom = (
-                current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            next_button_top = (
+                conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height
+            )
+            next_button_bottom = (
+                next_button_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            )
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_desc_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height,
+                    left=event_desc_rect.left,
+                    bottom=next_button_bottom,
+                    width=ecb_width // 2,
+                    button_text="Next",
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    _type="event_next",
+                    enabled=True,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # create EventChoiceButton
-            each_choice_button: Button = EventChoiceButton(
-                centerx=event_title_rect.centerx,
-                height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
-                top=current_ecb_top,
-                left=ecb_left,
-                bottom=current_ecb_bottom,
-                width=ecb_width,
-                button_text=each_choice["text"],
-                event=self.event,
-                choice_idx=i,
-                curr_player=self.curr_player,
+            # display stat change on the card
+            conseq_stat_display = ConsequenceCardDisplay(
                 centre=None,
-                size=EVENT_BUTTONS_CHOICE_SIZE,
-                # string to display on the button
-                _type="choice",
-                enabled=is_enabled,
-                game_manager=self.game_manager,
+                centre_moved=EVENT_CONSEQ_CARD_OUT,
+                size=None,
+                type="Consequence Stats",
+                image="Resources/rmc_card.png",
             )
-            self.buttons.append(each_choice_button)
+
+            stat_change_dict: dict = self.__get_change_dict(
+                self.game_manager.current_player.stats, self.conseq_choice_idx
+            )
+            conseq_stat_display_info = (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+
+            conseq_stat_display.update_info(conseq_stat_display_info)
+            self.buttons.append(conseq_stat_display)
 
         # * ALL draw events
 
@@ -968,6 +1109,7 @@ class EventChoiceButton(Button):
         event,
         curr_player,
         game_manager,
+        is_conseq_disp=False,
         *args,
         **kwargs,
     ):
@@ -978,6 +1120,9 @@ class EventChoiceButton(Button):
         self.left = left
         self.bottom = bottom
         self.width = width
+
+        # for conseq display
+        self.is_conseq_disp = is_conseq_disp
 
         # tmp fix
         self.game_manager = game_manager
@@ -1025,6 +1170,11 @@ class EventChoiceButton(Button):
             if self.enabled
             else EVENT_BUTTONS_FILL_DISABLED_COLOUR
         )
+        # override colour if consequence display
+        if self.is_conseq_disp:
+            fill_colour = EVENT_RECT_TSS_BG_COLOUR
+            # 20% larger font size
+            button_font = pygame.font.Font(None, int(EVENT_BUTTONS_FONT_SIZE * 1.2))
 
         # fill
         pygame.draw.rect(screen, fill_colour, button_rect)
@@ -1072,18 +1222,25 @@ class EventChoiceButton(Button):
         button_rect.bottom = self.bottom
         button_rect.centerx = self.centerx
 
-        if button_rect.collidepoint(pos):
-            # ! TBD
-            print(f"applying result for id={self.choice_idx}; text={self.button_text}")
-            print(f"\tbefore: {self.curr_player.stats}")
+        if button_rect.collidepoint(pos) and self.enabled:
+            # check if initial pop up (event choices)
+            if not self.is_conseq_disp:
+                # ! TBD
+                print(
+                    f"applying result for id={self.choice_idx}; text={self.button_text}"
+                )
+                print(f"\tbefore: {self.curr_player.stats}")
 
-            # apply the consequence
-            self.game_manager.event_choice(self.event, self.choice_idx)
+                # TODO: apply consequence once in `EventMenu`
+                # apply the consequence
+                self.game_manager.event_choice(self.event, self.choice_idx)
 
-            # ! TBD
-            print(f"\tafter: {self.curr_player.stats}")
-            return "choice"
-        return None
+                # ! TBD
+                print(f"\tafter: {self.curr_player.stats}")
+                return f"choice{EVENT_BUTTON_RET_STR_DELIMITER}{self.choice_idx}"
+            else:
+                return "event_done"
+        return ""
 
 
 class CardDisplays(Button):
@@ -1185,3 +1342,12 @@ class CardDisplays(Button):
                         self.position = self.main
                         self.hovered = False
                     return self.type
+
+
+class ConsequenceCardDisplay(CardDisplays):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.position = self.moved
+        self.hovered = True
+        self.enabled = False
