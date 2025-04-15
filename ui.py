@@ -1006,8 +1006,6 @@ class EventChoiceButton(Button):
         # ! DRY
         screen_height = screen.get_height() / 100
 
-        button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
-
         button_rect = pygame.rect.Rect(
             self.left,
             self.top,
@@ -1034,7 +1032,14 @@ class EventChoiceButton(Button):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
 
         # find font-size to fit all text
-        fitting_font_size: int = None
+        fitting_font_size: int = get_font_size_to_fit_all(
+            screen,
+            button_rect,
+            self.button_text,
+            EVENT_FONT_COLOUR,
+            EVENT_BUTTONS_FONT_SIZE,
+        )
+        button_font = pygame.font.Font(None, fitting_font_size)
 
         # draw text on top
         draw_text_with_wrap_centery_increment(
