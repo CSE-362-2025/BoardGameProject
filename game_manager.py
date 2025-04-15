@@ -12,6 +12,7 @@ from player import Player
 from event import Event
 import json
 from statistics import mean
+from database import GameDatabase
 
 
 class GameManager:
@@ -115,13 +116,14 @@ class GameManager:
     def play_computer_turn(self):
         pass
 
-    def start_game(self):
+    def start_game(self, is_new_game=True):
         print("Starting")
         events = self.get_events(0)
         self.events = events
         self.board = self.get_board(0)
         self.players = self.get_players()
-        self.current_player = self.players[0]
+        if is_new_game:
+            self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
     
     def get_events(self, year):
@@ -176,7 +178,6 @@ class GameManager:
         ]
         return players
 
-    
     def end_game(self):
         print("THE GAME IS OVER")
 
@@ -237,7 +238,7 @@ class GameManager:
     #         i += 1
 
 
-
+    # add saving as we change turn
     def switch_turn(self):
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
@@ -627,3 +628,15 @@ class GameManager:
                 "social": -1
             }]
 
+    def save_state(self):
+        db = GameDatabase()
+        db.connect("")
+        db.save_game(self)
+        db.close_connection()
+    
+    def load_state(self) -> bool:
+        db = GameDatabase()
+        db.connect("")
+        ret = db.load_game(self)
+        db.close_connection()
+        return ret
