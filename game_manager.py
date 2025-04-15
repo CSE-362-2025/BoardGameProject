@@ -12,6 +12,7 @@ from player import Player
 from event import Event
 import json
 from statistics import mean
+from llm_model import llm
 
 
 class GameManager:
@@ -87,6 +88,11 @@ class GameManager:
         if not tile:          
             self.current_player.position = self.board.size
             tile = self.board.tiles[len(self.board.tiles) - 1]
+        
+        if tile.get_type() == "EndTile":
+            print(f"{self.current_player.name} is at the end of the board")
+            self.current_player.at_end = True
+            return
 
         self.current_player.tile_counts[tile.get_type()] += 1
 
@@ -100,10 +106,6 @@ class GameManager:
             self.current_player.change_stats(effects[1])
             self.ui.display_message(f"{effects[0]}")
             self.ui.display_non_decision_event(effects)
-
-        elif tile.get_type() == "EndTile":
-            print(f"{self.current_player.name} is at the end of the board")
-            self.current_player.at_end = True
 
         else:
             print(tile.get_type())
@@ -179,6 +181,11 @@ class GameManager:
     
     def end_game(self):
         print("THE GAME IS OVER")
+        self.generate_awards()
+        self.ai_summary()
+        for player in self.players:
+            print(f"{player.name} awards: {player.awards}")
+            print(f"{player.name} ai summary: {player.ai_summary}")
 
 
     #  gives awards to players with the highest stats
@@ -212,6 +219,29 @@ class GameManager:
             
             for player in max_players:
                 player.awards[stat] = True
+
+
+    # Uses a Large Language Model to write a summary about events played for each player
+    def ai_summary(self):
+
+        for player in self.players:
+
+            prompt = f"""
+            You are a machine which generates a summary and detailed story of {player.name}'s journey through a Royal Military College board game.
+            You will only get the names of the events played in the ordered they were played by the player throughout the game and the choice the player made.
+            Contain generated summary between a START and END token.
+            Events played and choice:
+            
+            """
+
+            for event in player.events_played:
+                prompt = prompt + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+
+            prompt = prompt + "\n generate summary: START"
+
+            summary = llm(prompt)
+
+            player.ai_summary = summary
 
 
     # #  writes an endgame summary to player object in player.end_text
@@ -315,8 +345,16 @@ class GameManager:
         # adding return statement
         return event
 
+
+    # Return true if the entire game is over
     def is_game_over(self):
-        return self.turn_count >= 40
+        for player in self.players:
+            if player.at_end:
+                continue
+            else:
+                return False
+            
+        return True
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
