@@ -34,7 +34,7 @@
 
                 "criteria" : {"academic" : 0, 
                             "bilingual" : 0, 
-                            "military" : 3, 
+                            "military" : 2, 
                             "athletic" : 0, 
                             "social" : 0},
 
@@ -61,7 +61,7 @@
     
                 "criteria" : {"academic" : 0, 
                             "bilingual" : 0, 
-                            "military" : 3, 
+                            "military" : 2, 
                             "athletic" : 0, 
                             "social" : 0},
     
@@ -252,7 +252,7 @@
                             "bilingual" : 0, 
                             "military" : 0, 
                             "athletic" : 0, 
-                            "social" : 3},
+                            "social" : 2},
     
                 "consequence": "While exploring you come across multiple sights you make sure to keep in mind, like the bunker, the catacombs, and many more.",
                 "hide": false
@@ -359,7 +359,7 @@
         
                 "criteria" : {"academic" : 0, 
                             "bilingual" : 0, 
-                            "military" : 5, 
+                            "military" : 2, 
                             "athletic" : 0, 
                             "social" : 0},
         
