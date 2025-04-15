@@ -613,7 +613,7 @@ class PauseMenu(Menu):
         self.buttons = [
             Button(MAIN1, MAINSIZE, "Return"),
             Button(MAIN2, MAINSIZE, "Save"),
-            Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
+            Button(MAIN3, MAINSIZE, "Settings"),
             Button(MAIN4, MAINSIZE, "Quit to Title"),
         ]
 
