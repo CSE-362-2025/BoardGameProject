@@ -955,7 +955,6 @@ class EventChoiceButton(Button):
             return
 
         # ! DRY
-        screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
 
         button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
