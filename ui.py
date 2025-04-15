@@ -32,10 +32,14 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
+# consequence RMC card display position
+EVENT_CONSEQ_CARD_OUT = (100, 17.5)
+
 # Rect with TSS background
 EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
+EVENT_RECT_TSS_BG_COLOUR: tuple[int] = (173, 118, 113)
 
 # margin for left/right in percentage
 EVENT_LR_MARGIN: int = 3
@@ -59,6 +63,9 @@ EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 
 # choice size
 EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 10)
+
+# delimiter for ECB.handle_click()
+EVENT_BUTTON_RET_STR_DELIMITER: str = "|"
 
 
 def draw_text_with_wrap_centery(
@@ -206,7 +213,9 @@ class UI:
         )
         self.width = self.screen.get_width()
         self.backgrounds = dict(
-            title="Resources/Title_Screen.png", wood="Resources/background_wood.png", year1="Resources/board_year1.png",
+            title="Resources/Title_Screen.png",
+            wood="Resources/background_wood.png",
+            year1="Resources/board_year1.png",
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -218,32 +227,61 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
-            Button(MAIN3,MAINSIZE,"Custom Char",False,"Resources/CUSTOM_CHARA.jpg",False,),
+            Button(
+                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
+            ),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                "Resources/CUSTOM_CHARA.jpg",
+                False,
+            ),
             Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),]
-        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
-        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
+            Button(PAUSE, PAUSESIZE, "Pause", True),
+        ]
+        self.Buttons.insert(
+            0,
+            CardDisplays(
+                CARD1IN,
+                CARD1OUT,
+                CARDSIZE,
+                "Player Stats",
+                image="Resources/rmc_card.png",
+            ),
+        )
+        self.Buttons.insert(
+            1,
+            CardDisplays(
+                CARD2IN,
+                CARD2OUT,
+                CARDSIZE,
+                "Leaderboard",
+                image="Resources/rmc_card.png",
+            ),
+        )
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
-        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
-                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
-                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
-                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
-                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
-                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
-                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
-        self.sounds['click'].set_volume(0.5)
+        self.sounds = dict(
+            click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+            pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+            athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"),
+        )
+        self.sounds["click"].set_volume(0.5)
         self.track = 0
         self.year = 0
         self.the_meeple = pygame.image.load("Resources/test_meeple.png")
-
 
     def update(self):
         """Updates the screen"""
@@ -265,12 +303,19 @@ class UI:
         else:
             self.screen.fill(BG_COLOR)
         if board:
-            self.display_board(board, players)  # Call a method to draw the game board
-            
+            self.display_board(
+                board, players
+            )  # Call a method to draw the game board (implement as needed)
+
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(center=(self.screen.get_width()/2, self.screen.get_width()*(41/150)))
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -294,26 +339,26 @@ class UI:
                 button.turn_on()
 
     def set_sound(self):
-            if self.player:
-                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.play()
-                match self.track:
-                    case 0:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1: 
-                        pass
-                    case 2:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 3:
-                        pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-                    case _:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                        print("Track Reset")
-                        self.track=0
-                self.track =+ 1
-            else:
-                pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
-                pygame.mixer.music.play()
+        if self.player:
+            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+            pygame.mixer.music.play()
+            match self.track:
+                case 0:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 1:
+                    pass
+                case 2:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 3:
+                    pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                case _:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    print("Track Reset")
+                    self.track = 0
+            self.track = +1
+        else:
+            pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
+            pygame.mixer.music.play()
 
     def game_start(self):
         self.game_manager.start_game()
@@ -328,7 +373,7 @@ class UI:
             case 0:
                 if self.curr_background != self.backgrounds["year1"]:
                     self.curr_background = self.backgrounds["year1"]
-                    self.width=1
+                    self.width = 1
             case _:
                 self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
@@ -354,10 +399,9 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
-    
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -410,13 +454,16 @@ class UI:
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
-                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
+                image = pygame.transform.scale(
+                    playerlist[start].next_up, (width * 8, width * 10)
+                )
                 image_rect = image.get_rect(
-                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                    bottomleft=(
+                        ((35 - (move_over * 5)) * self.screen.get_width() / 100),
+                        self.screen.get_height() - 10,
+                    )
                 )
                 self.screen.blit(image, image_rect)
-
-
 
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
@@ -462,9 +509,18 @@ class UI:
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
         if len(self.buttonevents) > 0:
+
             next_event = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next_event)
             print(next_event)
+
+            if "choice" in next_event and len(self.open_menus) == 1:
+                # choice button is clicked, init consequence display
+                self.open_menus[0].is_conseq = True
+                self.open_menus[0].conseq_choice_idx = int(
+                    str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+
             match next_event:
                 case "Dice":
                     self.roll_dice()
@@ -490,16 +546,17 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
-                case "choice":
-                    # one choice button has been clicked, clean up and back to menu
+                case "":
+                    pass
+                case "event_done":
+                    # event (pop-up + consequence display) done, clean up and move on
                     self.open_menus.pop()
                     self.return_state()
                     self.game_manager.switch_turn()
                 case "Quit":
                     pygame.event.Event(quit)
         if self.game_manager.is_game_over():
-            self.player=None
-    
+            self.player = None
 
     def save_state(self):
         for button in self.Buttons:
@@ -574,7 +631,43 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, game_manager, image=None, event=None):
+    def __get_change_dict(
+        self, player_stat_after: dict, event_choice_index: int
+    ) -> dict | None:
+        """Get copy of player stats dict, modified to include before/after.
+
+        For each category of stats:
+            original_format: "{stat}"
+            format: "{before} -> {after}"
+
+        Args:
+            player_stat_after (dict): current player's stat after result is applied
+            event_choice_index (int): index representing which choice the player chose
+
+        Returns:
+            dict | None: new dict with the new format
+
+        """
+        if player_stat_after is None:
+            return None
+
+        ret: dict[str, str] = {}
+        for each_cat in player_stat_after:
+            # get current value
+            resulting_value: int = int(player_stat_after[each_cat])
+            # get resulting stat
+            change_value: int = int(self.event.choices[event_choice_index - 1]["result"][each_cat]
+)            # calculate stats before :(
+            value_before: int = resulting_value - change_value
+
+            # add new format into returning dict
+            ret[each_cat] = f"{value_before} -> {resulting_value}"
+
+        return ret
+
+    def __init__(
+        self, name, curr_player, game_manager, image=None, event=None, is_conseq=False
+    ):
         super().__init__(name, image)
 
         self.game_manager = game_manager
@@ -592,7 +685,11 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
-        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        self.event_image = pygame.image.load(
+            "Resources/gunsalute-scarlets-mckenzie.jpg"
+        )
+        self.is_conseq: bool = is_conseq
+        self.conseq_choice_idx = None
 
     def draw(self, screen):
         super().draw(screen)
@@ -681,48 +778,126 @@ class EventMenu(Menu):
         # calculate left for all ECB's
         ecb_left = tss_rect_adjusted.left + EVENT_LR_MARGIN * screen_width
 
-        # reset every frame
+        # populate buttons with choice
         self.buttons: list[EventChoiceButton] = []
-        for i, each_choice in enumerate(self.event.choices):
-            # grab stat dict to compare
-            curr_player_stat: dict = self.curr_player.stats
-            choice_criteria_stat: dict = each_choice["criteria"]
+        if not self.is_conseq:
+            for i, each_choice in enumerate(self.event.choices):
+                # grab stat dict to compare
+                curr_player_stat: dict = self.curr_player.stats
+                choice_criteria_stat: dict = each_choice["criteria"]
 
-            # check if current player can choose this choice
-            is_enabled: bool = self.__is_choice_available(
-                curr_player_stat, choice_criteria_stat
+                # check if current player can choose this choice
+                is_enabled: bool = self.__is_choice_available(
+                    curr_player_stat, choice_criteria_stat
+                )
+
+                # increment top (ecb_top + ECB's height + margin)
+                current_ecb_top = ecb_top + (
+                    +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
+                ) * int(i)
+
+                # calculate bottom for current button: current_ecb_top + ECB's height
+                current_ecb_bottom = (
+                    current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+                )
+
+                # create EventChoiceButton
+                each_choice_button: Button = EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=current_ecb_top,
+                    left=ecb_left,
+                    bottom=current_ecb_bottom,
+                    width=ecb_width,
+                    button_text=each_choice["text"],
+                    event=self.event,
+                    choice_idx=i,
+                    curr_player=self.curr_player,
+                    centre=None,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    # string to display on the button
+                    _type="choice",
+                    enabled=is_enabled,
+                    game_manager=self.game_manager,
+                )
+                self.buttons.append(each_choice_button)
+        else:
+            # consequence text box
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=ecb_top,
+                    left=ecb_left,
+                    bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
+                    width=ecb_width,
+                    button_text=self.event.choices[0]["consequence"],
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=(
+                        EVENT_BUTTONS_CHOICE_SIZE[0],
+                        EVENT_BUTTONS_CHOICE_SIZE[1] * 2,
+                    ),
+                    _type="event_conseq_text",
+                    enabled=False,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # increment top (ecb_top + ECB's height + margin)
-            current_ecb_top = ecb_top + (
-                +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
-            ) * int(i)
+            # add next_turn button here
+            # for now, on the right half of the immediate bottom from the first button
+            conseq_text_box_button = self.buttons[0]
 
-            # calculate bottom for current button: current_ecb_top + ECB's height
-            current_ecb_bottom = (
-                current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            next_button_top = (
+                conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height
+            )
+            next_button_bottom = (
+                next_button_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            )
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_desc_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height,
+                    left=event_desc_rect.left,
+                    bottom=next_button_bottom,
+                    width=ecb_width // 2,
+                    button_text="Next",
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    _type="event_next",
+                    enabled=True,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # create EventChoiceButton
-            each_choice_button: Button = EventChoiceButton(
-                centerx=event_title_rect.centerx,
-                height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
-                top=current_ecb_top,
-                left=ecb_left,
-                bottom=current_ecb_bottom,
-                width=ecb_width,
-                button_text=each_choice["text"],
-                event=self.event,
-                choice_idx=i,
-                curr_player=self.curr_player,
+            # display stat change on the card
+            conseq_stat_display = ConsequenceCardDisplay(
                 centre=None,
-                size=EVENT_BUTTONS_CHOICE_SIZE,
-                # string to display on the button
-                _type="choice",
-                enabled=is_enabled,
-                game_manager=self.game_manager
+                centre_moved=EVENT_CONSEQ_CARD_OUT,
+                size=None,
+                type="Consequence Stats",
+                image="Resources/rmc_card.png",
             )
-            self.buttons.append(each_choice_button)
+
+            stat_change_dict: dict = self.__get_change_dict(
+                self.game_manager.current_player.stats, self.conseq_choice_idx
+            )
+            conseq_stat_display_info = (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+
+            conseq_stat_display.update_info(conseq_stat_display_info)
+            self.buttons.append(conseq_stat_display)
 
         # * ALL draw events
 
@@ -809,7 +984,10 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
+                buttonimg = pygame.transform.scale(
+                    self.image,
+                    (self.size[0] * screen_width, self.size[1] * screen_height),
+                )
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -885,6 +1063,7 @@ class EventChoiceButton(Button):
         event,
         curr_player,
         game_manager,
+        is_conseq_disp=False,
         *args,
         **kwargs,
     ):
@@ -895,6 +1074,9 @@ class EventChoiceButton(Button):
         self.left = left
         self.bottom = bottom
         self.width = width
+
+        # for conseq display
+        self.is_conseq_disp = is_conseq_disp
 
         # tmp fix
         self.game_manager = game_manager
@@ -945,6 +1127,11 @@ class EventChoiceButton(Button):
             if self.enabled
             else EVENT_BUTTONS_FILL_DISABLED_COLOUR
         )
+        # override colour if consequence display
+        if self.is_conseq_disp:
+            fill_colour = EVENT_RECT_TSS_BG_COLOUR
+            # 20% larger font size
+            button_font = pygame.font.Font(None, int(EVENT_BUTTONS_FONT_SIZE * 1.2))
 
         # fill
         pygame.draw.rect(screen, fill_colour, button_rect)
@@ -982,18 +1169,25 @@ class EventChoiceButton(Button):
         button_rect.bottom = self.bottom
         button_rect.centerx = self.centerx
 
-        if button_rect.collidepoint(pos):
-            # ! TBD
-            print(f"applying result for id={self.choice_idx}; text={self.button_text}")
-            print(f"\tbefore: {self.curr_player.stats}")
+        if button_rect.collidepoint(pos) and self.enabled:
+            # check if initial pop up (event choices)
+            if not self.is_conseq_disp:
+                # ! TBD
+                print(
+                    f"applying result for id={self.choice_idx}; text={self.button_text}"
+                )
+                print(f"\tbefore: {self.curr_player.stats}")
 
-            # apply the consequence
-            self.game_manager.event_choice(self.event, self.choice_idx)
+                # TODO: apply consequence once in `EventMenu`
+                # apply the consequence
+                self.game_manager.event_choice(self.event, self.choice_idx)
 
-            # ! TBD
-            print(f"\tafter: {self.curr_player.stats}")
-            return "choice"
-        return None
+                # ! TBD
+                print(f"\tafter: {self.curr_player.stats}")
+                return f"choice{EVENT_BUTTON_RET_STR_DELIMITER}{self.choice_idx}"
+            else:
+                return "event_done"
+        return ""
 
 
 class CardDisplays(Button):
@@ -1027,7 +1221,9 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
+                buttonimg = pygame.transform.scale(
+                    self.image, (w * screen_width, h * screen_height)
+                )
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
@@ -1093,3 +1289,12 @@ class CardDisplays(Button):
                         self.position = self.main
                         self.hovered = False
                     return self.type
+
+
+class ConsequenceCardDisplay(CardDisplays):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.position = self.moved
+        self.hovered = True
+        self.enabled = False
