@@ -36,6 +36,12 @@
             {
                 "position": 6,
                 "tile_type": "EventTile",
+                "screen_position": [63.5,13.8]
+
+            },
+            {
+                "position": 6,
+                "tile_type": "EventTile",
                 "screen_position": [72.5,10]
 
             },
@@ -301,6 +307,12 @@
                 "position": 115,
                 "tile_type": "GoodTile",
                 "screen_position": [34,51]
+
+            },
+            {
+                "position": 17,
+                "tile_type": "EventTile",
+                "screen_position": [22.7,52]
 
             },
             {
