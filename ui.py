@@ -314,6 +314,7 @@ class UI:
 
         self.display_buttons()  # Call a method to display the dice
         self.display_current_turn()
+        self.display_leaderboard()
         for menu in self.open_menus:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
@@ -391,6 +392,7 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
+                    game_manager=self.game_manager
                 )
             )
 
@@ -428,11 +430,39 @@ class UI:
                     width = self.screen.get_width() / 100
                 else:
                     width = self.screen.get_height() / 60
-                portrait = pygame.transform.scale(portrait, (width * 20, width * 20))
+                portrait = pygame.transform.rotate(portrait, 16)
+                portrait = pygame.transform.scale(portrait, (width * 28, width * 28))
                 portrait_rect = portrait.get_rect(
-                    bottomleft=(0 - width, self.screen.get_height() - width)
+                    bottomleft=(0 - 40, self.screen.get_height() + 30)
                 )
                 self.screen.blit(portrait, portrait_rect)
+            playerlist = self.game_manager.players
+            for player in range(len(playerlist)):
+                if self.player == playerlist[player]:
+                    start = player
+                    break
+            move_over = 0
+            for player in range(len(playerlist)-1):
+                start += 1
+                move_over += 1
+                if start >= len(playerlist):
+                    start = 0
+                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
+                image_rect = image.get_rect(
+                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                )
+                self.screen.blit(image, image_rect)
+
+
+
+    def display_leaderboard(self):
+        self.font = pygame.font.Font(None, 16)
+        if self.player:
+            playerlist={}
+            for player in self.game_manager.players:
+                playerlist.update({player.name:random.randint(1,10)})
+            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+            self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
         self.player = player
@@ -580,8 +610,10 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, image=None, event=None, is_conseq=False):
+    def __init__(self, name, curr_player, game_manager, image=None, event=None, is_conseq=False):
         super().__init__(name, image)
+
+        self.game_manager = game_manager
 
         if event is None:
             raise RuntimeError("EventMenu(): the received `event` is None")
@@ -595,6 +627,8 @@ class EventMenu(Menu):
         self.curr_player = curr_player
         self.event = event
         self.buttons: list[Button] = []
+        self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
+        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
         self.is_conseq: bool = is_conseq
 
     def draw(self, screen):
@@ -619,7 +653,7 @@ class EventMenu(Menu):
         )
 
         # load TSS image
-        tss = pygame.image.load(EVENT_RECT_TSS_PATH)
+        tss = self.tss
         tss.convert()
         tss_rect: pygame.Rect = tss.get_rect()
 
@@ -669,7 +703,7 @@ class EventMenu(Menu):
         # move to the right for 0.2% of the screen
         event_img_rect.left += screen.get_width() / 100 * 0.2
         # TODO: replace this with a pool of event desc images
-        event_img = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        event_img = self.event_image
         event_img.convert()
         # fit this image into img_rect
         event_img_fit = event_img.get_rect().fit(event_img_rect)
@@ -724,6 +758,7 @@ class EventMenu(Menu):
                     # string to display on the button
                     _type="choice",
                     enabled=is_enabled,
+                game_manager=self.game_manager
                 )
                 self.buttons.append(each_choice_button)
         else:
@@ -821,7 +856,10 @@ class Button(object):
         self.position = centre  # Button pos is centre horizontally, base vertically(to be fixed later)
         self.size = size
         self.type: str = _type
-        self.image = image
+        if image:
+            self.image = pygame.image.load(image)
+        else:
+            self.image = None
         self.enabled = enabled
 
     def turn_on(self):
@@ -859,10 +897,7 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(
-                    pygame.image.load(self.image),
-                    (self.size[0] * screen_width, self.size[1] * screen_height),
-                )
+                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -937,6 +972,7 @@ class EventChoiceButton(Button):
         choice_idx: int,
         event,
         curr_player,
+        game_manager,
         is_conseq_disp=False,
         *args,
         **kwargs,
@@ -951,6 +987,9 @@ class EventChoiceButton(Button):
 
         # for conseq display
         self.is_conseq_disp = is_conseq_disp
+
+        # tmp fix
+        self.game_manager = game_manager
 
         # set center for parent's class
         self.center = (centerx, self.top + self.height / 2)
@@ -1047,7 +1086,7 @@ class EventChoiceButton(Button):
 
             # TODO: apply consequence once in `EventMenu`
             # apply the consequence
-            # self.event.apply_result(self.curr_player, self.choice_idx)
+            # self.game_manager.event_choice(self.event, self.choice_idx)
 
             # ! TBD
             print(f"\tafter: {self.curr_player.stats}")
@@ -1086,9 +1125,7 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(
-                    pygame.image.load(self.image), (w * screen_width, h * screen_height)
-                )
+                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
@@ -1118,15 +1155,13 @@ class CardDisplays(Button):
             for item in self.info[1]:
                 stat = font.render(str(item), True, BLACK)
                 val = font.render(str(self.info[1][item]), True, BLACK)
-                buttonimg.blit(stat, (50 * width, base * height))
+                buttonimg.blit(stat, (60 * width, base * height))
                 buttonimg.blit(val, (85 * width, base * height))
                 base = base + 10
-            portrait = pygame.transform.scale(self.info[2], (width * 40, width * 40))
+            portrait = pygame.transform.scale(self.info[2], (width * 50, width * 50))
             portrait_rect = portrait.get_rect(
-                bottomleft=(0 - width + 10, (height * 100) - width - 5)
+                bottomleft=(0 - width + 10, (height * 100) - width + 5)
             )
-            outline = portrait_rect.scale_by(0.67, 0.8)
-            pygame.draw.rect(buttonimg, BLACK, outline, 3)
             buttonimg.blit(portrait, portrait_rect)
         return buttonimg
 
