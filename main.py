@@ -2,7 +2,7 @@ import pygame
 from game_manager import GameManager
 from ui import UI
 
-
+#help
 def main():
     # Initialize pygame
     pygame.init()
