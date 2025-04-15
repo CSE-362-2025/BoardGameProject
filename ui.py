@@ -274,7 +274,9 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
+            Button(
+                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
+            ),
             Button(
                 MAIN3,
                 MAINSIZE,
@@ -332,7 +334,13 @@ class UI:
         """Updates the screen"""
         # first make sure aspect ratio is good
         if self.width != self.screen.get_width():
-            pygame.display.set_mode((int(self.screen.get_width()), int(self.screen.get_width()*(41/59))), pygame.RESIZABLE)
+            pygame.display.set_mode(
+                (
+                    int(self.screen.get_width()),
+                    int(self.screen.get_width() * (41 / 59)),
+                ),
+                pygame.RESIZABLE,
+            )
         if self.player:
             board = self.game_manager.board
             players = self.game_manager.players
@@ -350,7 +358,9 @@ class UI:
             self.screen.fill(BG_COLOR)
         if self.player:
             if board:
-                self.display_board(board, players)  # Call a method to draw the game board
+                self.display_board(
+                    board, players
+                )  # Call a method to draw the game board
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
@@ -738,7 +748,7 @@ class EventMenu(Menu):
             resulting_value: int = int(player_stat_after[each_cat])
             # get resulting stat
             change_value: int = int(
-                self.event.choices[event_choice_index - 1]["result"][each_cat]
+                self.event.choices[event_choice_index]["result"][each_cat]
             )  # calculate stats before :(
             value_before: int = resulting_value - change_value
 
@@ -913,7 +923,7 @@ class EventMenu(Menu):
                     left=ecb_left,
                     bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
                     width=ecb_width,
-                    button_text=self.event.choices[0]["consequence"],
+                    button_text=self.event.choices[self.conseq_choice_idx]["Consequence"],
                     event=self.event,
                     choice_idx=None,
                     curr_player=self.curr_player,
@@ -1265,6 +1275,7 @@ class EventChoiceButton(Button):
 
         Returns:
             str: str literal, if clicked. None otherwise.
+
         """
 
         # ECB handle click
