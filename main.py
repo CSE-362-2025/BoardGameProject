@@ -9,7 +9,7 @@ def main():
     pygame.mixer.init()
 
     # Set up display
-    pygame.display.set_caption("Board Game")
+    pygame.display.set_caption("Cadet's Life")
 
     # Create UI instance
     ui = UI()

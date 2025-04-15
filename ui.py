@@ -612,8 +612,6 @@ class UI:
                 case "Quit to Title":
                     self.open_menus.pop()
                     self.main_menu()
-        if self.game_manager.is_game_over():
-            self.player = None
 
     def save_state(self):
         for button in self.Buttons:
