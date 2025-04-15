@@ -780,9 +780,10 @@ class EventMenu(Menu):
                         EVENT_BUTTONS_CHOICE_SIZE[1] * 2,
                     ),
                     _type="event_conseq_text",
-                    enabled=True,
+                    enabled=False,
                     centre=None,
                     is_conseq_disp=True,
+                    game_manager=self.game_manager
                 )
             )
 
@@ -808,7 +809,8 @@ class EventMenu(Menu):
                     _type="event_next",
                     enabled=True,
                     centre=None,
-                    is_conseq_disp=True
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager
                 )
             )
 
@@ -1079,19 +1081,23 @@ class EventChoiceButton(Button):
         button_rect.bottom = self.bottom
         button_rect.centerx = self.centerx
 
-        if button_rect.collidepoint(pos):
-            # ! TBD
-            print(f"applying result for id={self.choice_idx}; text={self.button_text}")
-            print(f"\tbefore: {self.curr_player.stats}")
+        if button_rect.collidepoint(pos) and self.enabled:
+            # check if initial pop up (event choices)
+            if not self.is_conseq_disp:
+                # ! TBD
+                print(f"applying result for id={self.choice_idx}; text={self.button_text}")
+                print(f"\tbefore: {self.curr_player.stats}")
 
-            # TODO: apply consequence once in `EventMenu`
-            # apply the consequence
-            # self.game_manager.event_choice(self.event, self.choice_idx)
+                # TODO: apply consequence once in `EventMenu`
+                # apply the consequence
+                self.game_manager.event_choice(self.event, self.choice_idx)
 
-            # ! TBD
-            print(f"\tafter: {self.curr_player.stats}")
-            return f"choice{EVENT_BUTTON_RET_STR_DELIMITER}{self.choice_idx}"
-        return None
+                # ! TBD
+                print(f"\tafter: {self.curr_player.stats}")
+                return f"choice{EVENT_BUTTON_RET_STR_DELIMITER}{self.choice_idx}"
+            else:
+                return "event_done"
+        return ""
 
 
 class CardDisplays(Button):
