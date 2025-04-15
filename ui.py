@@ -127,7 +127,7 @@ def draw_text_with_wrap_centery(
 
 
 def draw_text_with_wrap_centery_increment(
-    surface, text, color, rect, font, aa=True, bkg=None
+    surface, text, color, rect, font, aa=True, bkg=None, is_dry_run=False
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
     This returns any remaining text that will not fit into the `Rect`.
@@ -144,6 +144,7 @@ def draw_text_with_wrap_centery_increment(
         font (pygame.font.Font): `Font` to use for text
         aa (bool, optional): anti-aliasing toggle. Defaults to True.
         bkg (_type_, optional): background. Defaults to None.
+        is_dry_run (bool, optional): if set, won't render. Defaults to False.
 
     Returns:
         str: left over string that could not fit into given rect
@@ -186,7 +187,8 @@ def draw_text_with_wrap_centery_increment(
 
         text_rect = image.get_rect(center=rect.center)
         text_rect.centery = y
-        surface.blit(image, text_rect)
+        if not is_dry_run:
+            surface.blit(image, text_rect)
         y += font_height + line_spacing
 
         # remove the text we just blitted
