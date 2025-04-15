@@ -169,10 +169,10 @@ class GameManager:
         
         # Create players
         players = [
-            Player("Player 1", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png", next_up="Resources/Next_Blue.png"),
-            Player("Player 2", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png", next_up="Resources/Next_Yellow.png"),
-            Player("Player 3", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png", next_up="Resources/Next_Green.png"),
-            Player("Player 4", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png", next_up="Resources/Next_Red.png")
+            Player("Brandon", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png", next_up="Resources/Next_Blue.png"),
+            Player("Charlie", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png", next_up="Resources/Next_Yellow.png"),
+            Player("Dani", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png", next_up="Resources/Next_Green.png"),
+            Player("Alex", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png", next_up="Resources/Next_Red.png")
         ]
         return players
 
