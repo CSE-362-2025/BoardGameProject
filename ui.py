@@ -150,10 +150,10 @@ def draw_text_with_wrap_centery_increment(
     """
 
     # padding for L/R
-    padding_lr = surface.get_width() / 100 * 3
+    padding_lr = surface.get_width() / 100 * 1
 
     # padding for top/bottom
-    padding_tb = surface.get_height() / 100 * 3
+    padding_tb = surface.get_height() / 100 * 2.5
     rect = pygame.Rect(rect)
 
     y = rect.top + padding_tb
