@@ -103,7 +103,7 @@
             },
             {
                 "position": 10,
-                "tile_type": "BadTile",
+                "tile_type": "EventTile",
                 "screen_position": [62.2,27.8]
 
             },
@@ -207,7 +207,7 @@
             },
             {
                 "position": 14,
-                "tile_type": "GoodTile",
+                "tile_type": "EventTile",
                 "screen_position": [22.2,27.2]
 
             },
@@ -338,7 +338,7 @@
             },
             {
                 "position": 22,
-                "tile_type": "GoodTile",
+                "tile_type": "EventTile",
                 "screen_position": [64,71]
             },
             {
