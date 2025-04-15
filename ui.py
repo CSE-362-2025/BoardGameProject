@@ -274,9 +274,7 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(
-                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
-            ),
+            Button(MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False),
             Button(
                 MAIN3,
                 MAINSIZE,
@@ -334,15 +332,10 @@ class UI:
         """Updates the screen"""
         # first make sure aspect ratio is good
         if self.width != self.screen.get_width():
-            pygame.display.set_mode(
-                (
-                    int(self.screen.get_width()),
-                    int(self.screen.get_width() * (41 / 59)),
-                ),
-                pygame.RESIZABLE,
-            )
-        board = self.game_manager.board
-        players = self.game_manager.players
+            pygame.display.set_mode((int(self.screen.get_width()), int(self.screen.get_width()*(41/59))), pygame.RESIZABLE)
+        if self.player:
+            board = self.game_manager.board
+            players = self.game_manager.players
         """Updates and draws all necessary UI components."""
         # Draw the board, dice, and stats, starting by filling the background with either an image or colour
         if self.background_img:
@@ -355,9 +348,9 @@ class UI:
             self.screen.blit(self.background_img, (0, 0))
         else:
             self.screen.fill(BG_COLOR)
-        if board:
-            self.display_board(board, players)  # Call a method to draw the game board
-
+        if self.player:
+            if board:
+                self.display_board(board, players)  # Call a method to draw the game board
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
@@ -386,6 +379,7 @@ class UI:
 
     def main_menu(self):
         self.save_state()
+        self.player = None
         for button in self.Buttons:
             if (
                 button.type == "New Game"
@@ -394,6 +388,9 @@ class UI:
                 or button.type == "Settings"
             ):
                 button.turn_on()
+        self.curr_background = self.backgrounds["title"]
+        self.width = 1
+        self.set_sound()
 
     def set_sound(self):
         if self.player:
@@ -466,7 +463,7 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event[0]}: {event[1]}")
+        self.display_message(f"{event[0]}")
         for button in self.Buttons:
             if button.type == "Next Turn":
                 button.turn_on()
@@ -612,6 +609,9 @@ class UI:
                     self.game_manager.switch_turn()
                 case "Quit":
                     pygame.event.Event(quit)
+                case "Quit to Title":
+                    self.open_menus.pop()
+                    self.main_menu()
         if self.game_manager.is_game_over():
             self.player = None
 
@@ -664,8 +664,8 @@ class PauseMenu(Menu):
         self.buttons = [
             Button(MAIN1, MAINSIZE, "Return"),
             Button(MAIN2, MAINSIZE, "Save"),
-            Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
-            Button(MAIN4, MAINSIZE, "Quit"),
+            Button(MAIN3, MAINSIZE, "Settings"),
+            Button(MAIN4, MAINSIZE, "Quit to Title"),
         ]
 
 
