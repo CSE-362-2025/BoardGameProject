@@ -748,7 +748,7 @@ class EventMenu(Menu):
             resulting_value: int = int(player_stat_after[each_cat])
             # get resulting stat
             change_value: int = int(
-                self.event.choices[event_choice_index - 1]["result"][each_cat]
+                self.event.choices[event_choice_index]["result"][each_cat]
             )  # calculate stats before :(
             value_before: int = resulting_value - change_value
 
