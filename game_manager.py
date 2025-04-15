@@ -348,13 +348,16 @@ class GameManager:
 
     # Return true if the entire game is over
     def is_game_over(self):
-        for player in self.players:
-            if player.at_end:
-                continue
-            else:
-                return False
-            
-        return True
+        if self.players:
+            for player in self.players:
+                if player.at_end:
+                    continue
+                else:
+                    return False
+                
+            return True
+        else:
+            return False
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
