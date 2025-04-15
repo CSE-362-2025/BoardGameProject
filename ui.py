@@ -264,7 +264,7 @@ class UI:
             self.screen.fill(BG_COLOR)
         if board:
             self.display_board(board, players)  # Call a method to draw the game board
-            
+
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
@@ -298,7 +298,7 @@ class UI:
                 match self.track:
                     case 0:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1: 
+                    case 1:
                         pass
                     case 2:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
@@ -355,7 +355,7 @@ class UI:
                     game_manager=self.game_manager
                 )
             )
-    
+
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -486,7 +486,7 @@ class UI:
                     pygame.event.Event(quit)
         if self.game_manager.is_game_over():
             self.player=None
-    
+
 
     def save_state(self):
         for button in self.Buttons:
@@ -581,6 +581,45 @@ class EventMenu(Menu):
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
         self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
 
+    def __get_font_size_to_fit_all(self, screen: pygame.Surface, rect: pygame.Rect, text: str, colour: tuple[int], initial_font_size: int, font_family: str = None) -> int:
+        """Find a font size that fits all of given string into the rect.
+
+        This finds the font size that can fit all given text and returns
+        the font size. This will render the font on the given rect.
+        Currently, font-size decrements by 1.
+
+        Args:
+            screen (pygame.Surface): the base surface
+            rect (pygame.Rect): rect obj to fit text in
+            text (str): text to render
+            colour (tuple[int]): colour of the text
+            initial_font_size (int): Initial font size to use
+            font_family (str, optional): path to specific font to use. Defaults to None.
+
+        Returns:
+            int: font size value found
+
+        """
+        step_size: int = 1
+        curr_font_size = initial_font_size
+        while True:
+            each_font: pygame.font.Font = pygame.font.Font(font_family, curr_font_size)
+            # try to draw text
+            remaining: str = draw_text_with_wrap_centery_increment(
+                screen,
+                text,
+                colour,
+                rect,
+                each_font,
+                is_dry_run=True
+            )
+            if len(remaining) == 0:
+                break
+
+            curr_font_size -= step_size
+
+        return curr_font_size
+
     def draw(self, screen):
         super().draw(screen)
 
@@ -627,9 +666,6 @@ class EventMenu(Menu):
         event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
 
         # prep event description box, right half below the title box
-        event_desc_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/news_gothic_std_medium.otf", EVENT_DESC_FONT_SIZE
-        )
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
@@ -729,6 +765,17 @@ class EventMenu(Menu):
         )
 
         # draw desc on top
+        fitting_font_size: int = self.__get_font_size_to_fit_all(
+            screen,
+            event_desc_rect,
+            str(self.event.description),
+            EVENT_FONT_COLOUR,
+            EVENT_DESC_FONT_SIZE,
+            font_family="Resources/fonts/news_gothic_std_medium.otf"
+        )
+        event_desc_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/news_gothic_std_medium.otf", fitting_font_size
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.description),
