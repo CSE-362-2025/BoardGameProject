@@ -254,8 +254,7 @@ class GameManager:
             print(f"{player.name} awards: {player.awards}")
             print(f"{player.name} end text: {player.end_text}")
             if self.has_gpu:
-                print(f"{player.name} ai summary: {player.ai_summary}"
-                      
+                print(f"{player.name} ai summary: {player.ai_summary}")
 
     #  gives awards to players with the highest stats
     def generate_awards(self):
