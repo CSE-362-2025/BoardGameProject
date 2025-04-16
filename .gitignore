@@ -6,6 +6,8 @@ game_data.db
 # common names for virtual environments names
 .venv/
 venv/
+.myenv/
+myenv/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

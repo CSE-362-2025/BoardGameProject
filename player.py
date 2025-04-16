@@ -35,11 +35,11 @@ class Player:
 
         else:
             self.stats = {  # Caps at 10 and can't go below 0
-                "academic": 5,                
-                "bilingual": 5,
-                "military": 5,                
-                "athletic": 5,
-                "social": 5,
+                "academic": 2,                
+                "bilingual": 2,
+                "military": 2,                
+                "athletic": 2,
+                "social": 2,
             }
         
         # Increment when landing on specific tile
@@ -64,6 +64,7 @@ class Player:
             "social": False,
         }
         self.end_text = ""
+        self.ai_summary = ""
 
     def move(self, spaces):
         self.position += spaces
@@ -83,11 +84,13 @@ class Player:
 
     def store_event(self, event, choice_idx=None):
         if choice_idx is not None:
-            self.events_played.append((event.id, choice_idx))
+            self.events_played.append((event.description, event.choices[choice_idx]["text"]))
             self.events_played_id.append(event.id)
+            print(self.events_played)
         else:
-            self.events_played.append((event.id, None))
+            self.events_played.append((event.name, None))
             self.events_played_id.append(event.id)
+            print("SHOULD NOT BE HERE")
 
     def get_stats(self):
         return self.stats

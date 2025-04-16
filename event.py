@@ -21,5 +21,5 @@ class Event:
         return self.type
 
     def apply_result(self, player, choice_idx):
-        player.change_stats(self.choices[choice_idx-1]['result'])
+        player.change_stats(self.choices[choice_idx]['result'])
 

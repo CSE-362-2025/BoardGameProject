@@ -1,17 +1,19 @@
 import sqlite3
-from os import path
+from os import path, remove
 import pathlib
 
 DB_NAME_DEFAULT = "game_data.db"
 DB_DIR_PATH = pathlib.Path("database")
 
+
 class GameDatabase:
 
     def __init__(self):
-        
+
         # Assuming the db name doesn't change can just have static attribute
-        self.connection = sqlite3.connect('')
-        self.cursor = self.connection.cursor()
+        self.connection = None
+        self.cursor = None
+        self.db_path = None
 
     def __create_tables(self) -> None:
         """Run queries to create tables if they don't already exist
@@ -52,6 +54,8 @@ class GameDatabase:
                 event_id INTEGER,
                 player_id INTEGER,
                 response INTEGER,
+                event_desc TEXT,
+                event_choice_text TEXT,
                 FOREIGN KEY (player_id) REFERENCES Players(player_id)
             );
         """
@@ -73,17 +77,16 @@ class GameDatabase:
 
     def connect(self, db_name):
         name = db_name
-        db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
+        self.db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
 
         if len(name) > 0:
             # if file has .db extension
             if name[-3:] not in ".db":
                 name += ".db"
-                db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
+                self.db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
 
-        print(f"trying to connect to path={db_path}")
         try:
-            self.connection = sqlite3.connect(db_path)
+            self.connection = sqlite3.connect(self.db_path)
             self.cursor = self.connection.cursor()
 
             # initialize the table (if they don't already exist)
@@ -92,7 +95,7 @@ class GameDatabase:
 
         except sqlite3.Error as e:
             print(f"GameDatabase.connect() raised exception={e}")
-            return False    
+            return False
 
     # return true is success, false otherwise
     def save_game(self, game_manager):
@@ -106,6 +109,9 @@ class GameDatabase:
                 # clear_database failed
                 print("GameDatabase.save_game(): failed to clear DB before saving")
                 return False
+
+            # connect again after deleting DB
+            self.connect("")
 
             # save GameInfo
             current_player_index: int = game_manager.players.index(
@@ -150,19 +156,21 @@ class GameDatabase:
                 self.connection.commit()
 
                 # save all events played by the players into DB
-                for each_event in each_player.events_played:
-                    resp = each_event[1]
-                    if resp is None:
-                        resp = "NULL"
+                for i, each_event in enumerate(each_player.events_played):
+                    resp_text = each_event[1]
+                    each_event_index = int(each_player.events_played_id[i])
+                    if resp_text is None:
+                        resp_text = ""
                     self.cursor.execute(
                         """
-                        INSERT INTO Events (event_id, player_id, response)
-                        VALUES (?, ?, ?)
+                        INSERT INTO Events (player_id, event_desc, event_choice_text, event_id)
+                        VALUES (?, ?, ?, ?)
                         """,
                         (
-                            int(each_event[0]),
                             int(each_player_index),
-                            resp
+                            each_event[0],
+                            resp_text,
+                            each_event_index,
                         ),
                     )
                     self.connection.commit()
@@ -211,23 +219,56 @@ class GameDatabase:
                 each_player.stats["military"] = int(each_row[4])
                 each_player.stats["social"] = int(each_row[5])
 
-                # TODO: load other attributes (has_moved, next_pos, ...)
+                # `has_moved` attrib
+                has_moved: int = self.cursor.execute(
+                    """
+                    SELECT has_moved FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.has_moved = has_moved == 1
+
+                # `branch` attrib
+                branch: int = self.cursor.execute(
+                    """
+                    SELECT branch FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.branch = branch == 1
+
+                # `next_pos`
+                next_pos: int = self.cursor.execute(
+                    """
+                    SELECT next_pos FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.next_pos = next_pos
+
+                # `on_alt_path`
+                on_alt_path: int = self.cursor.execute(
+                    """
+                    SELECT on_alt_path FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.on_alt_path = on_alt_path == 1
 
                 # reset events_played list
                 each_player.events_played = []
+                each_player.events_played_id = []
 
-            curr_index = self.cursor.execute(
+            current_player_index = self.cursor.execute(
                 """
                 SELECT current_player_index FROM GameInfo
                 """
-            ).fetchone()
-
-            
-
+            ).fetchone()[0]
+            game_manager.current_player = game_manager.players[current_player_index]
 
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(
-                """SELECT player_id, event_id, response
+                """SELECT player_id, event_id, event_desc, event_choice_text
                 FROM Events
                 """
             ).fetchall()
@@ -237,18 +278,15 @@ class GameDatabase:
                 # SQL IDs starts at one
                 player_index: int = int(each_event_row[0]) - 1
                 event_id: int = each_event_row[1]
-                resp: int = each_event_row[2]
 
-                each_event_with_resp: tuple[int] = (event_id,resp)
-
+                event_desc: str = str(each_event_row[2])
+                event_choice_text: str = str(each_event_row[3])
 
                 # append into the player's list
                 game_manager.players[player_index].events_played.append(
-                    each_event_with_resp
+                    (event_desc, event_choice_text)
                 )
-                game_manager.players[player_index].events_played_id.append(
-                    event_id                    
-                )
+                game_manager.players[player_index].events_played_id.append(event_id)
             return True
         except sqlite3.Error as e:
             # TODO: logger for error handling
@@ -262,7 +300,7 @@ class GameDatabase:
             return False
 
     def clear_database(self):
-        """Clear any saved game states from the connected DB.
+        """Delete game database file.
 
         Args:
             game_manager (GameManager): running instance of `GameManager`
@@ -271,30 +309,24 @@ class GameDatabase:
             bool: True if successful, False otherwise
         """
 
-        try:
-            self.cursor.execute(
-                """
-                DELETE FROM Players;
-            """
-            )
-            self.cursor.execute(
-                """
-                DELETE FROM GameInfo;
-            """
-            )
-            self.cursor.execute(
-                """
-                DELETE FROM Events;
-            """
-            )
-            self.connection.commit()
-            return True
-        except sqlite3.Error as e:
-            print(f"FAILED: {e}")
+        if self.db_path is None or not path.exists(self.db_path):
+            print(f"GameDatabase.clear_database(): Failed, {self.db_path} DNE.")
             return False
 
+        # delete file
+        try:
+            remove(self.db_path)
+        except OSError as e:
+            print(
+                f"GameDatabase.clear_database(): Failed with e={e}, could not delete {self.db_path}"
+            )
+            return False
+
+        return True
+
     def close_connection(self):
-        pass
+        self.connection.close()
+
 
 if __name__ == "__main__":
     db = GameDatabase()

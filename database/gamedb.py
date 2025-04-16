@@ -23,9 +23,9 @@ class GameDataBase(object):
             name TEXT NOT NULL,
             position INTEGER
             )
-        
+
         CREATE TABLE iF NOT EXISTS stats (
-            player_id INTEGER FOREIGN KEY REFERENCES players(id) 
+            player_id INTEGER FOREIGN KEY REFERENCES players(id)
             military INTEGER,
             bilingualism INTEGER,
             fitness INTEGER,
@@ -68,33 +68,32 @@ class GameDataBase(object):
         conn.close()
 
     # update stat
-    def update_stats (self, player_id: int, military=0, bilingualism=0, fintess=0, academics=0): 
+    def update_stats(
+        self, player_id: int, military=0, bilingualism=0, fintess=0, academics=0
+    ):
         conn = self._get_connection()
         cursor = conn.cursor()
 
         curr_stat = get_stat()
 
-
-
-        
         curosor.execute()
-
 
     # get stat
     def get_stat(self, player_id: int):
         """
 
         Args:
-            player_id (int): player id 
+            player_id (int): player id
 
         Returns:
-            row 
+            row
         """
         conn = self._get_connection()
         cursor = conn.cursor()
-        cursor.execute(f"SELECT id, military, bilingualism, fitness, academics FROM players WHERE id = {player_id}")
+        cursor.execute(
+            f"SELECT id, military, bilingualism, fitness, academics FROM players WHERE id = {player_id}"
+        )
         row = cursor.fetchone()
         conn.close()
 
         return row
-        
