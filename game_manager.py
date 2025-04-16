@@ -98,7 +98,7 @@ class GameManager:
         if tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
-            self.ui.display_non_decision_event(["You have reached the end of the board"])
+            self.ui.display_end_event(["You have reached the end of the board"])
             
             if self.is_game_over():
                 self.end_game()
