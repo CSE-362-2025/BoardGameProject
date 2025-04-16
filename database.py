@@ -88,11 +88,10 @@ class GameDatabase:
         try:
             self.connection = sqlite3.connect(self.db_path)
             self.cursor = self.connection.cursor()
-
+            
             # initialize the table (if they don't already exist)
             self.__create_tables()
             return True
-
         except sqlite3.Error as e:
             print(f"GameDatabase.connect() raised exception={e}")
             return False
@@ -102,8 +101,8 @@ class GameDatabase:
 
         if game_manager is None:
             return False
-
         try:
+            self.connection.close()
             # clear DB first
             if not self.clear_database():
                 # clear_database failed
@@ -112,7 +111,6 @@ class GameDatabase:
 
             # connect again after deleting DB
             self.connect("")
-
             # save GameInfo
             current_player_index: int = game_manager.players.index(
                 game_manager.current_player
@@ -129,7 +127,7 @@ class GameDatabase:
                 ),
             )
             self.connection.commit()
-
+            
             # save all players into DB
             for each_player_index, each_player in enumerate(game_manager.players):
                 self.cursor.execute(
@@ -174,11 +172,19 @@ class GameDatabase:
                         ),
                     )
                     self.connection.commit()
-
             return True
         except sqlite3.Error as e:
             print(f"GameDatabase.save_game(): unexpected exception = {e}")
             return False
+
+    def get_curr_player(self, game_manager):
+        current_player_index = self.cursor.execute(
+            """
+            SELECT current_player_index FROM GameInfo
+            """
+        ).fetchone()[0]
+        current_player = game_manager.players[current_player_index]
+        return current_player
 
     def load_game(self, game_manager):
         """Load game from the connected DB.
@@ -259,13 +265,6 @@ class GameDatabase:
                 each_player.events_played = []
                 each_player.events_played_id = []
 
-            current_player_index = self.cursor.execute(
-                """
-                SELECT current_player_index FROM GameInfo
-                """
-            ).fetchone()[0]
-            game_manager.current_player = game_manager.players[current_player_index]
-
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(
                 """SELECT player_id, event_id, event_desc, event_choice_text
@@ -308,7 +307,6 @@ class GameDatabase:
         Returns:
             bool: True if successful, False otherwise
         """
-
         if self.db_path is None or not path.exists(self.db_path):
             print(f"GameDatabase.clear_database(): Failed, {self.db_path} DNE.")
             return False

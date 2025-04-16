@@ -456,8 +456,33 @@ class UI:
 
     def game_start(self, is_new_game=True):
         self.game_manager.start_game(is_new_game)
+        new_game = self.game_manager.start_game(is_new_game)
         self.set_sound()
         self.curr_background = self.backgrounds["wood"]
+        if new_game == True:
+            self.screen.fill(BG_COLOR)
+            text_rect=self.screen.get_rect().scale_by(0.8,0.2).move(0,-20)
+            text=("""Welcome to A Cadet's life""")
+            font = pygame.font.Font(size=get_font_size_to_fit_all(self.screen, text_rect, text, FONT_COLOR, 16))
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect=text_rect.move(0,20)
+            text=("""This game will let you experience the Quintessential RMC experience.""")
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect=text_rect.move(0,50)
+            text=("""You will have the chance to go through the Regular Officer Training Program. Dice rolls letting you progress across the board, each having different tiles that let you act out a variety of events that will simulate what life at the Royal Military College is like. Each event will offer you options that will decide the way you spend your time at this university. """)
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect=text_rect.move(0,60)
+            text=("""You possess five traits based on the  RMC pillars, Academic, Billinguallism, Military, Physical and Social. Every choice you make will have a chance to positively or negatively impact your attributes. They determine the options offered to you as some are only available if you have high enough stats""")
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect=text_rect.move(0,40)
+            text=("""Your goal is to live the life you want, make the choices that best represent you and enjoy your time at the college. """)
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect=text_rect.move(0,20)
+            text=("""Good luck, and may the dice ever roll in your favour.""")
+            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            pygame.display.flip()
+            pygame.time.wait(10000)
+            pygame.event.wait(2000000)
         self.width = 1
         self.game_over = False
         self.return_state()
@@ -512,6 +537,36 @@ class UI:
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
+
+    def display_end_event(self, event):
+        # display button for displaying effect description
+        self.Buttons.append(
+            EffectTileDisplayButton(
+                button_text=str(event[0]),
+                _type="TileEffect",
+                centre=(50, 40),
+                size=EFFECT_DISPLAY_SIZE
+            )
+        )       
+        # display stat change
+        stat_change_dict: dict = {} 
+        stat_display = ConsequenceCardDisplay(
+            centre=None,
+            centre_moved=EVENT_CONSEQ_CARD_OUT,
+            size=None,
+            type="TileEffectConsequence",
+            image=os.path.join("Resources", "rmc_card.png")
+        )
+        stat_display.update_info((
+            self.game_manager.current_player.name,
+            stat_change_dict,
+            self.game_manager.current_player.get_portrait(),
+        ))
+        self.Buttons.append(stat_display)
+
+        for button in self.Buttons:
+            if button.type == "Next Turn":
+                button.turn_on()
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
@@ -716,9 +771,7 @@ class UI:
                     self.game_manager.save_state()
                 case "Load Game":
                     self.game_start(is_new_game=False)
-                    r = self.game_manager.load_state()
-                    # delete this print
-                    print(f"load result={r}")
+                    self.game_manager.load_state()
                 case "Pause":
                     self.sounds["pause"].play()
                     self.save_state()
