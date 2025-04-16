@@ -45,7 +45,7 @@ END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
 END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
 END_GAME_TEXT_RECT_HEIGH_PERCENTAGE: int = 20
 END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
-END_GAME_TEXT_FONT_SIZE: int = 40
+END_GAME_TEXT_FONT_SIZE: int = 30
 
 ## constants for event popup screen
 
@@ -1746,7 +1746,7 @@ class EndScreen(Menu):
             text_rect.right = cursor_left + (each_portrait_img_rect_adjusted.width + screen_width * END_GAME_LR_MARGIN_PERCENTAGE) + screen_height * 2
             # calc font size that can fit
             font_size = get_font_size_to_fit_all(
-                screen, text_rect, each_player.end_text, None, END_GAME_TEXT_FONT_SIZE,
+                screen, text_rect, each_player.end_text, EVENT_FONT_COLOUR, END_GAME_TEXT_FONT_SIZE,
             )
             # TODO: add style for `player.end_text`
             text_font = pygame.font.Font(None, font_size)
