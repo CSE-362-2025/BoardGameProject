@@ -10,6 +10,7 @@ def main():
 
     # Set up display
     pygame.display.set_caption("Cadet's Life")
+    pygame.display.set_icon(pygame.image.load("Resources/monkeyhat.ico"))
 
     # Create UI instance
     ui = UI()
