@@ -489,6 +489,7 @@ class UI:
                 )
                 self.screen.blit(portrait, portrait_rect)
             playerlist = self.game_manager.players
+            start = 0
             for player in range(len(playerlist)):
                 if self.player == playerlist[player]:
                     start = player
@@ -588,8 +589,6 @@ class UI:
                 case "Load Game":
                     self.game_start(is_new_game=False)
                     r = self.game_manager.load_state()
-                    # update UI
-                    self.update()
                     # delete this print
                     print(f"load result={r}")
                 case "Pause":
