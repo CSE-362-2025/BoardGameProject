@@ -1,5 +1,5 @@
 import sqlite3
-from os import path
+from os import path, remove
 import pathlib
 
 DB_NAME_DEFAULT = "game_data.db"
@@ -11,8 +11,9 @@ class GameDatabase:
     def __init__(self):
 
         # Assuming the db name doesn't change can just have static attribute
-        self.connection = sqlite3.connect("")
-        self.cursor = self.connection.cursor()
+        self.connection = None
+        self.cursor = None
+        self.db_path = None
 
     def __create_tables(self) -> None:
         """Run queries to create tables if they don't already exist
@@ -74,17 +75,16 @@ class GameDatabase:
 
     def connect(self, db_name):
         name = db_name
-        db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
+        self.db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
 
         if len(name) > 0:
             # if file has .db extension
             if name[-3:] not in ".db":
                 name += ".db"
-                db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
+                self.db_path = path.join(DB_DIR_PATH, DB_NAME_DEFAULT)
 
-        print(f"trying to connect to path={db_path}")
         try:
-            self.connection = sqlite3.connect(db_path)
+            self.connection = sqlite3.connect(self.db_path)
             self.cursor = self.connection.cursor()
 
             # initialize the table (if they don't already exist)
@@ -107,6 +107,9 @@ class GameDatabase:
                 # clear_database failed
                 print("GameDatabase.save_game(): failed to clear DB before saving")
                 return False
+
+            # connect again after deleting DB
+            self.connect("")
 
             # save GameInfo
             current_player_index: int = game_manager.players.index(
@@ -253,7 +256,7 @@ class GameDatabase:
             return False
 
     def clear_database(self):
-        """Clear any saved game states from the connected DB.
+        """Delete game database file.
 
         Args:
             game_manager (GameManager): running instance of `GameManager`
@@ -262,27 +265,19 @@ class GameDatabase:
             bool: True if successful, False otherwise
         """
 
-        try:
-            self.cursor.execute(
-                """
-                DELETE FROM Players;
-            """
-            )
-            self.cursor.execute(
-                """
-                DELETE FROM GameInfo;
-            """
-            )
-            self.cursor.execute(
-                """
-                DELETE FROM Events;
-            """
-            )
-            self.connection.commit()
-            return True
-        except sqlite3.Error as e:
-            print(f"FAILED: {e}")
+        if self.db_path is None or not path.exists(self.db_path):
+            print(f"GameDatabase.clear_database(): Failed, {self.db_path} DNE.")
             return False
+
+        # delete file
+        try:
+            remove(self.db_path)
+        except OSError as e:
+            print(f"GameDatabase.clear_database(): Failed with e={e}, could not delete {self.db_path}")
+            return False
+
+        return True
+
 
     def close_connection(self):
         self.connection.close()
