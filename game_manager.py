@@ -140,6 +140,7 @@ class GameManager:
         if is_new_game:
             self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
+        return is_new_game
 
     def get_events(self, year):
         # Create events

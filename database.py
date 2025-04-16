@@ -91,7 +91,6 @@ class GameDatabase:
             
             # initialize the table (if they don't already exist)
             self.__create_tables()
-            print("SUCCESS TO CONNECT")
             return True
         except sqlite3.Error as e:
             print(f"GameDatabase.connect() raised exception={e}")
