@@ -473,7 +473,24 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        # self.display_message(f"{event[0]}")
+
+        # check recv event obj is of `TileEffect`
+        if len(event) == 1:
+            # end tile
+
+            # display end tile message
+            self.Buttons.append(
+                EffectTileDisplayButton(
+                    button_text=str(event[0]),
+                    _type="TileEffect",
+                    centre=(50, 40),
+                    size=EFFECT_DISPLAY_SIZE
+                )
+            )
+            for button in self.Buttons:
+                if button.type == "Next Turn":
+                    button.turn_on()
+            return
 
         # display button for displaying effect description
         self.Buttons.append(
