@@ -1,7 +1,7 @@
-import pygame
 import random
 import os
 from database import GameDatabase
+import pygame
 
 # Constants
 WINDOW_SIZE_X = 1080
@@ -13,10 +13,10 @@ FONT_COLOR = (255, 255, 255)  # White text
 # Adjust this based on your UI layout (percentage based)
 DICE_POS = (88, 88)
 DICE_SIZE = (20, 15)
-MAIN1 = (15, 70)
-MAIN2 = (38, 70)
-MAIN3 = (62, 70)
-MAIN4 = (85, 70)
+MAIN1 = (12.5, 30)
+MAIN2 = (12.5, 50)
+MAIN3 = (12.5, 70)
+MAIN4 = (12.5, 90)
 MAINSIZE = (20, 12)
 CARD1IN = (115, 17.5)
 CARD1OUT = (90, 17.5)
@@ -33,10 +33,14 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 ## constants for event popup screen
 
+# consequence RMC card display position
+EVENT_CONSEQ_CARD_OUT = (100, 17.5)
+
 # Rect with TSS background
 EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
+EVENT_RECT_TSS_BG_COLOUR: tuple[int] = (173, 118, 113)
 
 # margin for left/right in percentage
 EVENT_LR_MARGIN: int = 3
@@ -44,14 +48,14 @@ EVENT_LR_MARGIN: int = 3
 EVENT_TB_MARGIN: int = 2
 
 # event title rect and font
-EVENT_TITLE_FONT_SIZE: int = 40
+EVENT_TITLE_FONT_SIZE: int = 50
 EVENT_FONT_COLOUR: tuple[int] = (96, 35, 58)
 
 # event description and font
-EVENT_DESC_FONT_SIZE: int = 25
+EVENT_DESC_FONT_SIZE: int = 30
 
 # event button text size
-EVENT_BUTTONS_FONT_SIZE: int = 22
+EVENT_BUTTONS_FONT_SIZE: int = 25
 
 # event button colours
 EVENT_BUTTONS_BORDER_COLOUR: tuple[int] = (94, 36, 51)
@@ -61,11 +65,15 @@ EVENT_BUTTONS_FILL_DISABLED_COLOUR: tuple[int] = (90, 66, 63)
 # choice size
 EVENT_BUTTONS_CHOICE_SIZE: tuple[int] = (17, 10)
 
+# delimiter for ECB.handle_click()
+EVENT_BUTTON_RET_STR_DELIMITER: str = "|"
+
 
 def draw_text_with_wrap_centery(
     surface, text, color, rect, font, aa=True, bkg=None
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
+
     This returns any remaining text that will not fit into the `Rect`.
     This will force all text to have the same `centery` as the given `rect`,
     only use for short texts.
@@ -83,6 +91,7 @@ def draw_text_with_wrap_centery(
 
     Returns:
         str: left over string that could not fit into given rect
+
     """
     rect = pygame.Rect(rect)
     y = rect.top
@@ -128,7 +137,7 @@ def draw_text_with_wrap_centery(
 
 
 def draw_text_with_wrap_centery_increment(
-    surface, text, color, rect, font, aa=True, bkg=None
+    surface, text, color, rect, font, aa=True, bkg=None, is_dry_run=False
 ) -> str:
     """Helper function that draws text and wrap it to fit the given `Rect`.
     This returns any remaining text that will not fit into the `Rect`.
@@ -145,16 +154,17 @@ def draw_text_with_wrap_centery_increment(
         font (pygame.font.Font): `Font` to use for text
         aa (bool, optional): anti-aliasing toggle. Defaults to True.
         bkg (_type_, optional): background. Defaults to None.
+        is_dry_run (bool, optional): if set, won't render. Defaults to False.
 
     Returns:
         str: left over string that could not fit into given rect
     """
 
     # padding for L/R
-    padding_lr = surface.get_width() / 100 * 3
+    padding_lr = surface.get_width() / 100 * 1
 
     # padding for top/bottom
-    padding_tb = surface.get_height() / 100 * 3
+    padding_tb = surface.get_height() / 100 * 2.5
     rect = pygame.Rect(rect)
 
     y = rect.top + padding_tb
@@ -187,13 +197,56 @@ def draw_text_with_wrap_centery_increment(
 
         text_rect = image.get_rect(center=rect.center)
         text_rect.centery = y
-        surface.blit(image, text_rect)
+        if not is_dry_run:
+            surface.blit(image, text_rect)
         y += font_height + line_spacing
 
         # remove the text we just blitted
         text = text[i:]
 
     return text
+
+
+def get_font_size_to_fit_all(
+    screen: pygame.Surface,
+    rect: pygame.Rect,
+    text: str,
+    colour: tuple[int],
+    initial_font_size: int,
+    font_family: str = None,
+) -> int:
+    """Find a font size that fits all of given string into the rect.
+
+    This finds the font size that can fit all given text and returns
+    the font size. This will render the font on the given rect.
+    Currently, font-size decrements by 1.
+
+    Args:
+        screen (pygame.Surface): the base surface
+        rect (pygame.Rect): rect obj to fit text in
+        text (str): text to render
+        colour (tuple[int]): colour of the text
+        initial_font_size (int): Initial font size to use
+        font_family (str, optional): path to specific font to use. Defaults to None.
+
+    Returns:
+        int: font size value found
+
+    """
+    step_size: int = 1
+    curr_font_size = initial_font_size
+    while True:
+        each_font: pygame.font.Font = pygame.font.Font(font_family, curr_font_size)
+        # try to draw text
+        remaining: str = draw_text_with_wrap_centery_increment(
+            screen, text, colour, rect, each_font, is_dry_run=True
+        )
+        if len(remaining) == 0:
+            break
+
+        curr_font_size -= step_size
+
+    return curr_font_size
 
 
 class UI:
@@ -242,24 +295,36 @@ class UI:
         self.dice_value = 0
         self.message = None  # Variable to store the current message
         self.message_duration = 0  # Number of frames the message will stay on screen
-        self.sounds = dict(click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
-                           start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
-                           pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
-                           athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
-                           english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
-                           french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
-                           military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
-                           social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
-                           academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"))
-        self.sounds['click'].set_volume(0.5)
+        self.sounds = dict(
+            click=pygame.mixer.Sound("Resources/sounds/click.ogg"),
+            start=pygame.mixer.Sound("Resources/sounds/I am notta da mario.ogg"),
+            pause=pygame.mixer.Sound("Resources/sounds/paused.ogg"),
+            athletic=pygame.mixer.Sound("Resources/sounds/Athletics.ogg"),
+            english=pygame.mixer.Sound("Resources/sounds/Bilingualism(English).ogg"),
+            french=pygame.mixer.Sound("Resources/sounds/Bilingualism(French).ogg"),
+            military=pygame.mixer.Sound("Resources/sounds/Military.ogg"),
+            social=pygame.mixer.Sound("Resources/sounds/Socials.ogg"),
+            academic=pygame.mixer.Sound("Resources/sounds/Academics.ogg"),
+        )
+        self.sounds["click"].set_volume(0.5)
         self.track = 0
         self.year = 0
-
+        self.the_meeple = pygame.image.load("Resources/test_meeple.png")
 
     def update(self):
         """Updates the screen"""
-        board = self.game_manager.board
-        players = self.game_manager.players
+        # first make sure aspect ratio is good
+        if self.width != self.screen.get_width():
+            pygame.display.set_mode(
+                (
+                    int(self.screen.get_width()),
+                    int(self.screen.get_width() * (41 / 59)),
+                ),
+                pygame.RESIZABLE,
+            )
+        if self.player:
+            board = self.game_manager.board
+            players = self.game_manager.players
         """Updates and draws all necessary UI components."""
         # Draw the board, dice, and stats, starting by filling the background with either an image or colour
         if self.background_img:
@@ -272,13 +337,26 @@ class UI:
             self.screen.blit(self.background_img, (0, 0))
         else:
             self.screen.fill(BG_COLOR)
-        if board:
-            self.display_board(board, players)  # Call a method to draw the game board
-
+        if self.player:
+            if board:
+                self.display_board(
+                    board, players
+                )  # Call a method to draw the game board
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
-            text_rect = text_surface.get_rect(center=(self.screen.get_width()/2, self.screen.get_width()*(41/150)))
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
+            text_rect = text_surface.get_rect(
+                center=(
+                    self.screen.get_width() / 2,
+                    self.screen.get_width() * (41 / 150),
+                )
+            )
             self.screen.blit(text_surface, text_rect)
             self.message_duration -= 1
 
@@ -292,6 +370,7 @@ class UI:
 
     def main_menu(self):
         self.save_state()
+        self.player = None
         for button in self.Buttons:
             if (
                 button.type == "New Game"
@@ -300,28 +379,31 @@ class UI:
                 or button.type == "Settings"
             ):
                 button.turn_on()
+        self.curr_background = self.backgrounds["title"]
+        self.width = 1
+        self.set_sound()
 
     def set_sound(self):
-            if self.player:
-                pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
-                pygame.mixer.music.play()
-                match self.track:
-                    case 0:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1:
-                        pass
-                    case 2:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 3:
-                        pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
-                    case _:
-                        pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                        print("Track Reset")
-                        self.track=0
-                self.track =+ 1
-            else:
-                pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
-                pygame.mixer.music.play()
+        if self.player:
+            pygame.mixer.music.load("Resources/sounds/Relaxation.ogg")
+            pygame.mixer.music.play()
+            match self.track:
+                case 0:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 1:
+                    pass
+                case 2:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                case 3:
+                    pygame.mixer.music.queue("Resources/sounds/Music Box.ogg")
+                case _:
+                    pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
+                    print("Track Reset")
+                    self.track = 0
+            self.track = +1
+        else:
+            pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
+            pygame.mixer.music.play()
 
     def game_start(self, is_new_game=True):
         self.game_manager.start_game(is_new_game)
@@ -336,7 +418,7 @@ class UI:
             case 0:
                 if self.curr_background != self.backgrounds["year1"]:
                     self.curr_background = self.backgrounds["year1"]
-                    self.width=1
+                    self.width = 1
             case _:
                 self.curr_background = self.backgrounds["wood"]
         board.draw(self.screen, players)
@@ -362,10 +444,9 @@ class UI:
                     self.game_manager.current_player,
                     image="Resources/tss.jpg",
                     event=event,
-                    game_manager=self.game_manager
+                    game_manager=self.game_manager,
                 )
             )
-
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -373,7 +454,7 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event[0]}: {event[1]}")
+        self.display_message(f"{event[0]}")
         for button in self.Buttons:
             if button.type == "Next Turn":
                 button.turn_on()
@@ -413,26 +494,40 @@ class UI:
                     start = player
                     break
             move_over = 0
-            for player in range(len(playerlist)-1):
-                start += 1
+            for player in range(len(playerlist) - 1):
+                start -= 1
                 move_over += 1
                 if start >= len(playerlist):
                     start = 0
-                image = pygame.transform.scale(playerlist[start].next_up, (width * 8, width * 10))
+                image = pygame.transform.scale(
+                    playerlist[start].next_up, (width * 8, width * 10)
+                )
                 image_rect = image.get_rect(
-                    bottomleft=(((35 - (move_over*5))*self.screen.get_width()/100), self.screen.get_height() - 10)
+                    bottomleft=(
+                        ((35 - (move_over * 5)) * self.screen.get_width() / 100),
+                        self.screen.get_height() - 10,
+                    )
                 )
                 self.screen.blit(image, image_rect)
-
-
 
     def display_leaderboard(self):
         self.font = pygame.font.Font(None, 16)
         if self.player:
-            playerlist={}
+            player_sort = []
             for player in self.game_manager.players:
-                playerlist.update({player.name:random.randint(1,10)})
-            info = ("Leaderboard", playerlist, pygame.image.load("Resources/test_meeple.png"))
+                player_sort.append(player)
+            for player in range(len(player_sort) - 1):
+                next = player_sort[player]
+                for remainder in range(len(player_sort) - player):
+                    if next.position < player_sort[remainder + player].position:
+                        hold = player_sort[remainder + player]
+                        player_sort[remainder + player] = next
+                        player_sort[player] = hold
+                        next = player_sort[player]
+            playerlist = {}
+            for player in player_sort:
+                playerlist.update({player.name: random.randint(1, 10)})
+            info = ("Leaderboard", playerlist, self.the_meeple)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
@@ -459,9 +554,18 @@ class UI:
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
         if len(self.buttonevents) > 0:
+
             next_event = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next_event)
             print(next_event)
+
+            if "choice" in next_event and len(self.open_menus) == 1:
+                # choice button is clicked, init consequence display
+                self.open_menus[0].is_conseq = True
+                self.open_menus[0].conseq_choice_idx = int(
+                    str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+
             match next_event:
                 case "Dice":
                     self.roll_dice()
@@ -495,16 +599,18 @@ class UI:
                 case "Return":
                     self.open_menus.pop()
                     self.return_state()
-                case "choice":
-                    # one choice button has been clicked, clean up and back to menu
+                case "":
+                    pass
+                case "event_done":
+                    # event (pop-up + consequence display) done, clean up and move on
                     self.open_menus.pop()
                     self.return_state()
                     self.game_manager.switch_turn()
                 case "Quit":
                     pygame.event.Event(quit)
-        if self.game_manager.is_game_over():
-            self.player=None
-
+                case "Quit to Title":
+                    self.open_menus.pop()
+                    self.main_menu()
 
     def save_state(self):
         for button in self.Buttons:
@@ -555,12 +661,36 @@ class PauseMenu(Menu):
         self.buttons = [
             Button(MAIN1, MAINSIZE, "Return"),
             Button(MAIN2, MAINSIZE, "Save"),
-            Button(MAIN3, MAINSIZE, "Settings", image="Resources/SETTINGS.jpg"),
-            Button(MAIN4, MAINSIZE, "Quit"),
+            Button(MAIN3, MAINSIZE, "Settings"),
+            Button(MAIN4, MAINSIZE, "Quit to Title"),
         ]
 
 
 class EventMenu(Menu):
+
+    def __get_random_image_from_path(self, parent_dir_path: str) -> str | None:
+        """Return a path string (by Python to be OS-independent) of a image file to use.
+
+        Randomly selects a file from the given parent directory.
+        The `parent_dir_path` must be valid and contain only images.
+
+        Args:
+            parent_dir_path (str): Path to the dir that contains images to select from.
+
+        Returns:
+            str | None: full path to the selected image, None on error.
+
+        """
+        dir_list = os.listdir(parent_dir_path)
+        # only keep files
+        dir_list = [
+            f for f in dir_list if os.path.isfile(os.path.join(parent_dir_path, f))
+        ]
+        # choose a random one
+        ret = random.choice(dir_list)
+
+        # join path
+        return os.path.join(parent_dir_path, ret)
 
     def __is_choice_available(self, player_stat: dict, choice_stat: dict) -> bool:
         """Check if the `player_stat` is higher or equal than `choice_stat` dictionary.
@@ -579,7 +709,44 @@ class EventMenu(Menu):
                 return False
         return True
 
-    def __init__(self, name, curr_player, game_manager, image=None, event=None):
+    def __get_change_dict(
+        self, player_stat_after: dict, event_choice_index: int
+    ) -> dict | None:
+        """Get copy of player stats dict, modified to include before/after.
+
+        For each category of stats:
+            original_format: "{stat}"
+            format: "{before} -> {after}"
+
+        Args:
+            player_stat_after (dict): current player's stat after result is applied
+            event_choice_index (int): index representing which choice the player chose
+
+        Returns:
+            dict | None: new dict with the new format
+
+        """
+        if player_stat_after is None:
+            return None
+
+        ret: dict[str, str] = {}
+        for each_cat in player_stat_after:
+            # get current value
+            resulting_value: int = int(player_stat_after[each_cat])
+            # get resulting stat
+            change_value: int = int(
+                self.event.choices[event_choice_index]["result"][each_cat]
+            )  # calculate stats before :(
+            value_before: int = resulting_value - change_value
+
+            # add new format into returning dict
+            ret[each_cat] = f"{value_before} -> {resulting_value}"
+
+        return ret
+
+    def __init__(
+        self, name, curr_player, game_manager, image=None, event=None, is_conseq=False
+    ):
         super().__init__(name, image)
 
         self.game_manager = game_manager
@@ -597,7 +764,18 @@ class EventMenu(Menu):
         self.event = event
         self.buttons: list[Button] = []
         self.tss = pygame.image.load(EVENT_RECT_TSS_PATH)
-        self.event_image = pygame.image.load("Resources/gunsalute-scarlets-mckenzie.jpg")
+        self.is_conseq: bool = is_conseq
+        self.conseq_choice_idx = None
+
+        # choose a random image for event desc
+        desc_image_path = os.path.join("Resources", "event_popup_images")
+        self.image_desc_path: str = self.__get_random_image_from_path(desc_image_path)
+        # fallback image
+        if self.image_desc_path is None:
+            self.image_desc_path = os.path.join(
+                "Resources", "gunsalute-scarlets-mckenzie.jpg"
+            )
+        self.event_image = pygame.image.load(self.image_desc_path)
 
     def draw(self, screen):
         super().draw(screen)
@@ -630,24 +808,17 @@ class EventMenu(Menu):
         tss_resized = pygame.transform.scale(tss, tss_rect_adjusted.size)
 
         # prep event title
-        event_title_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/franklin_gothic_book_italic.ttf", EVENT_TITLE_FONT_SIZE
-        )
         # title rect with padding
         event_title_rect: pygame.Rect = pygame.Rect(
             0,
             0,
             tss_rect_adjusted.width,
-            # TODO: set height such that the longest event title can fit
-            15 * screen_height,
+            10 * screen_height,
         )
         event_title_rect.centerx = tss_rect_adjusted.centerx
         event_title_rect.top = tss_rect_adjusted.top + 10 * screen_height
 
         # prep event description box, right half below the title box
-        event_desc_font: pygame.font.Font = pygame.font.Font(
-            "Resources/fonts/news_gothic_std_medium.otf", EVENT_DESC_FONT_SIZE
-        )
         event_desc_rect: pygame.Rect = pygame.Rect(
             0,
             0,
@@ -686,48 +857,126 @@ class EventMenu(Menu):
         # calculate left for all ECB's
         ecb_left = tss_rect_adjusted.left + EVENT_LR_MARGIN * screen_width
 
-        # reset every frame
+        # populate buttons with choice
         self.buttons: list[EventChoiceButton] = []
-        for i, each_choice in enumerate(self.event.choices):
-            # grab stat dict to compare
-            curr_player_stat: dict = self.curr_player.stats
-            choice_criteria_stat: dict = each_choice["criteria"]
+        if not self.is_conseq:
+            for i, each_choice in enumerate(self.event.choices):
+                # grab stat dict to compare
+                curr_player_stat: dict = self.curr_player.stats
+                choice_criteria_stat: dict = each_choice["criteria"]
 
-            # check if current player can choose this choice
-            is_enabled: bool = self.__is_choice_available(
-                curr_player_stat, choice_criteria_stat
+                # check if current player can choose this choice
+                is_enabled: bool = self.__is_choice_available(
+                    curr_player_stat, choice_criteria_stat
+                )
+
+                # increment top (ecb_top + ECB's height + margin)
+                current_ecb_top = ecb_top + (
+                    +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
+                ) * int(i)
+
+                # calculate bottom for current button: current_ecb_top + ECB's height
+                current_ecb_bottom = (
+                    current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+                )
+
+                # create EventChoiceButton
+                each_choice_button: Button = EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=current_ecb_top,
+                    left=ecb_left,
+                    bottom=current_ecb_bottom,
+                    width=ecb_width,
+                    button_text=each_choice["text"],
+                    event=self.event,
+                    choice_idx=i,
+                    curr_player=self.curr_player,
+                    centre=None,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    # string to display on the button
+                    _type="choice",
+                    enabled=is_enabled,
+                    game_manager=self.game_manager,
+                )
+                self.buttons.append(each_choice_button)
+        else:
+            # consequence text box
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_title_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=ecb_top,
+                    left=ecb_left,
+                    bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
+                    width=ecb_width,
+                    button_text=self.event.choices[self.conseq_choice_idx]["consequence"],
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=(
+                        EVENT_BUTTONS_CHOICE_SIZE[0],
+                        EVENT_BUTTONS_CHOICE_SIZE[1] * 2,
+                    ),
+                    _type="event_conseq_text",
+                    enabled=False,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # increment top (ecb_top + ECB's height + margin)
-            current_ecb_top = ecb_top + (
-                +EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height + screen_height * 1
-            ) * int(i)
+            # add next_turn button here
+            # for now, on the right half of the immediate bottom from the first button
+            conseq_text_box_button = self.buttons[0]
 
-            # calculate bottom for current button: current_ecb_top + ECB's height
-            current_ecb_bottom = (
-                current_ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            next_button_top = (
+                conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height
+            )
+            next_button_bottom = (
+                next_button_top + EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height
+            )
+            self.buttons.append(
+                EventChoiceButton(
+                    centerx=event_desc_rect.centerx,
+                    height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
+                    top=conseq_text_box_button.bottom + EVENT_TB_MARGIN * screen_height,
+                    left=event_desc_rect.left,
+                    bottom=next_button_bottom,
+                    width=ecb_width // 2,
+                    button_text="Next",
+                    event=self.event,
+                    choice_idx=None,
+                    curr_player=self.curr_player,
+                    size=EVENT_BUTTONS_CHOICE_SIZE,
+                    _type="event_next",
+                    enabled=True,
+                    centre=None,
+                    is_conseq_disp=True,
+                    game_manager=self.game_manager,
+                )
             )
 
-            # create EventChoiceButton
-            each_choice_button: Button = EventChoiceButton(
-                centerx=event_title_rect.centerx,
-                height=EVENT_BUTTONS_CHOICE_SIZE[1] * screen_height,
-                top=current_ecb_top,
-                left=ecb_left,
-                bottom=current_ecb_bottom,
-                width=ecb_width,
-                button_text=each_choice["text"],
-                event=self.event,
-                choice_idx=i,
-                curr_player=self.curr_player,
+            # display stat change on the card
+            conseq_stat_display = ConsequenceCardDisplay(
                 centre=None,
-                size=EVENT_BUTTONS_CHOICE_SIZE,
-                # string to display on the button
-                _type="choice",
-                enabled=is_enabled,
-                game_manager=self.game_manager
+                centre_moved=EVENT_CONSEQ_CARD_OUT,
+                size=None,
+                type="Consequence Stats",
+                image="Resources/rmc_card.png",
             )
-            self.buttons.append(each_choice_button)
+
+            stat_change_dict: dict = self.__get_change_dict(
+                self.game_manager.current_player.stats, self.conseq_choice_idx
+            )
+            conseq_stat_display_info = (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+
+            conseq_stat_display.update_info(conseq_stat_display_info)
+            self.buttons.append(conseq_stat_display)
 
         # * ALL draw events
 
@@ -738,6 +987,18 @@ class EventMenu(Menu):
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, event_desc_rect, 3)
 
         # draw title on top
+        event_title_font_size_fitting: int = get_font_size_to_fit_all(
+            screen,
+            event_title_rect,
+            str(self.event.name),
+            EVENT_FONT_COLOUR,
+            EVENT_TITLE_FONT_SIZE,
+            font_family="Resources/fonts/franklin_gothic_book_italic.ttf",
+        )
+        event_title_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/franklin_gothic_book_italic.ttf",
+            event_title_font_size_fitting,
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.name),
@@ -747,6 +1008,17 @@ class EventMenu(Menu):
         )
 
         # draw desc on top
+        fitting_font_size: int = get_font_size_to_fit_all(
+            screen,
+            event_desc_rect,
+            str(self.event.description),
+            EVENT_FONT_COLOUR,
+            EVENT_DESC_FONT_SIZE,
+            font_family="Resources/fonts/news_gothic_std_medium.otf",
+        )
+        event_desc_font: pygame.font.Font = pygame.font.Font(
+            "Resources/fonts/news_gothic_std_medium.otf", fitting_font_size
+        )
         draw_text_with_wrap_centery_increment(
             screen,
             str(self.event.description),
@@ -814,7 +1086,10 @@ class Button(object):
                     )
                     screen_height = screen_height * 2
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image,(self.size[0] * screen_width, self.size[1] * screen_height),)
+                buttonimg = pygame.transform.scale(
+                    self.image,
+                    (self.size[0] * screen_width, self.size[1] * screen_height),
+                )
                 if not self.enabled:
                     buttonimg.set_alpha(160)
                 screen.blit(buttonimg, button_rect)
@@ -890,6 +1165,7 @@ class EventChoiceButton(Button):
         event,
         curr_player,
         game_manager,
+        is_conseq_disp=False,
         *args,
         **kwargs,
     ):
@@ -900,6 +1176,9 @@ class EventChoiceButton(Button):
         self.left = left
         self.bottom = bottom
         self.width = width
+
+        # for conseq display
+        self.is_conseq_disp = is_conseq_disp
 
         # tmp fix
         self.game_manager = game_manager
@@ -926,10 +1205,7 @@ class EventChoiceButton(Button):
             return
 
         # ! DRY
-        screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
-
-        button_font = pygame.font.Font(None, EVENT_BUTTONS_FONT_SIZE)
 
         button_rect = pygame.rect.Rect(
             self.left,
@@ -950,11 +1226,26 @@ class EventChoiceButton(Button):
             if self.enabled
             else EVENT_BUTTONS_FILL_DISABLED_COLOUR
         )
+        # override colour if consequence display
+        if self.is_conseq_disp:
+            fill_colour = EVENT_RECT_TSS_BG_COLOUR
+            # 20% larger font size
+            button_font = pygame.font.Font(None, int(EVENT_BUTTONS_FONT_SIZE * 1.2))
 
         # fill
         pygame.draw.rect(screen, fill_colour, button_rect)
         # border
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
+
+        # find font-size to fit all text
+        fitting_font_size: int = get_font_size_to_fit_all(
+            screen,
+            button_rect,
+            self.button_text,
+            EVENT_FONT_COLOUR,
+            EVENT_BUTTONS_FONT_SIZE,
+        )
+        button_font = pygame.font.Font(None, fitting_font_size)
 
         # draw text on top
         draw_text_with_wrap_centery_increment(
@@ -971,6 +1262,7 @@ class EventChoiceButton(Button):
 
         Returns:
             str: str literal, if clicked. None otherwise.
+
         """
 
         # ECB handle click
@@ -987,18 +1279,25 @@ class EventChoiceButton(Button):
         button_rect.bottom = self.bottom
         button_rect.centerx = self.centerx
 
-        if button_rect.collidepoint(pos):
-            # ! TBD
-            print(f"applying result for id={self.choice_idx}; text={self.button_text}")
-            print(f"\tbefore: {self.curr_player.stats}")
+        if button_rect.collidepoint(pos) and self.enabled:
+            # check if initial pop up (event choices)
+            if not self.is_conseq_disp:
+                # ! TBD
+                print(
+                    f"applying result for id={self.choice_idx}; text={self.button_text}"
+                )
+                print(f"\tbefore: {self.curr_player.stats}")
 
-            # apply the consequence
-            self.game_manager.event_choice(self.event, self.choice_idx)
+                # TODO: apply consequence once in `EventMenu`
+                # apply the consequence
+                self.game_manager.event_choice(self.event, self.choice_idx)
 
-            # ! TBD
-            print(f"\tafter: {self.curr_player.stats}")
-            return "choice"
-        return None
+                # ! TBD
+                print(f"\tafter: {self.curr_player.stats}")
+                return f"choice{EVENT_BUTTON_RET_STR_DELIMITER}{self.choice_idx}"
+            else:
+                return "event_done"
+        return ""
 
 
 class CardDisplays(Button):
@@ -1032,7 +1331,9 @@ class CardDisplays(Button):
                     screen_height = screen_width
                 else:
                     screen_width = screen_height
-                buttonimg = pygame.transform.scale(self.image, (w * screen_width, h * screen_height))
+                buttonimg = pygame.transform.scale(
+                    self.image, (w * screen_width, h * screen_height)
+                )
                 buttonimg = self.add_stats(buttonimg.copy())
                 if not self.enabled:
                     buttonimg.set_alpha(160)
@@ -1098,3 +1399,12 @@ class CardDisplays(Button):
                         self.position = self.main
                         self.hovered = False
                     return self.type
+
+
+class ConsequenceCardDisplay(CardDisplays):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.position = self.moved
+        self.hovered = True
+        self.enabled = False

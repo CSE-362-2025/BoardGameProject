@@ -12,6 +12,7 @@ from player import Player
 from event import Event
 import json
 from statistics import mean
+from llm_model import llm
 from database import GameDatabase
 
 
@@ -95,6 +96,11 @@ class GameManager:
         if not tile:
             self.current_player.position = self.board.size
             tile = self.board.tiles[len(self.board.tiles) - 1]
+        
+        if tile.get_type() == "EndTile":
+            print(f"{self.current_player.name} is at the end of the board")
+            self.current_player.at_end = True
+            return
 
         self.current_player.tile_counts[tile.get_type()] += 1
 
@@ -112,10 +118,6 @@ class GameManager:
             self.current_player.change_stats(effects[1])
             self.ui.display_message(f"{effects[0]}")
             self.ui.display_non_decision_event(effects)
-
-        elif tile.get_type() == "EndTile":
-            print(f"{self.current_player.name} is at the end of the board")
-            self.current_player.at_end = True
 
         else:
             print(tile.get_type())
@@ -207,39 +209,16 @@ class GameManager:
 
         # Create players
         players = [
-            Player(
-                "Player 1",
-                (50, 200, 50),
-                image="Resources/Pawn_Blue.png",
-                portrait="Resources/Portrait_Blue.png",
-                next_up="Resources/Next_Blue.png",
-            ),
-            Player(
-                "Player 2",
-                (50, 200, 200),
-                image="Resources/Pawn_Yellow.png",
-                portrait="Resources/Portrait_Yellow.png",
-                next_up="Resources/Next_Yellow.png",
-            ),
-            Player(
-                "Player 3",
-                (200, 200, 200),
-                image="Resources/Pawn_Green.png",
-                portrait="Resources/Portrait_Green.png",
-                next_up="Resources/Next_Green.png",
-            ),
-            Player(
-                "Player 4",
-                (200, 200, 50),
-                image="Resources/Pawn_Red.png",
-                portrait="Resources/Portrait_Red.png",
-                next_up="Resources/Next_Red.png",
-            ),
+            Player("Bruno", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png", next_up="Resources/Next_Blue.png"),
+            Player("Charlie", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png", next_up="Resources/Next_Yellow.png"),
+            Player("Dani", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png", next_up="Resources/Next_Green.png"),
+            Player("Alex", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png", next_up="Resources/Next_Red.png")
         ]
         return players
 
     def end_game(self):
         print("THE GAME IS OVER")
+
 
     #  gives awards to players with the highest stats
     def generate_awards(self):
@@ -272,6 +251,30 @@ class GameManager:
 
             for player in max_players:
                 player.awards[stat] = True
+
+
+    # Uses a Large Language Model to write a summary about events played for each player
+    def ai_summary(self):
+
+        for player in self.players:
+
+            prompt = f"""
+            You are a machine which generates a summary and detailed story of {player.name}'s journey through a Royal Military College board game.
+            You will only get the names of the events played in the ordered they were played by the player throughout the game and the choice the player made.
+            Contain generated summary between a START and END token.
+            Events played and choice:
+            
+            """
+
+            for event in player.events_played:
+                prompt = prompt + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+
+            prompt = prompt + "\n generate summary: START"
+
+            summary = llm(prompt)
+
+            player.ai_summary = summary
+
 
     # #  writes an endgame summary to player object in player.end_text
     # def generate_endgame_summary(self):
@@ -385,8 +388,19 @@ class GameManager:
         # adding return statement
         return event
 
+
+    # Return true if the entire game is over
     def is_game_over(self):
-        return self.turn_count >= 40
+        if self.players:
+            for player in self.players:
+                if player.at_end:
+                    continue
+                else:
+                    return False
+                
+            return True
+        else:
+            return False
 
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):

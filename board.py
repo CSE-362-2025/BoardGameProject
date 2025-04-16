@@ -37,17 +37,17 @@ class Board:
         # Draw tiles
         TILE_SIZE = (screen_width*8, screen_height*8)
         mid = (TILE_SIZE[0]/2, TILE_SIZE[1]/2)
-        for tile in self.tiles:
+        """for tile in self.tiles:
             position = tile.get_screen_pos()
             # Draw tile rectangle
             rect = pygame.Rect((position[0])*screen_width-mid[0], (position[1])*screen_height-mid[1], TILE_SIZE[0], TILE_SIZE[1])
-            pygame.draw.rect(screen, tile.get_colour(), rect)
-            pygame.draw.rect(screen, (0, 0, 0), rect, 2)  # Black border
+            #pygame.draw.rect(screen, tile.get_colour(), rect)
+            #pygame.draw.rect(screen, (0, 0, 0), rect, 2)  # Black border
 
             # Draw tile type letter in center
             text_surface = font.render(tile.get_type()[:], True, FONT_COLOR)
             text_rect = text_surface.get_rect(center=rect.center)
-            screen.blit(text_surface, text_rect)
+            screen.blit(text_surface, text_rect)"""
 
         # Draw players
         for player in players:
