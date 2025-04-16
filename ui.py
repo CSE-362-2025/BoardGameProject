@@ -43,6 +43,9 @@ END_GAME_TB_MARGIN_PERCENTAGE: int = 2
 END_GAME_LR_MARGIN_PERCENTAGE: int = 2
 END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
 END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
+END_GAME_TEXT_RECT_HEIGH_PERCENTAGE: int = 20
+END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
+END_GAME_TEXT_FONT_SIZE: int = 40
 
 ## constants for event popup screen
 
@@ -266,8 +269,6 @@ class UI:
 
     # player is current player, changes during switch_turn()
     def __init__(self, game_manager=None, player=None):
-        self.tmp_flag = False
-
         self.game_manager = game_manager
         self.player = player
         self.screen = pygame.display.set_mode(
@@ -706,11 +707,6 @@ class UI:
                             ]
                             if len(conseq_card_display_buttons) > 0:
                                 self.Buttons.remove(conseq_card_display_buttons[0])
-                    # TODO: Delete this
-                    # end the game on first dice roll
-                    if self.tmp_flag is None or not self.tmp_flag:
-                        self.game_end()
-                        self.tmp_flag = True
 
                 case "New Game":
                     self.sounds["start"].play()
@@ -1687,10 +1683,36 @@ class EndScreen(Menu):
             screen.blit(each_portrait_img_rect_resized, each_portrait_img_rect_adjusted)
 
             # draw text box below the portraits
+            text_rect = pygame.rect.Rect(
+                cursor_left_box,
+                screen_height * END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE,
+                each_portrait_img_rect_resized.get_width() * 0.60,
+                screen_height * END_GAME_TEXT_RECT_HEIGH_PERCENTAGE,
+            )
+            # reposition rect to be below the portrait
+            text_rect.right = cursor_left + (each_portrait_img_rect_adjusted.width + screen_width * END_GAME_LR_MARGIN_PERCENTAGE) + screen_height * 2
+            # calc font size that can fit
+            font_size = get_font_size_to_fit_all(
+                screen, text_rect, each_player.end_text, None, END_GAME_TEXT_FONT_SIZE,
+            )
+            # TODO: add style for `player.end_text`
+            text_font = pygame.font.Font(None, font_size)
 
+            # fill text box with colour
+            pygame.draw.rect(screen, EVENT_BUTTONS_FILL_ENABLED_COLOUR, text_rect)
+            # border
+            pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, text_rect, 3)
+            # render text on top
+            draw_text_with_wrap_centery_increment(
+                screen,
+                each_player.end_text,
+                EVENT_FONT_COLOUR,
+                text_rect,
+                text_font,
+            )
 
             # increment cursor (width of current portrait + margin)
             cursor_left += each_portrait_img_rect_adjusted.width
             cursor_left += screen_width * END_GAME_LR_MARGIN_PERCENTAGE
-            cursor_left_box += each_portrait_img_rect_resized.get_width()
+            cursor_left_box += each_portrait_img_rect_resized.get_width() * 0.75
             cursor_left_box += screen_width * END_GAME_LR_MARGIN_PERCENTAGE
