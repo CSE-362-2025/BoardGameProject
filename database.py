@@ -54,6 +54,8 @@ class GameDatabase:
                 event_id INTEGER,
                 player_id INTEGER,
                 response INTEGER,
+                event_desc TEXT,
+                event_choice_text TEXT,
                 FOREIGN KEY (player_id) REFERENCES Players(player_id)
             );
         """
@@ -154,16 +156,22 @@ class GameDatabase:
                 self.connection.commit()
 
                 # save all events played by the players into DB
-                for each_event in each_player.events_played:
-                    resp = each_event[1]
-                    if resp is None:
-                        resp = "NULL"
+                for i, each_event in enumerate(each_player.events_played):
+                    resp_text = each_event[1]
+                    each_event_index = int(each_player.events_played_id[i])
+                    if resp_text is None:
+                        resp_text = ""
                     self.cursor.execute(
                         """
-                        INSERT INTO Events (event_id, player_id, response)
-                        VALUES (?, ?, ?)
+                        INSERT INTO Events (player_id, event_desc, event_choice_text, event_id)
+                        VALUES (?, ?, ?, ?)
                         """,
-                        (int(each_event[0]), int(each_player_index), resp),
+                        (
+                            int(each_player_index),
+                            each_event[0],
+                            resp_text,
+                            each_event_index,
+                        ),
                     )
                     self.connection.commit()
 
@@ -260,7 +268,7 @@ class GameDatabase:
 
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(
-                """SELECT player_id, event_id, response
+                """SELECT player_id, event_id, event_desc, event_choice_text
                 FROM Events
                 """
             ).fetchall()
@@ -270,13 +278,13 @@ class GameDatabase:
                 # SQL IDs starts at one
                 player_index: int = int(each_event_row[0]) - 1
                 event_id: int = each_event_row[1]
-                resp: int = each_event_row[2]
 
-                each_event_with_resp: tuple[int] = (event_id, resp)
+                event_desc: str = str(each_event_row[2])
+                event_choice_text: str = str(each_event_row[3])
 
                 # append into the player's list
                 game_manager.players[player_index].events_played.append(
-                    each_event_with_resp
+                    (event_desc, event_choice_text)
                 )
                 game_manager.players[player_index].events_played_id.append(event_id)
             return True
