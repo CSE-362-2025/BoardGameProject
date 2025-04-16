@@ -1,6 +1,6 @@
 import random
 import os
-
+from database import GameDatabase
 import pygame
 
 # Constants
@@ -263,10 +263,9 @@ class UI:
             (WINDOW_SIZE_X, WINDOW_SIZE_Y), pygame.RESIZABLE
         )
         self.width = self.screen.get_width()
+        tmp: str = "Resources"
         self.backgrounds = dict(
-            title="Resources/Title_Screen.png",
-            wood="Resources/background_wood.png",
-            year1="Resources/board_year1.png",
+            title=os.path.join(tmp, "Title_Screen.png"), wood=os.path.join(tmp, "background_wood.png"), year1=os.path.join(tmp, "board_year1.png"),
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -274,44 +273,26 @@ class UI:
             (self.screen.get_width(), self.screen.get_width() * (41 / 59)),
         )
         self.font = pygame.font.Font(None, 16)
+        new_game = os.path.join(tmp, "NEW_GAME.jpg")
+        load_game = os.path.join(tmp, "LOAD_GAME.jpg")
+        custom_char = os.path.join(tmp, "LOAD_GAME.jpg")
+        settings = os.path.join(tmp, "SETTINGS.jpg")
+
+        # check if saved game exists
+        is_game_loadable: bool = False
+        if os.path.exists(os.path.join("database", "game_data.db")):
+            is_game_loadable = True
+
         self.Buttons = [
-            Button(DICE_POS, DICE_SIZE, "Dice", image="Resources/Dice.png"),
+            Button(DICE_POS, DICE_SIZE, "Dice", image=os.path.join(tmp, "Dice.png")),
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
-            Button(MAIN1, MAINSIZE, "New Game", False, "Resources/NEW_GAME.jpg"),
-            Button(
-                MAIN2, MAINSIZE, "Load Game", False, "Resources/LOAD_GAME.jpg", False
-            ),
-            Button(
-                MAIN3,
-                MAINSIZE,
-                "Custom Char",
-                False,
-                "Resources/CUSTOM_CHARA.jpg",
-                False,
-            ),
-            Button(MAIN4, MAINSIZE, "Settings", False, "Resources/SETTINGS.jpg", False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),
-        ]
-        self.Buttons.insert(
-            0,
-            CardDisplays(
-                CARD1IN,
-                CARD1OUT,
-                CARDSIZE,
-                "Player Stats",
-                image="Resources/rmc_card.png",
-            ),
-        )
-        self.Buttons.insert(
-            1,
-            CardDisplays(
-                CARD2IN,
-                CARD2OUT,
-                CARDSIZE,
-                "Leaderboard",
-                image="Resources/rmc_card.png",
-            ),
-        )
+            Button(MAIN1, MAINSIZE, "New Game", False, new_game),
+            Button(MAIN2, MAINSIZE, "Load Game", False, load_game, is_game_loadable),
+            Button(MAIN3,MAINSIZE,"Custom Char",False, custom_char,False,),
+            Button(MAIN4, MAINSIZE, "Settings", False, settings, False),
+            Button(PAUSE, PAUSESIZE, "Pause", True),]
+        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
+        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -433,8 +414,8 @@ class UI:
             pygame.mixer.music.load("Resources/sounds/Precision(Title).ogg")
             pygame.mixer.music.play()
 
-    def game_start(self):
-        self.game_manager.start_game()
+    def game_start(self, is_new_game=True):
+        self.game_manager.start_game(is_new_game)
         self.set_sound()
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
@@ -562,6 +543,7 @@ class UI:
                 )
                 self.screen.blit(portrait, portrait_rect)
             playerlist = self.game_manager.players
+            start = 0
             for player in range(len(playerlist)):
                 if self.player == playerlist[player]:
                     start = player
@@ -664,6 +646,12 @@ class UI:
                     self.game_start()
                 case "Save":
                     random.choice(list(self.sounds.values())).play()
+                    self.game_manager.save_state()
+                case "Load Game":
+                    self.game_start(is_new_game=False)
+                    r = self.game_manager.load_state()
+                    # delete this print
+                    print(f"load result={r}")
                 case "Pause":
                     self.sounds["pause"].play()
                     self.save_state()

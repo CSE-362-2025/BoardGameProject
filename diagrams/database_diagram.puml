@@ -25,6 +25,8 @@ entity event {
     id: int
     --
     *event_id: int
+    event_desc: str
+    event_choice_text: str
     player_id: int <<FK>>
     response: int
 }
