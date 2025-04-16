@@ -13,6 +13,7 @@ from event import Event
 import json
 from statistics import mean
 from llm_model import llm
+from database import GameDatabase
 
 
 class GameManager:
@@ -82,10 +83,6 @@ class GameManager:
             f"{self.current_player.name}'s Position after move: {self.current_player.position}"
         )
 
-        # # VERY TEMP
-        # if self.current_player.position > 22:
-        #     self.current_player.position = 22
-
         tile = self.board.get_tile(self.current_player.position)
 
         if not tile and self.current_player.on_alt_path:
@@ -102,6 +99,10 @@ class GameManager:
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
             self.ui.display_end_event(["You have reached the end of the board"])
+            
+            if self.is_game_over():
+                self.end_game()
+
             return
 
         self.current_player.tile_counts[tile.get_type()] += 1
@@ -130,13 +131,14 @@ class GameManager:
     def play_computer_turn(self):
         pass
 
-    def start_game(self):
+    def start_game(self, is_new_game=True):
         print("Starting")
         events = self.get_events(0)
         self.events = events
         self.board = self.get_board(0)
         self.players = self.get_players()
-        self.current_player = self.players[0]
+        if is_new_game:
+            self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
 
     def get_events(self, year):
@@ -243,11 +245,13 @@ class GameManager:
 
     def end_game(self):
         print("THE GAME IS OVER")
+
         self.generate_awards()
         self.generate_end_text()
         if self.has_gpu:
             self.ai_summary()
         for player in self.players:
+            print(f"{player.name} stats: {player.stats}")
             print(f"{player.name} awards: {player.awards}")
             print(f"{player.name} end text: {player.end_text}")
             if self.has_gpu:
@@ -289,10 +293,10 @@ class GameManager:
     #  writes an endgame summary to player object in player.end_text
     def generate_end_text(self):
 
-        idx = random.randint(0, self.players-1)
+        idx = random.randint(0, len(self.players)-1)
         player = self.players[idx]
         
-        player.end_text = f"You rolled an average of {player.rolls.mean():.1f}. Nice!"
+        player.end_text = f"You rolled an average of {mean(player.rolls):.1f}. Nice!"
 
         idx = (idx + 1) % len(self.players)
         player = self.players[idx]
@@ -336,11 +340,6 @@ class GameManager:
 
             player.ai_summary = summary
 
-
-
-
-
-
     def switch_turn(self):
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
@@ -348,7 +347,9 @@ class GameManager:
         i = 0
         if self.current_player.at_end:
             while i < 4:
-                self.current_player = self.players[(self.turn_count + i) % len(self.players)]
+                self.current_player = self.players[
+                    (self.turn_count + i) % len(self.players)
+                ]
 
                 if self.current_player.at_end:
                     i += 1
@@ -843,3 +844,17 @@ class GameManager:
                         "social": -1,
                     },
                 ]
+
+    def save_state(self):
+        db = GameDatabase()
+        db.connect("")
+        db.save_game(self)
+        db.close_connection()
+
+    def load_state(self) -> bool:
+        db = GameDatabase()
+        db.connect("")
+        ret = db.load_game(self)
+        db.close_connection()
+        return ret
+
