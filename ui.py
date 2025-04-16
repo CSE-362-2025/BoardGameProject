@@ -37,8 +37,12 @@ EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
 
 # constants for endgame screen
 END_GAME_BACKGROUND_IMAGE_PATH: str = os.path.join("Resources", "end_summary_bg.jpg")
-END_GAME_TITLE_FONT_SIZE: int = 40
-END_GAME_TITLE_TEXT: str = "Congrats on Graduating"
+END_GAME_TITLE_FONT_SIZE: int = 90
+END_GAME_TITLE_TEXT: str = "Congrats on Finishing First Year!"
+END_GAME_TB_MARGIN_PERCENTAGE: int = 2
+END_GAME_LR_MARGIN_PERCENTAGE: int = 2
+END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
+END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
 
 ## constants for event popup screen
 
@@ -460,7 +464,9 @@ class UI:
     def game_end(self):
         self.save_state()
         self.player = None
-        self.open_menus.append(EndScreen("Endscreen"))
+        self.open_menus.append(
+            EndScreen(name="Endscreen", players=self.game_manager.players),
+        )
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
         self.game_over = True
@@ -1580,10 +1586,13 @@ class ConsequenceCardDisplay(CardDisplays):
 
 
 class EndScreen(Menu):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, players: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.players = players
+
         self.buttons = [
-            Button(MAIN4, MAINSIZE, "Finish"),
+            Button((85, 90), MAINSIZE, "Finish"),
         ]
 
         self.background_img = pygame.image.load(END_GAME_BACKGROUND_IMAGE_PATH)
@@ -1604,24 +1613,20 @@ class EndScreen(Menu):
             screen_height * 10,
         )
         # center the title rect
-        title_rect.centerx = screen.get_width() / 2 - title_rect.width / 2
-
-        # insert TSS
+        title_rect.centerx = screen.get_width() / 2
+        # add padding from top
+        title_rect.top += screen_height * 5
 
         # ! all draw event
 
-        # Border for title
-        pygame.draw.rect(screen, WHITE, title_rect, 3)
-
         # background image
         bg_img = pygame.transform.scale(
-            self.background_img, (screen.get_width(), screen.get_height())
+            self.background_img,
+            (screen.get_width(), screen.get_height()),
         )
         screen.blit(bg_img, (0, 0))
         for each_b in self.buttons:
             each_b.display(screen)
-
-        return
 
         # title font
         title_font_fitting_size: int = get_font_size_to_fit_all(
@@ -1631,7 +1636,6 @@ class EndScreen(Menu):
             EVENT_FONT_COLOUR,
             END_GAME_TITLE_FONT_SIZE,
         )
-        print(f"AHH=>{title_font_fitting_size}")
         # TODO: add style on title
         title_font: pygame.font.Font = pygame.font.Font(
             None,
@@ -1644,3 +1648,49 @@ class EndScreen(Menu):
             title_rect,
             title_font,
         )
+
+        # draw player portrait / summary boxes
+
+        # vars to hold left/top/etc value for rects
+        cursor_left = screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+        # cursor for text box below the portraits :(
+        cursor_left_box = cursor_left
+
+        cursor_top = title_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE
+
+        for each_player in self.players:
+            portrait_rect = pygame.Rect(
+                cursor_left,
+                cursor_top,
+                screen_width * END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE,
+                screen_height * END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE,
+            )
+            each_portrait_img_rect = each_player.get_portrait().get_rect()
+
+            # fit portrait img into rect
+            each_portrait_img_rect_adjusted: pygame.Rect = each_portrait_img_rect.fit(
+                portrait_rect
+            )
+
+            # scale img to fit into rect
+            each_portrait_img_rect_resized: pygame.Surface = pygame.transform.scale(
+                each_player.get_portrait(), each_portrait_img_rect_adjusted.size
+            )
+            # zoom in the resulting img
+            each_portrait_img_rect_resized: pygame.Surface = pygame.transform.rotozoom(
+                each_portrait_img_rect_resized,
+                0,
+                1.5,
+            )
+
+            # draw portraits
+            screen.blit(each_portrait_img_rect_resized, each_portrait_img_rect_adjusted)
+
+            # draw text box below the portraits
+
+
+            # increment cursor (width of current portrait + margin)
+            cursor_left += each_portrait_img_rect_adjusted.width
+            cursor_left += screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+            cursor_left_box += each_portrait_img_rect_resized.get_width()
+            cursor_left_box += screen_width * END_GAME_LR_MARGIN_PERCENTAGE
