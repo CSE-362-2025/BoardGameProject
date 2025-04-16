@@ -35,11 +35,11 @@ def main():
                 ui.handle_click(event.pos)  # Check if dice was clicked
 
         # Check if the game is over
-        if game_manager.is_game_over():
+        """ if game_manager.is_game_over():
             ui.display_message("Game Over!")  # Display game over message
             pygame.display.update()  # Ensure the last message is displayed
             pygame.time.wait(2000)  # Wait for a couple of seconds before quitting
-            running = False
+            running = False"""
 
         ui.run()
         # Display the current state

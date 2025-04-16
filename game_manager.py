@@ -275,12 +275,14 @@ class GameManager:
 
         i = 0
         if self.current_player.at_end:
-            while i <= 4:
-                self.turn_count += 1
+            while i < 4:
                 self.current_player = self.players[(self.turn_count + i) % len(self.players)]
+                print(self.current_player.name)
 
                 if self.current_player.at_end:
                     i += 1
+                else:
+                    break
 
         if i == 4:
             self.end_game()
