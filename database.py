@@ -285,7 +285,7 @@ class GameDatabase:
             return False
 
     def close_connection(self):
-        pass
+        self.connection.close()
 
 
 if __name__ == "__main__":
