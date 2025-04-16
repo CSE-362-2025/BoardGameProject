@@ -274,7 +274,7 @@ class UI:
             self.screen.fill(BG_COLOR)
         if board:
             self.display_board(board, players)  # Call a method to draw the game board
-            
+
         # If there's a message to display, show it
         if self.message_duration > 0:
             text_surface = self.font.render(self.message, True, (255, 255, 255))
@@ -308,7 +308,7 @@ class UI:
                 match self.track:
                     case 0:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
-                    case 1: 
+                    case 1:
                         pass
                     case 2:
                         pygame.mixer.music.queue("Resources/sounds/Precision(Midgame).ogg")
@@ -365,7 +365,7 @@ class UI:
                     game_manager=self.game_manager
                 )
             )
-    
+
 
     def display_computer_decision(self, event, choice_idx):
         # Display the result of the computer's decision
@@ -502,7 +502,7 @@ class UI:
                     pygame.event.Event(quit)
         if self.game_manager.is_game_over():
             self.player=None
-    
+
 
     def save_state(self):
         for button in self.Buttons:
