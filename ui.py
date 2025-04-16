@@ -488,6 +488,30 @@ class UI:
                 size=EFFECT_DISPLAY_SIZE
             )
         )
+        # display stat change
+        stat_change_dict: dict = {}
+        # code modified from `EventMenu.__get_change_dict`
+        player_stats = self.game_manager.current_player.stats
+        for each_cat in player_stats:
+            resulting_value: int = int(player_stats[each_cat])
+            change_value: int = int(event[1][each_cat])
+            value_before: int = resulting_value - change_value
+
+            # add new format
+            stat_change_dict[each_cat] = f"{value_before} -> {resulting_value}"
+        stat_display = ConsequenceCardDisplay(
+            centre=None,
+            centre_moved=EVENT_CONSEQ_CARD_OUT,
+            size=None,
+            type="TileEffectConsequence",
+            image=os.path.join("Resources", "rmc_card.png")
+        )
+        stat_display.update_info((
+            self.game_manager.current_player.name,
+            stat_change_dict,
+            self.game_manager.current_player.get_portrait(),
+        ))
+        self.Buttons.append(stat_display)
 
         for button in self.Buttons:
             if button.type == "Next Turn":
@@ -616,6 +640,10 @@ class UI:
                         elif button.type == "TileEffect":
                             # remove message of Tile Effect
                             self.Buttons.remove(button)
+                            # also remove stat change display
+                            conseq_card_display_buttons = [b for b in self.Buttons if b.type == "TileEffectConsequence"]
+                            if len(conseq_card_display_buttons) > 0:
+                                self.Buttons.remove(conseq_card_display_buttons[0])
                 case "New Game":
                     self.sounds["start"].play()
                     self.game_start()
@@ -1475,4 +1503,8 @@ class ConsequenceCardDisplay(CardDisplays):
         super().__init__(*args, **kwargs)
         self.position = self.moved
         self.hovered = True
-        self.enabled = False
+        self.enabled = True
+
+    def handle_click(self, screen, pos):
+        # ignore all clicks
+        return ""
