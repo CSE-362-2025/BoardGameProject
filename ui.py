@@ -32,7 +32,7 @@ TURN_SIZE = 80
 TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
 # to show effect tile
-EFFECT_DISPLAY_FONT_SIZE: int = 16
+EFFECT_DISPLAY_FONT_SIZE: int = 28
 EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
 
 ## constants for event popup screen
@@ -1255,7 +1255,7 @@ class EffectTileDisplayButton(Button):
             button_rect,
             self.button_text,
             EVENT_FONT_COLOUR,
-            32
+            EFFECT_DISPLAY_FONT_SIZE,
         )
         button_font = pygame.font.Font(None, fitting_font_size)
         draw_text_with_wrap_centery_increment(
