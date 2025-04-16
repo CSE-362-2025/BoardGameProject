@@ -35,6 +35,11 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 EFFECT_DISPLAY_FONT_SIZE: int = 28
 EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
 
+# constants for endgame screen
+END_GAME_BACKGROUND_IMAGE_PATH: str = os.path.join("Resources", "end_summary_bg.jpg")
+END_GAME_TITLE_FONT_SIZE: int = 40
+END_GAME_TITLE_TEXT: str = "Congrats on Graduating"
+
 ## constants for event popup screen
 
 # consequence RMC card display position
@@ -257,6 +262,8 @@ class UI:
 
     # player is current player, changes during switch_turn()
     def __init__(self, game_manager=None, player=None):
+        self.tmp_flag = False
+
         self.game_manager = game_manager
         self.player = player
         self.screen = pygame.display.set_mode(
@@ -265,7 +272,9 @@ class UI:
         self.width = self.screen.get_width()
         tmp: str = "Resources"
         self.backgrounds = dict(
-            title=os.path.join(tmp, "Title_Screen.png"), wood=os.path.join(tmp, "background_wood.png"), year1=os.path.join(tmp, "board_year1.png"),
+            title=os.path.join(tmp, "Title_Screen.png"),
+            wood=os.path.join(tmp, "background_wood.png"),
+            year1=os.path.join(tmp, "board_year1.png"),
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -288,11 +297,37 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, new_game),
             Button(MAIN2, MAINSIZE, "Load Game", False, load_game, is_game_loadable),
-            Button(MAIN3,MAINSIZE,"Custom Char",False, custom_char,False,),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                custom_char,
+                False,
+            ),
             Button(MAIN4, MAINSIZE, "Settings", False, settings, False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),]
-        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
-        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
+            Button(PAUSE, PAUSESIZE, "Pause", True),
+        ]
+        self.Buttons.insert(
+            0,
+            CardDisplays(
+                CARD1IN,
+                CARD1OUT,
+                CARDSIZE,
+                "Player Stats",
+                image="Resources/rmc_card.png",
+            ),
+        )
+        self.Buttons.insert(
+            1,
+            CardDisplays(
+                CARD2IN,
+                CARD2OUT,
+                CARDSIZE,
+                "Leaderboard",
+                image="Resources/rmc_card.png",
+            ),
+        )
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -419,7 +454,7 @@ class UI:
         self.set_sound()
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
-        self.game_over=False
+        self.game_over = False
         self.return_state()
 
     def game_end(self):
@@ -428,7 +463,7 @@ class UI:
         self.open_menus.append(EndScreen("Endscreen"))
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
-        self.game_over=True
+        self.game_over = True
         self.set_sound()
 
     def display_board(self, board, players):
@@ -484,7 +519,7 @@ class UI:
                     button_text=str(event[0]),
                     _type="TileEffect",
                     centre=(50, 40),
-                    size=EFFECT_DISPLAY_SIZE
+                    size=EFFECT_DISPLAY_SIZE,
                 )
             )
             for button in self.Buttons:
@@ -498,7 +533,7 @@ class UI:
                 button_text=str(event[0]),
                 _type="TileEffect",
                 centre=(50, 40),
-                size=EFFECT_DISPLAY_SIZE
+                size=EFFECT_DISPLAY_SIZE,
             )
         )
         # display stat change
@@ -517,13 +552,15 @@ class UI:
             centre_moved=EVENT_CONSEQ_CARD_OUT,
             size=None,
             type="TileEffectConsequence",
-            image=os.path.join("Resources", "rmc_card.png")
+            image=os.path.join("Resources", "rmc_card.png"),
         )
-        stat_display.update_info((
-            self.game_manager.current_player.name,
-            stat_change_dict,
-            self.game_manager.current_player.get_portrait(),
-        ))
+        stat_display.update_info(
+            (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+        )
         self.Buttons.append(stat_display)
 
         for button in self.Buttons:
@@ -625,6 +662,13 @@ class UI:
 
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
+
+        # TODO: Delete this
+        # end the game immediately
+        if self.tmp_flag is None or not self.tmp_flag:
+            self.game_end()
+            self.tmp_flag = True
+
         if len(self.buttonevents) > 0:
 
             next_event = self.buttonevents[0]
@@ -655,7 +699,11 @@ class UI:
                             # remove message of Tile Effect
                             self.Buttons.remove(button)
                             # also remove stat change display
-                            conseq_card_display_buttons = [b for b in self.Buttons if b.type == "TileEffectConsequence"]
+                            conseq_card_display_buttons = [
+                                b
+                                for b in self.Buttons
+                                if b.type == "TileEffectConsequence"
+                            ]
                             if len(conseq_card_display_buttons) > 0:
                                 self.Buttons.remove(conseq_card_display_buttons[0])
                 case "New Game":
@@ -987,7 +1035,9 @@ class EventMenu(Menu):
                     left=ecb_left,
                     bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
                     width=ecb_width,
-                    button_text=self.event.choices[self.conseq_choice_idx]["consequence"],
+                    button_text=self.event.choices[self.conseq_choice_idx][
+                        "consequence"
+                    ],
                     event=self.event,
                     choice_idx=None,
                     curr_player=self.curr_player,
@@ -1040,7 +1090,7 @@ class EventMenu(Menu):
                 centre_moved=EVENT_CONSEQ_CARD_OUT,
                 size=None,
                 type="Consequence Stats",
-                image=os.path.join("Resources", "rmc_card.png")
+                image=os.path.join("Resources", "rmc_card.png"),
             )
 
             stat_change_dict: dict = self.__get_change_dict(
@@ -1523,6 +1573,7 @@ class ConsequenceCardDisplay(CardDisplays):
         super().__init__(*args, **kwargs)
         self.position = self.moved
         self.hovered = True
+
     def handle_click(self, screen, pos):
         # ignore all clicks
         return ""
@@ -1531,5 +1582,65 @@ class ConsequenceCardDisplay(CardDisplays):
 class EndScreen(Menu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.buttons = [Button(MAIN1, MAINSIZE, "Quit"),
-                        Button(MAIN4, MAINSIZE, "Quit to Title"),]
+        self.buttons = [
+            Button(MAIN4, MAINSIZE, "Finish"),
+        ]
+
+        self.background_img = pygame.image.load(END_GAME_BACKGROUND_IMAGE_PATH)
+        self.background_img.convert()
+
+    def draw(self, screen) -> None:
+        super().draw(screen)
+
+        # DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+
+        # title rect
+        title_rect: pygame.Rect = pygame.Rect(
+            0,
+            0,
+            screen_width * 100,
+            screen_height * 10,
+        )
+        # center the title rect
+        title_rect.centerx = screen.get_width() / 2 - title_rect.width / 2
+
+        # insert TSS
+
+        # ! all draw event
+
+        # Border for title
+        pygame.draw.rect(screen, WHITE, title_rect, 3)
+
+        # background image
+        bg_img = pygame.transform.scale(
+            self.background_img, (screen.get_width(), screen.get_height())
+        )
+        screen.blit(bg_img, (0, 0))
+        for each_b in self.buttons:
+            each_b.display(screen)
+
+        return
+
+        # title font
+        title_font_fitting_size: int = get_font_size_to_fit_all(
+            screen,
+            title_rect,
+            END_GAME_TITLE_TEXT,
+            EVENT_FONT_COLOUR,
+            END_GAME_TITLE_FONT_SIZE,
+        )
+        print(f"AHH=>{title_font_fitting_size}")
+        # TODO: add style on title
+        title_font: pygame.font.Font = pygame.font.Font(
+            None,
+            title_font_fitting_size,
+        )
+        draw_text_with_wrap_centery_increment(
+            screen,
+            END_GAME_TITLE_TEXT,
+            EVENT_FONT_COLOUR,
+            title_rect,
+            title_font,
+        )
