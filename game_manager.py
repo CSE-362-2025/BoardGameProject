@@ -94,6 +94,7 @@ class GameManager:
         if tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
+            self.ui.display_non_decision_event(["You have reached the end of the board"])
             return
 
         self.current_player.tile_counts[tile.get_type()] += 1
@@ -206,7 +207,7 @@ class GameManager:
             
             max_player = players[0]
             for player in players[1:]:
-                if player.stats[stat] > max_player.stat[stat]:
+                if player.stats[stat] > max_player.stats[stat]:
                     max_player = player
 
             max_players.append(max_player)
@@ -287,9 +288,12 @@ class GameManager:
         if self.current_player.at_end:
             while i < 4:
                 self.current_player = self.players[(self.turn_count + i) % len(self.players)]
+                print(self.current_player.name)
 
                 if self.current_player.at_end:
                     i += 1
+                else:
+                    break
 
         if i == 4:
             self.end_game()

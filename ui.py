@@ -329,6 +329,7 @@ class UI:
         self.track = 0
         self.year = 0
         self.the_meeple = pygame.image.load("Resources/test_meeple.png")
+        self.game_over = False
 
     def update(self):
         """Updates the screen"""
@@ -386,6 +387,9 @@ class UI:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
             self.set_sound()
+        if not self.game_over:
+            if self.game_manager.is_game_over():
+                self.game_end()
 
     def main_menu(self):
         self.save_state()
@@ -400,6 +404,7 @@ class UI:
                 button.turn_on()
         self.curr_background = self.backgrounds["title"]
         self.width = 1
+        self.game_over = True
         self.set_sound()
 
     def set_sound(self):
@@ -429,7 +434,17 @@ class UI:
         self.set_sound()
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
+        self.game_over=False
         self.return_state()
+
+    def game_end(self):
+        self.save_state()
+        self.player = None
+        self.open_menus.append(EndScreen("Endscreen"))
+        self.curr_background = self.backgrounds["wood"]
+        self.width = 1
+        self.game_over=True
+        self.set_sound()
 
     def display_board(self, board, players):
         self.year = self.game_manager.year
@@ -1419,3 +1434,12 @@ class ConsequenceCardDisplay(CardDisplays):
         self.position = self.moved
         self.hovered = True
         self.enabled = False
+
+
+class EndScreen(Menu):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.buttons = [
+            Button(MAIN1, MAINSIZE, "Quit"),
+            Button(MAIN4, MAINSIZE, "Quit to Title"),
+        ]
