@@ -678,13 +678,6 @@ class UI:
 
             match next_event:
                 case "Dice":
-
-                    # TODO: Delete this
-                    # end the game on first dice roll
-                    if self.tmp_flag is None or not self.tmp_flag:
-                        self.game_end()
-                        self.tmp_flag = True
-
                     self.roll_dice()
                     for button in self.Buttons:
                         if button.type == "Dice":
@@ -707,6 +700,12 @@ class UI:
                             ]
                             if len(conseq_card_display_buttons) > 0:
                                 self.Buttons.remove(conseq_card_display_buttons[0])
+                    # TODO: Delete this
+                    # end the game on first dice roll
+                    if self.tmp_flag is None or not self.tmp_flag:
+                        self.game_end()
+                        self.tmp_flag = True
+
                 case "New Game":
                     self.sounds["start"].play()
                     self.game_start()
