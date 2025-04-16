@@ -99,7 +99,7 @@ class GameManager:
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
             self.ui.display_end_event(["You have reached the end of the board"])
-            
+
             if self.is_game_over():
                 self.end_game()
 
@@ -139,10 +139,11 @@ class GameManager:
         self.events = events
         self.board = self.get_board(0)
         self.players = self.get_players()
-        
-        self.current_player = db.get_curr_player(game_manager=self)
+
         if is_new_game:
             self.current_player = self.players[0]
+        else:
+            self.current_player = db.get_curr_player(game_manager=self)
         print(self.current_player)
         self.ui.change_current_player(self.current_player)
         db.close_connection()
@@ -302,7 +303,7 @@ class GameManager:
 
         idx = random.randint(0, len(self.players)-1)
         player = self.players[idx]
-        
+
         player.end_text = f"You rolled an average of {mean(player.rolls):.1f}. Nice!"
 
         idx = (idx + 1) % len(self.players)
@@ -314,7 +315,7 @@ class GameManager:
         player = self.players[idx]
 
         player.end_text = f"You rolled {player.rolls.count(1)} 1s and {player.rolls.count(6)} 6s. Interesting!"
-        
+
         idx = (idx + 1) % len(self.players)
         player = self.players[idx]
 
