@@ -132,14 +132,20 @@ class GameManager:
         pass
 
     def start_game(self, is_new_game=True):
+        db = GameDatabase()
+        db.connect("")
         print("Starting")
         events = self.get_events(0)
         self.events = events
         self.board = self.get_board(0)
         self.players = self.get_players()
+        
+        self.current_player = db.get_curr_player(game_manager=self)
         if is_new_game:
             self.current_player = self.players[0]
+        print(self.current_player)
         self.ui.change_current_player(self.current_player)
+        db.close_connection()
         return is_new_game
 
     def get_events(self, year):

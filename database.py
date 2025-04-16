@@ -177,6 +177,15 @@ class GameDatabase:
             print(f"GameDatabase.save_game(): unexpected exception = {e}")
             return False
 
+    def get_curr_player(self, game_manager):
+        current_player_index = self.cursor.execute(
+            """
+            SELECT current_player_index FROM GameInfo
+            """
+        ).fetchone()[0]
+        current_player = game_manager.players[current_player_index]
+        return current_player
+
     def load_game(self, game_manager):
         """Load game from the connected DB.
 
@@ -255,13 +264,6 @@ class GameDatabase:
                 # reset events_played list
                 each_player.events_played = []
                 each_player.events_played_id = []
-
-            current_player_index = self.cursor.execute(
-                """
-                SELECT current_player_index FROM GameInfo
-                """
-            ).fetchone()[0]
-            game_manager.current_player = game_manager.players[current_player_index]
 
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(

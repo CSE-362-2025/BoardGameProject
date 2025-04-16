@@ -721,9 +721,7 @@ class UI:
                     self.game_manager.save_state()
                 case "Load Game":
                     self.game_start(is_new_game=False)
-                    r = self.game_manager.load_state()
-                    # delete this print
-                    print(f"load result={r}")
+                    self.game_manager.load_state()
                 case "Pause":
                     self.sounds["pause"].play()
                     self.save_state()
