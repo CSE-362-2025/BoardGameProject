@@ -104,7 +104,6 @@ class GameDatabase:
             return False
         try:
             self.connection.close()
-            print("deleted")
             # clear DB first
             if not self.clear_database():
                 # clear_database failed
