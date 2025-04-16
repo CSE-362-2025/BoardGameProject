@@ -211,10 +211,45 @@ class GameDatabase:
                 each_player.stats["military"] = int(each_row[4])
                 each_player.stats["social"] = int(each_row[5])
 
-                # TODO: load other attributes (has_moved, next_pos, ...)
+                # `has_moved` attrib
+                has_moved: int = self.cursor.execute(
+                    """
+                    SELECT has_moved FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.has_moved = has_moved == 1
+
+                # `branch` attrib
+                branch: int = self.cursor.execute(
+                    """
+                    SELECT branch FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.branch = branch == 1
+
+                # `next_pos`
+                next_pos: int = self.cursor.execute(
+                    """
+                    SELECT next_pos FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.next_pos = next_pos
+
+                # `on_alt_path`
+                on_alt_path: int = self.cursor.execute(
+                    """
+                    SELECT on_alt_path FROM Players WHERE name = ?
+                    """,
+                    ((str(each_row[0])),),
+                ).fetchone()[0]
+                each_player.on_alt_path = on_alt_path == 1
 
                 # reset events_played list
                 each_player.events_played = []
+                each_player.events_played_id = []
 
             current_player_index = self.cursor.execute(
                 """
@@ -274,11 +309,12 @@ class GameDatabase:
         try:
             remove(self.db_path)
         except OSError as e:
-            print(f"GameDatabase.clear_database(): Failed with e={e}, could not delete {self.db_path}")
+            print(
+                f"GameDatabase.clear_database(): Failed with e={e}, could not delete {self.db_path}"
+            )
             return False
 
         return True
-
 
     def close_connection(self):
         self.connection.close()
