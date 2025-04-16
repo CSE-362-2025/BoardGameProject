@@ -189,6 +189,7 @@ class GameManager:
             self.ai_summary()
         for player in self.players:
             print(f"{player.name} awards: {player.awards}")
+            print(f"{player.name} end text: {player.end_text}")
             if self.has_gpu:
                 print(f"{player.name} ai summary: {player.ai_summary}")
 
@@ -229,32 +230,26 @@ class GameManager:
     #  writes an endgame summary to player object in player.end_text
     def generate_end_text(self):
 
-
-        # returns true if player had the highest average rolls
-        def has_most_rolls(self, check_player):
-
-            max = check_player.rolls.mean()
-
-            for player in self.players:
-                if player.name == check_player.name:
-                    continue
-                else:
-                    if max < player.rolls.mean():
-                        return False
-                    
-            return True
-
-
-        first_player_idx = random.randint(0, 3)
-        player = self.players[first_player_idx]
-        i = 0
-
-        while i < 4:
-            pass
-                
+        idx = random.randint(0, self.players-1)
+        player = self.players[idx]
         
+        player.end_text = f"You rolled an average of {player.rolls.mean():.1f}. Nice!"
 
-        return
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You landed on {player.tile_counts['BadTile']} BadTiles and {player.tile_counts['GoodTile']} GoodTiles. Wow!"
+
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You rolled {player.rolls.count(1)} 1s and {player.rolls.count(6)} 6s. Interesting!"
+        
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You landed on {player.tile_counts['EventTile']} EventTiles. Cool!"
+
 
 
     # Uses a Large Language Model to write a summary about events played for each player
