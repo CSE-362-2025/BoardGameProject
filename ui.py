@@ -31,6 +31,10 @@ BLACK = (0, 0, 0)
 TURN_SIZE = 80
 TURN_POS = (100, 400)  # Adjust this based on your UI layout
 
+# to show effect tile
+EFFECT_DISPLAY_FONT_SIZE: int = 16
+EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
+
 ## constants for event popup screen
 
 # consequence RMC card display position
@@ -310,6 +314,7 @@ class UI:
         self.track = 0
         self.year = 0
         self.the_meeple = pygame.image.load("Resources/test_meeple.png")
+        self.game_over = False
 
     def update(self):
         """Updates the screen"""
@@ -367,6 +372,9 @@ class UI:
             menu.draw(self.screen)
         if not pygame.mixer.music.get_busy():
             self.set_sound()
+        if not self.game_over:
+            if self.game_manager.is_game_over():
+                self.game_end()
 
     def main_menu(self):
         self.save_state()
@@ -381,6 +389,7 @@ class UI:
                 button.turn_on()
         self.curr_background = self.backgrounds["title"]
         self.width = 1
+        self.game_over = True
         self.set_sound()
 
     def set_sound(self):
@@ -410,7 +419,17 @@ class UI:
         self.set_sound()
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
+        self.game_over=False
         self.return_state()
+
+    def game_end(self):
+        self.save_state()
+        self.player = None
+        self.open_menus.append(EndScreen("Endscreen"))
+        self.curr_background = self.backgrounds["wood"]
+        self.width = 1
+        self.game_over=True
+        self.set_sound()
 
     def display_board(self, board, players):
         self.year = self.game_manager.year
@@ -454,7 +473,42 @@ class UI:
 
     def display_non_decision_event(self, event):
         # Display the non-decision event
-        self.display_message(f"{event[0]}")
+        # self.display_message(f"{event[0]}")
+
+        # display button for displaying effect description
+        self.Buttons.append(
+            EffectTileDisplayButton(
+                button_text=str(event[0]),
+                _type="TileEffect",
+                centre=(50, 40),
+                size=EFFECT_DISPLAY_SIZE
+            )
+        )
+        # display stat change
+        stat_change_dict: dict = {}
+        # code modified from `EventMenu.__get_change_dict`
+        player_stats = self.game_manager.current_player.stats
+        for each_cat in player_stats:
+            resulting_value: int = int(player_stats[each_cat])
+            change_value: int = int(event[1][each_cat])
+            value_before: int = resulting_value - change_value
+
+            # add new format
+            stat_change_dict[each_cat] = f"{value_before} -> {resulting_value}"
+        stat_display = ConsequenceCardDisplay(
+            centre=None,
+            centre_moved=EVENT_CONSEQ_CARD_OUT,
+            size=None,
+            type="TileEffectConsequence",
+            image=os.path.join("Resources", "rmc_card.png")
+        )
+        stat_display.update_info((
+            self.game_manager.current_player.name,
+            stat_change_dict,
+            self.game_manager.current_player.get_portrait(),
+        ))
+        self.Buttons.append(stat_display)
+
         for button in self.Buttons:
             if button.type == "Next Turn":
                 button.turn_on()
@@ -580,6 +634,13 @@ class UI:
                             button.turn_off()
                         elif button.type == "Dice":
                             button.turn_on()
+                        elif button.type == "TileEffect":
+                            # remove message of Tile Effect
+                            self.Buttons.remove(button)
+                            # also remove stat change display
+                            conseq_card_display_buttons = [b for b in self.Buttons if b.type == "TileEffectConsequence"]
+                            if len(conseq_card_display_buttons) > 0:
+                                self.Buttons.remove(conseq_card_display_buttons[0])
                 case "New Game":
                     self.sounds["start"].play()
                     self.game_start()
@@ -822,7 +883,7 @@ class EventMenu(Menu):
             0,
             0,
             tss_rect_adjusted.width // 2,
-            28 * screen_height,
+            25 * screen_height,
         )
         event_desc_rect.topleft = (
             (event_title_rect.bottomleft[0] + event_title_rect.bottomright[0]) / 2,
@@ -962,7 +1023,7 @@ class EventMenu(Menu):
                 centre_moved=EVENT_CONSEQ_CARD_OUT,
                 size=None,
                 type="Consequence Stats",
-                image="Resources/rmc_card.png",
+                image=os.path.join("Resources", "rmc_card.png")
             )
 
             stat_change_dict: dict = self.__get_change_dict(
@@ -1147,6 +1208,45 @@ class Button(object):
                     )
                 if button_rect.collidepoint(pos):
                     return self.type
+
+
+class EffectTileDisplayButton(Button):
+
+    def __init__(self, button_text: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.enabled = False
+        self.button_text = button_text
+
+    def display(self, screen):
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+        button_rect = pygame.Rect(
+            (self.position[0] - self.size[0] / 2) * screen_width,
+            (self.position[1] - self.size[1] / 2) * screen_height,
+            self.size[0] * screen_width,
+            self.size[1] * screen_height,
+        )
+
+        # draw button rect
+        pygame.draw.rect(screen, EVENT_RECT_TSS_BG_COLOUR, button_rect)
+        # draw button rect border
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, button_rect, 3)
+
+        # draw text on top
+        fitting_font_size = get_font_size_to_fit_all(
+            screen,
+            button_rect,
+            self.button_text,
+            EVENT_FONT_COLOUR,
+            32
+        )
+        button_font = pygame.font.Font(None, fitting_font_size)
+        draw_text_with_wrap_centery_increment(
+            screen, self.button_text, EVENT_FONT_COLOUR, button_rect, button_font
+        )
+
+    def handle_click(self, screen, pos):
+        return ""
 
 
 class EventChoiceButton(Button):
@@ -1406,4 +1506,13 @@ class ConsequenceCardDisplay(CardDisplays):
         super().__init__(*args, **kwargs)
         self.position = self.moved
         self.hovered = True
-        self.enabled = False
+    def handle_click(self, screen, pos):
+        # ignore all clicks
+        return ""
+
+
+class EndScreen(Menu):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.buttons = [Button(MAIN1, MAINSIZE, "Quit"),
+                        Button(MAIN4, MAINSIZE, "Quit to Title"),]

@@ -30,6 +30,8 @@ class GameManager:
         self.current_player = None
         self.turn_count = 0
 
+        self.has_gpu = False
+
     # plays all logic for playing human turn
     def play_turn(self, dice_value):
 
@@ -96,10 +98,11 @@ class GameManager:
         if not tile:
             self.current_player.position = self.board.size
             tile = self.board.tiles[len(self.board.tiles) - 1]
-        
+
         if tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
+            self.ui.display_non_decision_event(["You have reached the end of the board"])
             return
 
         self.current_player.tile_counts[tile.get_type()] += 1
@@ -116,7 +119,7 @@ class GameManager:
                 else self.generate_bad_tile_effects()
             )
             self.current_player.change_stats(effects[1])
-            self.ui.display_message(f"{effects[0]}")
+            # self.ui.display_message(f"{effects[0]}")
             self.ui.display_non_decision_event(effects)
 
         else:
@@ -209,16 +212,50 @@ class GameManager:
 
         # Create players
         players = [
-            Player("Bruno", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png", next_up="Resources/Next_Blue.png"),
-            Player("Charlie", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png", next_up="Resources/Next_Yellow.png"),
-            Player("Dani", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png", next_up="Resources/Next_Green.png"),
-            Player("Alex", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png", next_up="Resources/Next_Red.png")
+            Player(
+                "Bruno",
+                (50, 200, 50),
+                image="Resources/Pawn_Blue.png",
+                portrait="Resources/Portrait_Blue.png",
+                next_up="Resources/Next_Blue.png",
+            ),
+            Player(
+                "Charlie",
+                (50, 200, 200),
+                image="Resources/Pawn_Yellow.png",
+                portrait="Resources/Portrait_Yellow.png",
+                next_up="Resources/Next_Yellow.png",
+            ),
+            Player(
+                "Dani",
+                (200, 200, 200),
+                image="Resources/Pawn_Green.png",
+                portrait="Resources/Portrait_Green.png",
+                next_up="Resources/Next_Green.png",
+            ),
+            Player(
+                "Alex",
+                (200, 200, 50),
+                image="Resources/Pawn_Red.png",
+                portrait="Resources/Portrait_Red.png",
+                next_up="Resources/Next_Red.png",
+            ),
         ]
         return players
 
     def end_game(self):
         print("THE GAME IS OVER")
 
+        self.generate_awards()
+        self.generate_end_text()
+        if self.has_gpu:
+            self.ai_summary()
+        for player in self.players:
+            print(f"{player.name} awards: {player.awards}")
+            print(f"{player.name} end text: {player.end_text}")
+            if self.has_gpu:
+                print(f"{player.name} ai summary: {player.ai_summary}"
+                      
 
     #  gives awards to players with the highest stats
     def generate_awards(self):
@@ -232,7 +269,7 @@ class GameManager:
 
             max_player = players[0]
             for player in players[1:]:
-                if player.stats[stat] > max_player.stat[stat]:
+                if player.stats[stat] > max_player.stats[stat]:
                     max_player = player
 
             max_players.append(max_player)
@@ -253,6 +290,31 @@ class GameManager:
                 player.awards[stat] = True
 
 
+    #  writes an endgame summary to player object in player.end_text
+    def generate_end_text(self):
+
+        idx = random.randint(0, self.players-1)
+        player = self.players[idx]
+        
+        player.end_text = f"You rolled an average of {player.rolls.mean():.1f}. Nice!"
+
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You landed on {player.tile_counts['BadTile']} BadTiles and {player.tile_counts['GoodTile']} GoodTiles. Wow!"
+
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You rolled {player.rolls.count(1)} 1s and {player.rolls.count(6)} 6s. Interesting!"
+        
+        idx = (idx + 1) % len(self.players)
+        player = self.players[idx]
+
+        player.end_text = f"You landed on {player.tile_counts['EventTile']} EventTiles. Cool!"
+
+
+
     # Uses a Large Language Model to write a summary about events played for each player
     def ai_summary(self):
 
@@ -263,11 +325,14 @@ class GameManager:
             You will only get the names of the events played in the ordered they were played by the player throughout the game and the choice the player made.
             Contain generated summary between a START and END token.
             Events played and choice:
-            
+
             """
 
             for event in player.events_played:
-                prompt = prompt + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+                prompt = (
+                    prompt
+                    + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+                )
 
             prompt = prompt + "\n generate summary: START"
 
@@ -275,26 +340,6 @@ class GameManager:
 
             player.ai_summary = summary
 
-
-    # #  writes an endgame summary to player object in player.end_text
-    # def generate_endgame_summary(self):
-
-    #     def check_roll_stats(player, most):
-    #         if most:
-    #             i = 0
-
-    #     first_player_idx = random.randint(0, 3)
-    #     player = self.players[first_player_idx]
-    #     i = 0
-
-    #     while i < 4:
-
-    #         if player.rolls.mean()
-
-    #         player = self.players[first_player_idx+i % len(self.players)]
-    #         i += 1
-
-    # add saving as we change turn
     def switch_turn(self):
         self.turn_count += 1
         self.current_player = self.players[(self.turn_count) % len(self.players)]
@@ -308,6 +353,8 @@ class GameManager:
 
                 if self.current_player.at_end:
                     i += 1
+                else:
+                    break
 
         if i == 4:
             self.end_game()
@@ -388,7 +435,6 @@ class GameManager:
         # adding return statement
         return event
 
-
     # Return true if the entire game is over
     def is_game_over(self):
         if self.players:
@@ -397,7 +443,7 @@ class GameManager:
                     continue
                 else:
                     return False
-                
+
             return True
         else:
             return False
@@ -811,3 +857,4 @@ class GameManager:
         ret = db.load_game(self)
         db.close_connection()
         return ret
+
