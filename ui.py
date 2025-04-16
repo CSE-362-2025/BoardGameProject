@@ -834,7 +834,7 @@ class EventMenu(Menu):
             0,
             0,
             tss_rect_adjusted.width // 2,
-            28 * screen_height,
+            25 * screen_height,
         )
         event_desc_rect.topleft = (
             (event_title_rect.bottomleft[0] + event_title_rect.bottomright[0]) / 2,
