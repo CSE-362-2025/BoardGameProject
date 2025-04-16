@@ -1020,7 +1020,7 @@ class EventMenu(Menu):
                 centre_moved=EVENT_CONSEQ_CARD_OUT,
                 size=None,
                 type="Consequence Stats",
-                image="Resources/rmc_card.png",
+                image=os.path.join("Resources", "rmc_card.png")
             )
 
             stat_change_dict: dict = self.__get_change_dict(
