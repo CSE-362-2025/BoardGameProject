@@ -5,12 +5,13 @@ import pathlib
 DB_NAME_DEFAULT = "game_data.db"
 DB_DIR_PATH = pathlib.Path("database")
 
+
 class GameDatabase:
 
     def __init__(self):
-        
+
         # Assuming the db name doesn't change can just have static attribute
-        self.connection = sqlite3.connect('')
+        self.connection = sqlite3.connect("")
         self.cursor = self.connection.cursor()
 
     def __create_tables(self) -> None:
@@ -92,7 +93,7 @@ class GameDatabase:
 
         except sqlite3.Error as e:
             print(f"GameDatabase.connect() raised exception={e}")
-            return False    
+            return False
 
     # return true is success, false otherwise
     def save_game(self, game_manager):
@@ -159,11 +160,7 @@ class GameDatabase:
                         INSERT INTO Events (event_id, player_id, response)
                         VALUES (?, ?, ?)
                         """,
-                        (
-                            int(each_event[0]),
-                            int(each_player_index),
-                            resp
-                        ),
+                        (int(each_event[0]), int(each_player_index), resp),
                     )
                     self.connection.commit()
 
@@ -222,9 +219,6 @@ class GameDatabase:
                 """
             ).fetchone()
 
-            
-
-
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(
                 """SELECT player_id, event_id, response
@@ -239,16 +233,13 @@ class GameDatabase:
                 event_id: int = each_event_row[1]
                 resp: int = each_event_row[2]
 
-                each_event_with_resp: tuple[int] = (event_id,resp)
-
+                each_event_with_resp: tuple[int] = (event_id, resp)
 
                 # append into the player's list
                 game_manager.players[player_index].events_played.append(
                     each_event_with_resp
                 )
-                game_manager.players[player_index].events_played_id.append(
-                    event_id                    
-                )
+                game_manager.players[player_index].events_played_id.append(event_id)
             return True
         except sqlite3.Error as e:
             # TODO: logger for error handling
@@ -295,6 +286,7 @@ class GameDatabase:
 
     def close_connection(self):
         pass
+
 
 if __name__ == "__main__":
     db = GameDatabase()
