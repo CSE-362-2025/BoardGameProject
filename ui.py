@@ -484,6 +484,8 @@ class UI:
                 case "Load Game":
                     self.game_start(is_new_game=False)
                     r = self.game_manager.load_state()
+                    # update UI
+                    self.update()
                     # delete this print
                     print(f"load result={r}")
                 case "Pause":
