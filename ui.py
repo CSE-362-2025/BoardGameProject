@@ -1592,7 +1592,7 @@ class EndScreen(Menu):
         self.players = players
 
         self.buttons = [
-            Button((85, 90), MAINSIZE, "Finish"),
+            Button((85, 90), MAINSIZE, "Quit to Title"),
         ]
 
         self.background_img = pygame.image.load(END_GAME_BACKGROUND_IMAGE_PATH)
