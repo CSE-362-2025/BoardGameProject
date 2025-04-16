@@ -490,6 +490,36 @@ class UI:
         # Display the result of the computer's decision
         self.display_message(f"Computer chose: {event.choices[choice_idx].name}")
 
+    def display_end_event(self, event):
+        # display button for displaying effect description
+        self.Buttons.append(
+            EffectTileDisplayButton(
+                button_text=str(event[0]),
+                _type="TileEffect",
+                centre=(50, 40),
+                size=EFFECT_DISPLAY_SIZE
+            )
+        )       
+        # display stat change
+        stat_change_dict: dict = {} 
+        stat_display = ConsequenceCardDisplay(
+            centre=None,
+            centre_moved=EVENT_CONSEQ_CARD_OUT,
+            size=None,
+            type="TileEffectConsequence",
+            image=os.path.join("Resources", "rmc_card.png")
+        )
+        stat_display.update_info((
+            self.game_manager.current_player.name,
+            stat_change_dict,
+            self.game_manager.current_player.get_portrait(),
+        ))
+        self.Buttons.append(stat_display)
+
+        for button in self.Buttons:
+            if button.type == "Next Turn":
+                button.turn_on()
+
     def display_non_decision_event(self, event):
         # Display the non-decision event
         # self.display_message(f"{event[0]}")
