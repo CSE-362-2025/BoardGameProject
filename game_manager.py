@@ -18,7 +18,7 @@ from llm_model import llm
 class GameManager:
 
     def __init__(self, ui, game_database):
-        
+
         self.board = None
         self.players = None
         self.events = None
@@ -46,14 +46,17 @@ class GameManager:
             self.current_player.position = self.current_player.next_pos
             self.current_player.on_alt_path = True
 
-        print(f"{self.current_player.name}'s position before move {self.current_player.position}")
-            
+        print(
+            f"{self.current_player.name}'s position before move {self.current_player.position}"
+        )
 
         # Checking if hitting a stop tile
-        for i in range(self.current_player.position + 1, self.current_player.position + roll + 1):
+        for i in range(
+            self.current_player.position + 1, self.current_player.position + roll + 1
+        ):
             tile = self.board.get_tile(i)
             if not tile:
-                tile = self.board.get_tile(i-100)
+                tile = self.board.get_tile(i - 100)
                 if not tile:
                     print("OUT OF BOUNDS WHEN LOOKING FOR A STOPTILE")
                     break
@@ -62,7 +65,9 @@ class GameManager:
                 print("Found StopTile")
                 steps = tile.position - self.current_player.position
                 self.current_player.move(steps)
-                print(f"{self.current_player.name}'s' Position after move: {self.current_player.position}")
+                print(
+                    f"{self.current_player.name}'s' Position after move: {self.current_player.position}"
+                )
                 print(f"Landed on StopTile")
                 if len(tile.paths) > 1:
                     self.current_player.branch = True
@@ -73,7 +78,9 @@ class GameManager:
         # Move the player if not a stop tile
         self.current_player.move(roll)
 
-        print(f"{self.current_player.name}'s Position after move: {self.current_player.position}")
+        print(
+            f"{self.current_player.name}'s Position after move: {self.current_player.position}"
+        )
 
         # # VERY TEMP
         # if self.current_player.position > 22:
@@ -87,10 +94,10 @@ class GameManager:
             tile = self.board.get_tile(self.current_player.position)
             # print(tile.position, self.current_player.position)
 
-        if not tile:          
+        if not tile:
             self.current_player.position = self.board.size
             tile = self.board.tiles[len(self.board.tiles) - 1]
-        
+
         if tile.get_type() == "EndTile":
             print(f"{self.current_player.name} is at the end of the board")
             self.current_player.at_end = True
@@ -104,18 +111,21 @@ class GameManager:
             event = self.get_random_event()
             self.ui.display_decision_event(event)
 
-        elif tile.get_type() in ["GoodTile", "BadTile"]:   
-            effects = self.generate_good_tile_effects() if tile.get_type() == "GoodTile" else self.generate_bad_tile_effects()
+        elif tile.get_type() in ["GoodTile", "BadTile"]:
+            effects = (
+                self.generate_good_tile_effects()
+                if tile.get_type() == "GoodTile"
+                else self.generate_bad_tile_effects()
+            )
             self.current_player.change_stats(effects[1])
-            self.ui.display_message(f"{effects[0]}")
+            # self.ui.display_message(f"{effects[0]}")
             self.ui.display_non_decision_event(effects)
 
         else:
             print(tile.get_type())
             raise Exception("Invalid tile type")
-        
-        print(f"Landed on {tile.get_type()}")
 
+        print(f"Landed on {tile.get_type()}")
 
     def play_computer_turn(self):
         pass
@@ -128,60 +138,109 @@ class GameManager:
         self.players = self.get_players()
         self.current_player = self.players[0]
         self.ui.change_current_player(self.current_player)
-    
+
     def get_events(self, year):
-             # Create events
+        # Create events
         with open("game_objects/events.json") as file:
             events_raw = json.load(file)
-        
+
         events = []
         for event in events_raw:
-            events.append(Event(event['name'], event['description'], 
-                                    event['choices'], rarity=event['rarity'],
-                                    phase=event['phase']))
+            events.append(
+                Event(
+                    event["name"],
+                    event["description"],
+                    event["choices"],
+                    rarity=event["rarity"],
+                    phase=event["phase"],
+                )
+            )
         return events
 
     def get_board(self, year):
         boards = []
         with open("game_objects/boards.json") as file:
             boards_raw = json.load(file)
-    
+
         board_raw = boards_raw[0]
         tiles = []
-        for tile in board_raw['tiles']:
-            if tile['tile_type'] == "StopTile":
-                event_raw = tile['event']
+        for tile in board_raw["tiles"]:
+            if tile["tile_type"] == "StopTile":
+                event_raw = tile["event"]
                 if event_raw:
-                    if event_raw['branch']:
-                        event = Event(event_raw['name'], event_raw['description'], event_raw['choices'], branch=event_raw['branch'])
-                    else: 
-                        event = Event(event_raw['name'], event_raw['description'], event_raw['choices'])
+                    if event_raw["branch"]:
+                        event = Event(
+                            event_raw["name"],
+                            event_raw["description"],
+                            event_raw["choices"],
+                            branch=event_raw["branch"],
+                        )
+                    else:
+                        event = Event(
+                            event_raw["name"],
+                            event_raw["description"],
+                            event_raw["choices"],
+                        )
                 else:
                     event = None
 
-                if event_raw['branch']:
-                    tiles.append(StopTile(tile['position'], tile['screen_position'], event, tile['paths']))
+                if event_raw["branch"]:
+                    tiles.append(
+                        StopTile(
+                            tile["position"],
+                            tile["screen_position"],
+                            event,
+                            tile["paths"],
+                        )
+                    )
                 else:
-                    tiles.append(StopTile(tile['position'], tile['screen_position'], event, []))
+                    tiles.append(
+                        StopTile(tile["position"], tile["screen_position"], event, [])
+                    )
             else:
-                tiles.append(Tile(tile['position'], tile['screen_position'], tile['tile_type']))
-    
-        boards.append(Board(tiles, board_raw['year']))
+                tiles.append(
+                    Tile(tile["position"], tile["screen_position"], tile["tile_type"])
+                )
+
+        boards.append(Board(tiles, board_raw["year"]))
         board = boards[0]
         return board
 
     def get_players(self):
-        
+
         # Create players
         players = [
-            Player("Bruno", (50, 200, 50), image="Resources/Pawn_Blue.png", portrait="Resources/Portrait_Blue.png", next_up="Resources/Next_Blue.png"),
-            Player("Charlie", (50, 200, 200), image="Resources/Pawn_Yellow.png", portrait="Resources/Portrait_Yellow.png", next_up="Resources/Next_Yellow.png"),
-            Player("Dani", (200, 200, 200),image="Resources/Pawn_Green.png", portrait="Resources/Portrait_Green.png", next_up="Resources/Next_Green.png"),
-            Player("Alex", (200, 200, 50),image="Resources/Pawn_Red.png", portrait="Resources/Portrait_Red.png", next_up="Resources/Next_Red.png")
+            Player(
+                "Bruno",
+                (50, 200, 50),
+                image="Resources/Pawn_Blue.png",
+                portrait="Resources/Portrait_Blue.png",
+                next_up="Resources/Next_Blue.png",
+            ),
+            Player(
+                "Charlie",
+                (50, 200, 200),
+                image="Resources/Pawn_Yellow.png",
+                portrait="Resources/Portrait_Yellow.png",
+                next_up="Resources/Next_Yellow.png",
+            ),
+            Player(
+                "Dani",
+                (200, 200, 200),
+                image="Resources/Pawn_Green.png",
+                portrait="Resources/Portrait_Green.png",
+                next_up="Resources/Next_Green.png",
+            ),
+            Player(
+                "Alex",
+                (200, 200, 50),
+                image="Resources/Pawn_Red.png",
+                portrait="Resources/Portrait_Red.png",
+                next_up="Resources/Next_Red.png",
+            ),
         ]
         return players
 
-    
     def end_game(self):
         print("THE GAME IS OVER")
         self.generate_awards()
@@ -194,7 +253,6 @@ class GameManager:
             if self.has_gpu:
                 print(f"{player.name} ai summary: {player.ai_summary}")
 
-
     #  gives awards to players with the highest stats
     def generate_awards(self):
 
@@ -204,7 +262,7 @@ class GameManager:
         def max_player_stat(players, stat):
 
             max_players = []
-            
+
             max_player = players[0]
             for player in players[1:]:
                 if player.stats[stat] > max_player.stats[stat]:
@@ -223,7 +281,7 @@ class GameManager:
 
         for stat in stats:
             max_players = max_player_stat(self.players, stat)
-            
+
             for player in max_players:
                 player.awards[stat] = True
 
@@ -263,11 +321,14 @@ class GameManager:
             You will only get the names of the events played in the ordered they were played by the player throughout the game and the choice the player made.
             Contain generated summary between a START and END token.
             Events played and choice:
-            
+
             """
 
             for event in player.events_played:
-                prompt = prompt + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+                prompt = (
+                    prompt
+                    + f"Event name: {event[0]} and {player.name} chose: {event[1]} \n"
+                )
 
             prompt = prompt + "\n generate summary: START"
 
@@ -288,7 +349,6 @@ class GameManager:
         if self.current_player.at_end:
             while i < 4:
                 self.current_player = self.players[(self.turn_count + i) % len(self.players)]
-                print(self.current_player.name)
 
                 if self.current_player.at_end:
                     i += 1
@@ -298,7 +358,6 @@ class GameManager:
         if i == 4:
             self.end_game()
             return
-
 
         self.ui.change_current_player(self.current_player)
         self.ui.update()
@@ -314,24 +373,31 @@ class GameManager:
 
         if event.branch:
             pos = self.current_player.position
-            self.current_player.next_pos = (self.board.get_tile(pos).paths[choice_idx-1]) - 1
+            self.current_player.next_pos = (
+                self.board.get_tile(pos).paths[choice_idx - 1]
+            ) - 1
             print(f"Current Player Next Pos: {self.current_player.next_pos}")
 
-        self.current_player.store_event(event, choice_idx)  # store event in player's history
+        self.current_player.store_event(
+            event, choice_idx
+        )  # store event in player's history
         self.ui.display_board(self.board, self.players)
 
-
-    # gets a random event from the list of events that 
+    # gets a random event from the list of events that
     # meets the criteria of the player's stats, must take into account rarity
-    def get_random_event(self): 
-        number = random.randint(1,20)
-        i=0    # avoid infinate loop
+    def get_random_event(self):
+        number = random.randint(1, 20)
+        i = 0  # avoid infinate loop
 
         # common 75%
         if number >= 1 and number <= 15:
             while i < 500:
                 event = random.choice(self.events)
-                if not(event.rarity == 0 and self.board.year in event.phase and event.id in self.current_player.events_played):
+                if not (
+                    event.rarity == 0
+                    and self.board.year in event.phase
+                    and event.id in self.current_player.events_played
+                ):
                     i += 1
                     continue
                 else:
@@ -341,7 +407,11 @@ class GameManager:
         elif number >= 16 and number <= 19:
             while i < 500:
                 event = random.choice(self.events)
-                if (event.rarity == 1 and self.board.year in event.phase and event.id in self.current_player.events_played):
+                if (
+                    event.rarity == 1
+                    and self.board.year in event.phase
+                    and event.id in self.current_player.events_played
+                ):
                     i += 1
                     continue
                 else:
@@ -351,7 +421,11 @@ class GameManager:
         else:
             while i < 500:
                 event = random.choice(self.events)
-                if (event.rarity == 2 and self.board.year in event.phase and event.id in self.current_player.events_played):
+                if (
+                    event.rarity == 2
+                    and self.board.year in event.phase
+                    and event.id in self.current_player.events_played
+                ):
                     i += 1
                     continue
                 else:
@@ -359,7 +433,6 @@ class GameManager:
 
         # adding return statement
         return event
-
 
     # Return true if the entire game is over
     def is_game_over(self):
@@ -369,7 +442,7 @@ class GameManager:
                     continue
                 else:
                     return False
-                
+
             return True
         else:
             return False
@@ -377,309 +450,396 @@ class GameManager:
     # returns a message and stat changes in a tuple
     def generate_good_tile_effects(self):
 
-        number = random.randint(1,5)
+        number = random.randint(1, 5)
 
         if number == 1:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You took extra french lessons! (+1 Biligual)", {
-                "bilingual": 1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
+                return [
+                    "You took extra french lessons! (+1 Biligual)",
+                    {
+                        "bilingual": 1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
             elif number == 2:
-                return ["You spoke to someone in your second language! (+1 Biligual)", {
-                "bilingual": 1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
+                return [
+                    "You spoke to someone in your second language! (+1 Biligual)",
+                    {
+                        "bilingual": 1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
             else:
-                return ["You wrote a bilingual email! (+1 Biligual)", {
-                "bilingual": 1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
-
+                return [
+                    "You wrote a bilingual email! (+1 Biligual)",
+                    {
+                        "bilingual": 1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 2:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You ran a 5k! (+1 Athletic)", {
-                "bilingual": 0,
-                "athletic": 1,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
-            
+                return [
+                    "You ran a 5k! (+1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
+
             elif number == 2:
-                return ["You did a workout! (+1 Athletic)", {
-                "bilingual": 0,
-                "athletic": 1,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
-            
+                return [
+                    "You did a workout! (+1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
+
             else:
-                return ["You went to gym class! (+1 Athletic)", {
-                "bilingual": 0,
-                "athletic": 1,
-                "academic": 0,
-                "military": 0,
-                "social": 0 
-                }]
+                return [
+                    "You went to gym class! (+1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 3:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You did well on a test! (+1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 1,
-                "military": 0,
-                "social": 0 
-                }]
-            
+                return [
+                    "You did well on a test! (+1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
+
             elif number == 2:
-                return ["You completed a project for class! (+1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 1,
-                "military": 0,
-                "social": 0 
-                }]
-            
+                return [
+                    "You completed a project for class! (+1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
+
             else:
-                return ["You did a presentation for school! (+1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 1,
-                "military": 0,
-                "social": 0 
-                }]
+                return [
+                    "You did a presentation for school! (+1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 4:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You did a drill practice! (+1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 1,
-                "social": 0 
-                }]
-            
+                return [
+                    "You did a drill practice! (+1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 1,
+                        "social": 0,
+                    },
+                ]
+
             elif number == 2:
-                return ["You had an inspection this morning! (+1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 1,
-                "social": 0 
-                }]
-            
+                return [
+                    "You had an inspection this morning! (+1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 1,
+                        "social": 0,
+                    },
+                ]
+
             else:
-                return ["You polished your oxfords! (+1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 1,
-                "social": 0 
-                }]
+                return [
+                    "You polished your oxfords! (+1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 1,
+                        "social": 0,
+                    },
+                ]
 
         else:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You answered a question correctly in class! (+1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 1
-            }]  
+                return [
+                    "You answered a question correctly in class! (+1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 1,
+                    },
+                ]
 
             elif number == 2:
-                return ["You went to the mess! (+1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 1
-            }]
+                return [
+                    "You went to the mess! (+1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 1,
+                    },
+                ]
 
-            else: 
-                return ["You hung out with friends! (+1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 1
-            }]
+            else:
+                return [
+                    "You hung out with friends! (+1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 1,
+                    },
+                ]
 
-        
     def generate_bad_tile_effects(self):
 
-        number = random.randint(1,5)
+        number = random.randint(1, 5)
 
         if number == 1:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You forgot your french homework! (-1 Bilingual)", {
-                "bilingual": -1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You forgot your french homework! (-1 Bilingual)",
+                    {
+                        "bilingual": -1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
             elif number == 2:
-                return ["You said \"je suis fini\" instead of \"j'ai fini\" and all the francos laughed at you! (-1 Bilingual)", {
-                "bilingual": -1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    'You said "je suis fini" instead of "j\'ai fini" and all the francos laughed at you! (-1 Bilingual)',
+                    {
+                        "bilingual": -1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
             else:
-                return ["You failed your french test! (-1 Bilingual)", {
-                "bilingual": -1,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You failed your french test! (-1 Bilingual)",
+                    {
+                        "bilingual": -1,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 2:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You failed the PPT Run! (-1 Athletic)", {
-                "bilingual": 0,
-                "athletic": -1,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You failed the PPT Run! (-1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": -1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
             elif number == 2:
-                return ["You got dunked on in gym class! (-1 Athletic)", {
-                "bilingual": 0,
-                "athletic": -1,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You got dunked on in gym class! (-1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": -1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
             else:
-                return ["You lost every intramural game this season! (-1 Athletic)", {
-                "bilingual": 0,
-                "athletic": -1,
-                "academic": 0,
-                "military": 0,
-                "social": 0
-        }]
+                return [
+                    "You lost every intramural game this season! (-1 Athletic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": -1,
+                        "academic": 0,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 3:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You got a 2/20 on your math quiz. Yikes! (-1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": -1,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You got a 2/20 on your math quiz. Yikes! (-1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": -1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
             elif number == 2:
-                return ["You failed PSE103. Nobody even thought that was possible! (-1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": -1,
-                "military": 0,
-                "social": 0
-            }]
-            
+                return [
+                    "You failed PSE103. Nobody even thought that was possible! (-1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": -1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
+
             else:
-                return ["You got a 0 on your history proposal. Better cite some better sources! (-1 Academic)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": -1,
-                "military": 0,
-                "social": 0
-            }]
+                return [
+                    "You got a 0 on your history proposal. Better cite some better sources! (-1 Academic)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": -1,
+                        "military": 0,
+                        "social": 0,
+                    },
+                ]
 
         elif number == 4:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You forgot to polish your oxfords and got called out by the duty officer! (-1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": -1,
-                "social": 0
-            }]
+                return [
+                    "You forgot to polish your oxfords and got called out by the duty officer! (-1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": -1,
+                        "social": 0,
+                    },
+                ]
 
             elif number == 2:
-                return ["You forgot to salute an officer! (-1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": -1,
-                "social": 0
-            }]
-            
+                return [
+                    "You forgot to salute an officer! (-1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": -1,
+                        "social": 0,
+                    },
+                ]
+
             else:
-                return ["You turned the wrong way doing drill! (-1 Military)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": -1,
-                "social": 0
-            }]
+                return [
+                    "You turned the wrong way doing drill! (-1 Military)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": -1,
+                        "social": 0,
+                    },
+                ]
 
         else:
-            number = random.randint(1,3)
+            number = random.randint(1, 3)
 
             if number == 1:
-                return ["You dropped your tray in the CDH and food went everywhere! (-1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": -1
-            }]
+                return [
+                    "You dropped your tray in the CDH and food went everywhere! (-1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": -1,
+                    },
+                ]
 
             elif number == 2:
-                return ["You just realise that you haven't spoken to another human in over a week! (-1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": -1
-            }]
+                return [
+                    "You just realise that you haven't spoken to another human in over a week! (-1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": -1,
+                    },
+                ]
 
             else:
-                return ["You said something dumb in class and everyone laughed! (-1 Social)", {
-                "bilingual": 0,
-                "athletic": 0,
-                "academic": 0,
-                "military": 0,
-                "social": -1
-            }]
-
+                return [
+                    "You said something dumb in class and everyone laughed! (-1 Social)",
+                    {
+                        "bilingual": 0,
+                        "athletic": 0,
+                        "academic": 0,
+                        "military": 0,
+                        "social": -1,
+                    },
+                ]
