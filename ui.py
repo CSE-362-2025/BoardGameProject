@@ -663,12 +663,6 @@ class UI:
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
 
-        # TODO: Delete this
-        # end the game immediately
-        if self.tmp_flag is None or not self.tmp_flag:
-            self.game_end()
-            self.tmp_flag = True
-
         if len(self.buttonevents) > 0:
 
             next_event = self.buttonevents[0]
@@ -684,6 +678,13 @@ class UI:
 
             match next_event:
                 case "Dice":
+
+                    # TODO: Delete this
+                    # end the game on first dice roll
+                    if self.tmp_flag is None or not self.tmp_flag:
+                        self.game_end()
+                        self.tmp_flag = True
+
                     self.roll_dice()
                     for button in self.Buttons:
                         if button.type == "Dice":
