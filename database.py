@@ -216,11 +216,12 @@ class GameDatabase:
                 # reset events_played list
                 each_player.events_played = []
 
-            curr_index = self.cursor.execute(
+            current_player_index = self.cursor.execute(
                 """
                 SELECT current_player_index FROM GameInfo
                 """
-            ).fetchone()
+            ).fetchone()[0]
+            game_manager.current_player = game_manager.players[current_player_index]
 
             # grab events from DB
             db_event_rows: list[tuple] = self.cursor.execute(
