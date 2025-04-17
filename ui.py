@@ -296,6 +296,7 @@ class UI:
         custom_char = os.path.join(tmp, "customize.png")
         settings = os.path.join(tmp, "settings.png")
         pause = os.path.join(tmp, "pause.png")
+        next_turn = os.path.join(tmp, "next_turn.png")
         # check if saved game exists
         is_game_loadable: bool = False
         if os.path.exists(os.path.join("database", "game_data.db")):
@@ -303,7 +304,7 @@ class UI:
 
         self.Buttons = [
             Button(DICE_POS, DICE_SIZE, "Dice", image=os.path.join(tmp, "Dice.png")),
-            Button(DICE_POS, DICE_SIZE, "Next Turn", False),
+            Button(DICE_POS, DICE_SIZE, "Next Turn", False, next_turn),
             Button(MAIN1, MAINSIZE, "New Game", False, new_game),
             Button(MAIN2, MAINSIZE, "Load Game", False, load_game, is_game_loadable),
             Button(
