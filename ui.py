@@ -48,6 +48,9 @@ END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
 END_GAME_TEXT_FONT_SIZE: int = 30
 END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE: int = 8
 END_GAME_SUMMARY_BUTTON_TEXT: str = "SUMMARY"
+END_GAME_SUMMARY_POPUP_WIDTH_PERCENTAGE: int = 80
+END_GAME_SUMMARY_POPUP_HEIGHT_PERCENTAGE: int = 70
+END_GAME_SUMMARY_POPUP_VERTICAL_PADDING_PERCENTAGE: int = 10
 
 ## constants for event popup screen
 
@@ -59,7 +62,6 @@ EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 EVENT_RECT_TSS_BG_COLOUR: tuple[int] = (173, 118, 113)
-
 # margin for left/right in percentage
 EVENT_LR_MARGIN: int = 3
 # margin for top/bottom in percentage
@@ -756,8 +758,19 @@ class UI:
                     str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
                 )
             elif "SUMMARY" in next_event and len(self.open_menus) == 1:
-                # TODO: implement this by appending `SummaryMenu`
-                print("UI HANDLING SUMMARY BUTTON CLICK")
+                # summary button is clicked in endgame screen
+                # uses same delimiter as EventChoiceButton
+                player_index = int(
+                    str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+                self.save_state()
+                self.open_menus.append(
+                    SummaryMenu(
+                        name="summary",
+                        player_index=player_index,
+                        players=self.game_manager.players,
+                    ),
+                )
 
             match next_event:
                 case "Dice":
@@ -1040,7 +1053,6 @@ class EventMenu(Menu):
         event_img_rect.topleft = event_title_rect.bottomleft
         # move to the right for 0.2% of the screen
         event_img_rect.left += screen.get_width() / 100 * 0.2
-        # TODO: replace this with a pool of event desc images
         event_img = self.event_image
         event_img.convert()
         # fit this image into img_rect
@@ -1234,6 +1246,35 @@ class EventMenu(Menu):
         # ensure buttons are drawn over menu
         for each_button in self.buttons:
             each_button.display(screen)
+
+
+class SummaryMenu(Menu):
+    def __init__(self, player_index: int, players: list, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.player_index = player_index
+        self.players = players
+
+    def draw(self, screen):
+        super().draw(screen)
+
+        # DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+
+        # large rect with summary text
+        summary_rect = pygame.rect.Rect(
+            0,
+            screen_height * END_GAME_SUMMARY_POPUP_VERTICAL_PADDING_PERCENTAGE,
+            screen_width * END_GAME_SUMMARY_POPUP_WIDTH_PERCENTAGE,
+            screen_height * END_GAME_SUMMARY_POPUP_HEIGHT_PERCENTAGE,
+        )
+
+        # center horizontally
+        summary_rect.centerx = screen_width * 100 / 2
+
+        # render rect and border
+        pygame.draw.rect(screen, EVENT_RECT_TSS_BG_COLOUR, summary_rect)
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, summary_rect, 3)
 
 
 class Button(object):
