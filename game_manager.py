@@ -328,6 +328,10 @@ class GameManager:
 
         for player in self.players:
 
+            # check if player already has ai_summary generated
+            if len(player.ai_summary) > 0:
+                continue
+
             prompt = f"""
             You are a machine which generates a summary and detailed story of {player.name}'s journey through a Royal Military College board game.
             You will only get the names of the events played in the ordered they were played by the player throughout the game and the choice the player made.
