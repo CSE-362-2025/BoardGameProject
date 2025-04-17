@@ -96,7 +96,7 @@ class GameDatabase:
             print(f"GameDatabase.connect() raised exception={e}")
             return False
 
-    # return true is success, false otherwise
+
     def save_game(self, game_manager):
 
         if game_manager is None:
@@ -208,7 +208,7 @@ class GameDatabase:
 
             # grab players info and into game_manager's list of players
             db_player_rows: list[tuple] = self.cursor.execute(
-                """SELECT name, position, bilingual, athletic, military, social
+                """SELECT name, position, bilingual, athletic, military, social, academic
                 FROM Players
                 """
             ).fetchall()
@@ -224,6 +224,7 @@ class GameDatabase:
                 each_player.stats["athletic"] = int(each_row[3])
                 each_player.stats["military"] = int(each_row[4])
                 each_player.stats["social"] = int(each_row[5])
+                each_player.stats["academic"] = int(each_row[6])
 
                 # `has_moved` attrib
                 has_moved: int = self.cursor.execute(

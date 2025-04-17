@@ -652,9 +652,30 @@ class UI:
                         player_sort[player] = hold
                         next = player_sort[player]
             playerlist = {}
+            score_list = []
             for player in player_sort:
-                playerlist.update({player.name: random.randint(1, 10)})
-            info = ("Leaderboard", playerlist, self.the_meeple)
+                stats = player.stats
+                score = 0
+                score = sum(stats.values())
+                score_list.append(score)
+                playerlist.update({player.name: score})
+            
+            curr_best = 0
+            portrait = self.player.portrait
+            for each in score_list:
+                if each > curr_best:
+                    curr_best = each
+
+            orderedlist = {}
+            for each in sorted(playerlist, key=playerlist.get, reverse=True): 
+                orderedlist[each] = playerlist[each]
+
+            first = list(orderedlist.keys())[0]
+            for player in player_sort:
+                if player.name == first:
+                    portrait =  player.portrait
+
+            info = ("Leaderboard", orderedlist, portrait)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
