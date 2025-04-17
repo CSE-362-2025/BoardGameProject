@@ -35,6 +35,24 @@ TURN_POS = (100, 400)  # Adjust this based on your UI layout
 EFFECT_DISPLAY_FONT_SIZE: int = 28
 EFFECT_DISPLAY_SIZE: tuple[int] = (30, 10)
 
+# constants for endgame screen
+END_GAME_BACKGROUND_IMAGE_PATH: str = os.path.join("Resources", "end_summary_bg.jpg")
+END_GAME_TITLE_FONT_SIZE: int = 90
+END_GAME_TITLE_TEXT: str = "Congrats on Finishing First Year!"
+END_GAME_TB_MARGIN_PERCENTAGE: int = 2
+END_GAME_LR_MARGIN_PERCENTAGE: int = 2
+END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
+END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
+END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE: int = 12
+END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
+END_GAME_TEXT_FONT_SIZE: int = 30
+END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE: int = 8
+END_GAME_SUMMARY_BUTTON_TEXT: str = "SUMMARY"
+END_GAME_SUMMARY_POPUP_WIDTH_PERCENTAGE: int = 80
+END_GAME_SUMMARY_POPUP_HEIGHT_PERCENTAGE: int = 70
+END_GAME_SUMMARY_POPUP_VERTICAL_PADDING_PERCENTAGE: int = 10
+END_GAME_SUMMARY_FONT_SIZE: int = 30
+
 ## constants for event popup screen
 
 # consequence RMC card display position
@@ -45,7 +63,6 @@ EVENT_RECT_POS_CENTRE: tuple[int] = (50, 50)
 EVENT_RECT_SIZE: tuple[int] = (80, 80)
 EVENT_RECT_TSS_PATH: str = "Resources/tss.jpg"
 EVENT_RECT_TSS_BG_COLOUR: tuple[int] = (173, 118, 113)
-
 # margin for left/right in percentage
 EVENT_LR_MARGIN: int = 3
 # margin for top/bottom in percentage
@@ -254,7 +271,6 @@ def get_font_size_to_fit_all(
 
 
 class UI:
-
     # player is current player, changes during switch_turn()
     def __init__(self, game_manager=None, player=None):
         self.game_manager = game_manager
@@ -265,7 +281,9 @@ class UI:
         self.width = self.screen.get_width()
         tmp: str = "Resources"
         self.backgrounds = dict(
-            title=os.path.join(tmp, "Title_Screen.png"), wood=os.path.join(tmp, "background_wood.png"), year1=os.path.join(tmp, "board_year1.png"),
+            title=os.path.join(tmp, "Title_Screen.png"),
+            wood=os.path.join(tmp, "background_wood.png"),
+            year1=os.path.join(tmp, "board_year1.png"),
         )
         self.curr_background = self.backgrounds["title"]
         self.background_img = pygame.transform.scale(
@@ -288,7 +306,14 @@ class UI:
             Button(DICE_POS, DICE_SIZE, "Next Turn", False),
             Button(MAIN1, MAINSIZE, "New Game", False, new_game),
             Button(MAIN2, MAINSIZE, "Load Game", False, load_game, is_game_loadable),
-            Button(MAIN3,MAINSIZE,"Custom Char",False, custom_char,False,),
+            Button(
+                MAIN3,
+                MAINSIZE,
+                "Custom Char",
+                False,
+                custom_char,
+                False,
+            ),
             Button(MAIN4, MAINSIZE, "Settings", False, settings, False),
             Button(PAUSE, PAUSESIZE, "Pause", True,pause),]
         self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
@@ -421,39 +446,57 @@ class UI:
         self.curr_background = self.backgrounds["wood"]
         if new_game == True:
             self.screen.fill(BG_COLOR)
-            text_rect=self.screen.get_rect().scale_by(0.8,0.2).move(0,-20)
-            text=("""Welcome to A Cadet's life""")
-            font = pygame.font.Font(size=get_font_size_to_fit_all(self.screen, text_rect, text, FONT_COLOR, 16))
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
-            text_rect=text_rect.move(0,20)
-            text=("""This game will let you experience the Quintessential RMC experience.""")
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
-            text_rect=text_rect.move(0,50)
-            text=("""You will have the chance to go through the Regular Officer Training Program. Dice rolls letting you progress across the board, each having different tiles that let you act out a variety of events that will simulate what life at the Royal Military College is like. Each event will offer you options that will decide the way you spend your time at this university. """)
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
-            text_rect=text_rect.move(0,60)
-            text=("""You possess five traits based on the  RMC pillars, Academic, Billinguallism, Military, Physical and Social. Every choice you make will have a chance to positively or negatively impact your attributes. They determine the options offered to you as some are only available if you have high enough stats""")
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
-            text_rect=text_rect.move(0,40)
-            text=("""Your goal is to live the life you want, make the choices that best represent you and enjoy your time at the college. """)
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
-            text_rect=text_rect.move(0,20)
-            text=("""Good luck, and may the dice ever roll in your favour.""")
-            draw_text_with_wrap_centery_increment(self.screen, text, FONT_COLOR,text_rect,font)
+            text_rect = self.screen.get_rect().scale_by(0.8, 0.2).move(0, -20)
+            text = """Welcome to A Cadet's life"""
+            font = pygame.font.Font(
+                size=get_font_size_to_fit_all(
+                    self.screen, text_rect, text, FONT_COLOR, 16
+                )
+            )
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
+            text_rect = text_rect.move(0, 20)
+            text = """This game will let you experience the Quintessential RMC experience."""
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
+            text_rect = text_rect.move(0, 50)
+            text = """You will have the chance to go through the Regular Officer Training Program. Dice rolls letting you progress across the board, each having different tiles that let you act out a variety of events that will simulate what life at the Royal Military College is like. Each event will offer you options that will decide the way you spend your time at this university. """
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
+            text_rect = text_rect.move(0, 60)
+            text = """You possess five traits based on the  RMC pillars, Academic, Billinguallism, Military, Physical and Social. Every choice you make will have a chance to positively or negatively impact your attributes. They determine the options offered to you as some are only available if you have high enough stats"""
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
+            text_rect = text_rect.move(0, 40)
+            text = """Your goal is to live the life you want, make the choices that best represent you and enjoy your time at the college. """
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
+            text_rect = text_rect.move(0, 20)
+            text = """Good luck, and may the dice ever roll in your favour."""
+            draw_text_with_wrap_centery_increment(
+                self.screen, text, FONT_COLOR, text_rect, font
+            )
             pygame.display.flip()
             pygame.time.wait(10000)
             pygame.event.wait(2000000)
         self.width = 1
-        self.game_over=False
+        self.game_over = False
         self.return_state()
 
     def game_end(self):
         self.save_state()
         self.player = None
-        self.open_menus.append(EndScreen("Endscreen"))
+        self.open_menus.append(
+            EndScreen(name="Endscreen", players=self.game_manager.players),
+        )
         self.curr_background = self.backgrounds["wood"]
         self.width = 1
-        self.game_over=True
+        self.game_over = True
         self.set_sound()
 
     def display_board(self, board, players):
@@ -503,23 +546,25 @@ class UI:
                 button_text=str(event[0]),
                 _type="TileEffect",
                 centre=(50, 40),
-                size=EFFECT_DISPLAY_SIZE
+                size=EFFECT_DISPLAY_SIZE,
             )
-        )       
+        )
         # display stat change
-        stat_change_dict: dict = {} 
+        stat_change_dict: dict = {}
         stat_display = ConsequenceCardDisplay(
             centre=None,
             centre_moved=EVENT_CONSEQ_CARD_OUT,
             size=None,
             type="TileEffectConsequence",
-            image=os.path.join("Resources", "rmc_card.png")
+            image=os.path.join("Resources", "rmc_card.png"),
         )
-        stat_display.update_info((
-            self.game_manager.current_player.name,
-            stat_change_dict,
-            self.game_manager.current_player.get_portrait(),
-        ))
+        stat_display.update_info(
+            (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+        )
         self.Buttons.append(stat_display)
 
         for button in self.Buttons:
@@ -539,7 +584,7 @@ class UI:
                     button_text=str(event[0]),
                     _type="TileEffect",
                     centre=(50, 40),
-                    size=EFFECT_DISPLAY_SIZE
+                    size=EFFECT_DISPLAY_SIZE,
                 )
             )
             for button in self.Buttons:
@@ -553,7 +598,7 @@ class UI:
                 button_text=str(event[0]),
                 _type="TileEffect",
                 centre=(50, 40),
-                size=EFFECT_DISPLAY_SIZE
+                size=EFFECT_DISPLAY_SIZE,
             )
         )
         # display stat change
@@ -572,13 +617,15 @@ class UI:
             centre_moved=EVENT_CONSEQ_CARD_OUT,
             size=None,
             type="TileEffectConsequence",
-            image=os.path.join("Resources", "rmc_card.png")
+            image=os.path.join("Resources", "rmc_card.png"),
         )
-        stat_display.update_info((
-            self.game_manager.current_player.name,
-            stat_change_dict,
-            self.game_manager.current_player.get_portrait(),
-        ))
+        stat_display.update_info(
+            (
+                self.game_manager.current_player.name,
+                stat_change_dict,
+                self.game_manager.current_player.get_portrait(),
+            )
+        )
         self.Buttons.append(stat_display)
 
         for button in self.Buttons:
@@ -701,8 +748,8 @@ class UI:
 
     def run(self):
         """React to events in the list FIFO, and remove all following copies of that event - Should probably move to events"""
-        if len(self.buttonevents) > 0:
 
+        if len(self.buttonevents) > 0:
             next_event = self.buttonevents[0]
             self.buttonevents = list_edit(self.buttonevents, next_event)
             print(next_event)
@@ -712,6 +759,22 @@ class UI:
                 self.open_menus[0].is_conseq = True
                 self.open_menus[0].conseq_choice_idx = int(
                     str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+            elif "SUMMARY" in next_event and len(self.open_menus) == 1:
+                # summary button is clicked in endgame screen
+                # uses same delimiter as EventChoiceButton
+                player_index = int(
+                    str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
+                )
+                self.save_state()
+                # disable all buttons in EndScreen menu
+                self.open_menus[0].enable_buttons = False
+                self.open_menus.append(
+                    SummaryMenu(
+                        name="summary",
+                        player_index=player_index,
+                        players=self.game_manager.players,
+                    ),
                 )
 
             match next_event:
@@ -731,9 +794,14 @@ class UI:
                             # remove message of Tile Effect
                             self.Buttons.remove(button)
                             # also remove stat change display
-                            conseq_card_display_buttons = [b for b in self.Buttons if b.type == "TileEffectConsequence"]
+                            conseq_card_display_buttons = [
+                                b
+                                for b in self.Buttons
+                                if b.type == "TileEffectConsequence"
+                            ]
                             if len(conseq_card_display_buttons) > 0:
                                 self.Buttons.remove(conseq_card_display_buttons[0])
+
                 case "New Game":
                     self.sounds["start"].play()
                     self.game_start()
@@ -757,6 +825,12 @@ class UI:
                     self.open_menus.pop()
                     self.return_state()
                     self.game_manager.switch_turn()
+                case "summary_done":
+                    self.open_menus.pop()
+                    self.return_state()
+                    # enable all buttons in EndScreen menu
+                    for menu in self.open_menus:
+                        menu.enable_buttons = True
                 case "Quit":
                     pygame.event.Event(quit)
                 case "Quit to Title":
@@ -785,7 +859,6 @@ def list_edit(target_list, item):
 
 
 class Menu:
-
     def __init__(self, name, image=None):
         self.name = name
         self.image = image
@@ -825,7 +898,6 @@ class PauseMenu(Menu):
 
 
 class EventMenu(Menu):
-
     def __get_random_image_from_path(self, parent_dir_path: str) -> str | None:
         """Return a path string (by Python to be OS-independent) of a image file to use.
 
@@ -999,7 +1071,6 @@ class EventMenu(Menu):
         event_img_rect.topleft = event_title_rect.bottomleft
         # move to the right for 0.2% of the screen
         event_img_rect.left += screen.get_width() / 100 * 0.2
-        # TODO: replace this with a pool of event desc images
         event_img = self.event_image
         event_img.convert()
         # fit this image into img_rect
@@ -1068,7 +1139,9 @@ class EventMenu(Menu):
                     left=ecb_left,
                     bottom=ecb_top + EVENT_BUTTONS_CHOICE_SIZE[1] * 2 * screen_height,
                     width=ecb_width,
-                    button_text=self.event.choices[self.conseq_choice_idx]["consequence"],
+                    button_text=self.event.choices[self.conseq_choice_idx][
+                        "consequence"
+                    ],
                     event=self.event,
                     choice_idx=None,
                     curr_player=self.curr_player,
@@ -1121,7 +1194,7 @@ class EventMenu(Menu):
                 centre_moved=EVENT_CONSEQ_CARD_OUT,
                 size=None,
                 type="Consequence Stats",
-                image=os.path.join("Resources", "rmc_card.png")
+                image=os.path.join("Resources", "rmc_card.png"),
             )
 
             stat_change_dict: dict = self.__get_change_dict(
@@ -1191,6 +1264,78 @@ class EventMenu(Menu):
         # ensure buttons are drawn over menu
         for each_button in self.buttons:
             each_button.display(screen)
+
+
+class SummaryMenu(Menu):
+    def __init__(self, player_index: int, players: list, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.player_index = player_index
+        self.players = players
+        self.enable_buttons: bool = True
+        self.buttons = []
+
+    def draw(self, screen):
+        super().draw(screen)
+        self.buttons = []
+
+        # DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+
+        # large rect with summary text
+        summary_rect = pygame.rect.Rect(
+            0,
+            screen_height * END_GAME_SUMMARY_POPUP_VERTICAL_PADDING_PERCENTAGE,
+            screen_width * END_GAME_SUMMARY_POPUP_WIDTH_PERCENTAGE,
+            screen_height * END_GAME_SUMMARY_POPUP_HEIGHT_PERCENTAGE,
+        )
+
+        # center horizontally
+        summary_rect.centerx = screen_width * 100 / 2
+
+        # render rect and border
+        pygame.draw.rect(screen, EVENT_RECT_TSS_BG_COLOUR, summary_rect)
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, summary_rect, 3)
+
+        # text placeholder if ai_text is empty
+        curr_player = self.players[self.player_index]
+        summary_text: str = (
+            "NO SUMMARY AVAILABLE."
+            if len(curr_player.ai_summary) == 0
+            else curr_player.ai_summary
+        )
+
+        # get font size to fit all
+        font_size = get_font_size_to_fit_all(
+            screen,
+            summary_rect,
+            summary_text,
+            EVENT_FONT_COLOUR,
+            END_GAME_SUMMARY_FONT_SIZE,
+        )
+        # render font on top of rect
+        summary_font = pygame.font.Font(None, font_size)
+        draw_text_with_wrap_centery_increment(
+            screen,
+            summary_text,
+            EVENT_FONT_COLOUR,
+            summary_rect,
+            summary_font,
+        )
+
+        # add close button on bottom right?
+        close_button = SummaryButton(
+            players=self.players,
+            player_index=self.player_index,
+            right=summary_rect.right,
+            top=summary_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE,
+            height=screen_height * END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE,
+            width=screen_width * EVENT_BUTTONS_CHOICE_SIZE[0],
+            is_for_popup=True,
+        )
+        close_button.display(screen)
+        close_button.enabled = self.enable_buttons
+        self.buttons.append(close_button)
 
 
 class Button(object):
@@ -1309,7 +1454,6 @@ class Button(object):
 
 
 class EffectTileDisplayButton(Button):
-
     def __init__(self, button_text: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.enabled = False
@@ -1347,8 +1491,80 @@ class EffectTileDisplayButton(Button):
         return ""
 
 
-class EventChoiceButton(Button):
+class SummaryButton(Button):
+    def __init__(
+        self,
+        players: list,
+        player_index: int,
+        right: float,
+        top: float,
+        height: float,
+        width: float,
+        is_for_popup: bool = False,
+        *args,
+        **kwargs,
+    ):
+        self.right = right
+        self.top = top
+        self.height = height
+        self.width = width
+        self.button_rect = pygame.rect.Rect(
+            self.right - self.width,
+            self.top,
+            self.width,
+            self.height,
+        )
 
+        self.players = players
+        self.player_index = player_index
+        self.is_for_popup = is_for_popup
+
+        self.visible = True
+        self.enabled = True
+
+    def display(self, screen):
+        if not self.visible:
+            return
+
+        # render button on screen
+        pygame.draw.rect(screen, EVENT_BUTTONS_FILL_ENABLED_COLOUR, self.button_rect)
+        # render border
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, self.button_rect, 3)
+
+        # find font size
+        font_size = get_font_size_to_fit_all(
+            screen,
+            self.button_rect,
+            END_GAME_SUMMARY_BUTTON_TEXT,
+            EVENT_FONT_COLOUR,
+            END_GAME_TEXT_FONT_SIZE,
+        )
+        # font obj with fitting font-size
+        button_font = pygame.font.Font(None, font_size)
+        # render font on top
+        draw_text_with_wrap_centery_increment(
+            screen,
+            END_GAME_SUMMARY_BUTTON_TEXT if not self.is_for_popup else "CLOSE",
+            EVENT_FONT_COLOUR,
+            self.button_rect,
+            button_font,
+        )
+
+    def handle_click(self, screen, pos):
+        if not self.enabled:
+            return ""
+
+        if self.button_rect.collidepoint(pos):
+            return (
+                f"SUMMARY|{self.player_index}"
+                if not self.is_for_popup
+                else "summary_done"
+            )
+
+        return ""
+
+
+class EventChoiceButton(Button):
     def __init__(
         self,
         centerx: int,
@@ -1599,18 +1815,180 @@ class CardDisplays(Button):
 
 
 class ConsequenceCardDisplay(CardDisplays):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.position = self.moved
         self.hovered = True
+
     def handle_click(self, screen, pos):
         # ignore all clicks
         return ""
 
 
 class EndScreen(Menu):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, players: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.buttons = [Button(MAIN1, MAINSIZE, "Quit"),
-                        Button(MAIN4, MAINSIZE, "Quit to Title"),]
+
+        self.players = players
+
+        self.enable_buttons: bool = True
+
+        self.background_img = pygame.image.load(END_GAME_BACKGROUND_IMAGE_PATH)
+        self.background_img.convert()
+
+    def draw(self, screen) -> None:
+        # reset
+        self.buttons = [
+            Button((85, 91), MAINSIZE, "Quit to Title", True, os.path.join("Resources", "quit.png")),
+        ]
+        self.buttons[0].enabled = self.enable_buttons
+
+        # DRY
+        screen_width = screen.get_width() / 100
+        screen_height = screen.get_height() / 100
+
+        # title rect
+        title_rect: pygame.Rect = pygame.Rect(
+            0,
+            0,
+            screen_width * 100,
+            screen_height * 10,
+        )
+        # center the title rect
+        title_rect.centerx = screen.get_width() / 2
+        # add padding from top
+        title_rect.top += screen_height * 5
+
+        # ! all draw event
+
+        # background image
+        bg_img = pygame.transform.scale(
+            self.background_img,
+            (screen.get_width(), screen.get_height()),
+        )
+        screen.blit(bg_img, (0, 0))
+
+        # title font
+        title_font_fitting_size: int = get_font_size_to_fit_all(
+            screen,
+            title_rect,
+            END_GAME_TITLE_TEXT,
+            EVENT_FONT_COLOUR,
+            END_GAME_TITLE_FONT_SIZE,
+        )
+        title_font: pygame.font.Font = pygame.font.Font(
+            None,
+            title_font_fitting_size,
+        )
+        draw_text_with_wrap_centery_increment(
+            screen,
+            END_GAME_TITLE_TEXT,
+            EVENT_FONT_COLOUR,
+            title_rect,
+            title_font,
+        )
+
+        # draw quit to title button
+        if len(self.buttons) == 1:
+            self.buttons[0].display(screen)
+
+        # draw player portrait / summary boxes
+
+        # vars to hold left/top/etc value for rects
+        cursor_left = screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+        # cursor for text box below the portraits :(
+        cursor_left_box = cursor_left
+
+        cursor_top = title_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE
+
+        for i, each_player in enumerate(self.players):
+            portrait_rect = pygame.Rect(
+                cursor_left,
+                cursor_top,
+                screen_width * END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE,
+                screen_height * END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE,
+            )
+            each_portrait_img_rect = each_player.get_portrait().get_rect()
+
+            # fit portrait img into rect
+            each_portrait_img_rect_adjusted: pygame.Rect = each_portrait_img_rect.fit(
+                portrait_rect
+            )
+
+            # scale img to fit into rect
+            each_portrait_img_rect_resized: pygame.Surface = pygame.transform.scale(
+                each_player.get_portrait(),
+                each_portrait_img_rect_adjusted.size,
+            )
+            # zoom in the resulting img
+            each_portrait_img_rect_resized: pygame.Surface = pygame.transform.rotozoom(
+                each_portrait_img_rect_resized,
+                0,
+                1.5,
+            )
+
+            # draw portraits
+            screen.blit(each_portrait_img_rect_resized, each_portrait_img_rect_adjusted)
+
+            # draw text box below the portraits
+            text_rect = pygame.rect.Rect(
+                cursor_left_box,
+                screen_height * END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE,
+                each_portrait_img_rect_resized.get_width() * 0.60,
+                screen_height * END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE,
+            )
+            # reposition rect to be below the portrait
+            each_player_right = (
+                cursor_left
+                + (
+                    each_portrait_img_rect_adjusted.width
+                    + screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+                )
+                + screen_height * 2
+            )
+            text_rect.right = each_player_right
+            # calc font size that can fit
+            font_size = get_font_size_to_fit_all(
+                screen,
+                text_rect,
+                each_player.end_text,
+                EVENT_FONT_COLOUR,
+                END_GAME_TEXT_FONT_SIZE,
+            )
+            text_font = pygame.font.Font(None, font_size)
+
+            # fill text box with colour
+            pygame.draw.rect(screen, EVENT_BUTTONS_FILL_ENABLED_COLOUR, text_rect)
+            # border
+            pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, text_rect, 3)
+            # render text on top
+            draw_text_with_wrap_centery_increment(
+                screen,
+                each_player.end_text,
+                EVENT_FONT_COLOUR,
+                text_rect,
+                text_font,
+            )
+
+            # create summary button for each player
+            each_summary_button = SummaryButton(
+                players=self.players,
+                player_index=i,
+                right=each_player_right,
+                top=text_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE,
+                height=screen_height * END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE,
+                width=text_rect.width,
+                _type="summary",
+                centre=None,
+                size=None,
+            )
+            each_summary_button.enabled = self.enable_buttons
+            self.buttons.append(each_summary_button)
+            # render it on screen
+            each_summary_button.display(screen)
+
+            # increment cursor (width of current portrait + margin)
+            cursor_left += each_portrait_img_rect_adjusted.width
+            cursor_left += screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+            cursor_left_box += each_portrait_img_rect_resized.get_width() * 0.75
+            cursor_left_box += screen_width * END_GAME_LR_MARGIN_PERCENTAGE

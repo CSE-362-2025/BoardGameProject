@@ -259,9 +259,9 @@ class GameManager:
         if self.has_gpu:
             self.ai_summary()
         for player in self.players:
-            print(f"{player.name} stats: {player.stats}")
-            print(f"{player.name} awards: {player.awards}")
-            print(f"{player.name} end text: {player.end_text}")
+            # print(f"{player.name} stats: {player.stats}")
+            # print(f"{player.name} awards: {player.awards}")
+            # print(f"{player.name} end text: {player.end_text}")
             if self.has_gpu:
                 print(f"{player.name} ai summary: {player.ai_summary}")
 
