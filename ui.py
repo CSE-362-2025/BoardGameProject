@@ -340,6 +340,7 @@ class UI:
         self.track = 0
         self.year = 0
         self.the_meeple = pygame.image.load("Resources/test_meeple.png")
+        self.trophy = pygame.transform.scale_by(pygame.image.load("Resources/trophy.png"), 0.8)
         self.game_over = False
 
     def update(self):
@@ -709,7 +710,7 @@ class UI:
                 playerlist.update({player.name: score})
             
             curr_best = 0
-            portrait = self.player.portrait
+            portrait = self.trophy
             for each in score_list:
                 if each > curr_best:
                     curr_best = each
@@ -717,11 +718,6 @@ class UI:
             orderedlist = {}
             for each in sorted(playerlist, key=playerlist.get, reverse=True): 
                 orderedlist[each] = playerlist[each]
-
-            first = list(orderedlist.keys())[0]
-            for player in player_sort:
-                if player.name == first:
-                    portrait =  player.portrait
 
             info = ("Leaderboard", orderedlist, portrait)
             self.Buttons[1].update_info(info)
