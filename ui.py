@@ -1839,7 +1839,7 @@ class EndScreen(Menu):
     def draw(self, screen) -> None:
         # reset
         self.buttons = [
-            Button((85, 90), MAINSIZE, "Quit to Title"),
+            Button((85, 91), MAINSIZE, "Quit to Title", True, os.path.join("Resources", "quit.png")),
         ]
         self.buttons[0].enabled = self.enable_buttons
 
