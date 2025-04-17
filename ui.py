@@ -1685,7 +1685,6 @@ class EndScreen(Menu):
             EVENT_FONT_COLOUR,
             END_GAME_TITLE_FONT_SIZE,
         )
-        # TODO: add style on title
         title_font: pygame.font.Font = pygame.font.Font(
             None,
             title_font_fitting_size,
@@ -1748,7 +1747,6 @@ class EndScreen(Menu):
             font_size = get_font_size_to_fit_all(
                 screen, text_rect, each_player.end_text, EVENT_FONT_COLOUR, END_GAME_TEXT_FONT_SIZE,
             )
-            # TODO: add style for `player.end_text`
             text_font = pygame.font.Font(None, font_size)
 
             # fill text box with colour
