@@ -273,11 +273,11 @@ class UI:
             (self.screen.get_width(), self.screen.get_width() * (41 / 59)),
         )
         self.font = pygame.font.Font(None, 16)
-        new_game = os.path.join(tmp, "NEW_GAME.jpg")
-        load_game = os.path.join(tmp, "LOAD_GAME.jpg")
-        custom_char = os.path.join(tmp, "LOAD_GAME.jpg")
-        settings = os.path.join(tmp, "SETTINGS.jpg")
-
+        new_game = os.path.join(tmp, "New_Game.png")
+        load_game = os.path.join(tmp, "load_game.png")
+        custom_char = os.path.join(tmp, "customize.png")
+        settings = os.path.join(tmp, "settings.png")
+        pause = os.path.join(tmp, "pause.png")
         # check if saved game exists
         is_game_loadable: bool = False
         if os.path.exists(os.path.join("database", "game_data.db")):
@@ -290,7 +290,7 @@ class UI:
             Button(MAIN2, MAINSIZE, "Load Game", False, load_game, is_game_loadable),
             Button(MAIN3,MAINSIZE,"Custom Char",False, custom_char,False,),
             Button(MAIN4, MAINSIZE, "Settings", False, settings, False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),]
+            Button(PAUSE, PAUSESIZE, "Pause", True,pause),]
         self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
         self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
         self.buttonPaused = []
@@ -786,13 +786,20 @@ class Menu:
 
 
 class PauseMenu(Menu):
+
+
     def __init__(self, name, image=None):
         super().__init__(name, image)
+        tmp: str = "Resources"
+        return_to_game = os.path.join(tmp, "return.png")
+        saving = os.path.join(tmp, "save.png")
+        quitting = os.path.join(tmp, "quit.png")
+        settings = os.path.join(tmp, "settings.png")
         self.buttons = [
-            Button(MAIN1, MAINSIZE, "Return"),
-            Button(MAIN2, MAINSIZE, "Save"),
-            Button(MAIN3, MAINSIZE, "Settings"),
-            Button(MAIN4, MAINSIZE, "Quit to Title"),
+            Button(MAIN1, MAINSIZE, "Return", True, return_to_game),
+            Button(MAIN2, MAINSIZE, "Save", True, saving),
+            Button(MAIN3, MAINSIZE, "Settings", True, settings, False),
+            Button(MAIN4, MAINSIZE, "Quit to Title", True , quitting),
         ]
 
 
