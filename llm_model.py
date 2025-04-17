@@ -22,7 +22,7 @@ pipeline = pipeline(
     model="meta-llama/Meta-Llama-3.1-8B-Instruct",
     torch_dtype=torch.float16,  # Use FP16 to reduce memory usage
     device_map="cuda",  
-    max_new_tokens=128
+    max_new_tokens=256
 )
 
 def llm(query):
