@@ -43,9 +43,11 @@ END_GAME_TB_MARGIN_PERCENTAGE: int = 2
 END_GAME_LR_MARGIN_PERCENTAGE: int = 2
 END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
 END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
-END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE: int = 20
+END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE: int = 12
 END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
 END_GAME_TEXT_FONT_SIZE: int = 30
+END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE: int = 8
+END_GAME_SUMMARY_BUTTON_TEXT: str = "SUMMARY"
 
 ## constants for event popup screen
 
@@ -266,7 +268,6 @@ def get_font_size_to_fit_all(
 
 
 class UI:
-
     # player is current player, changes during switch_turn()
     def __init__(self, game_manager=None, player=None):
         self.game_manager = game_manager
@@ -754,6 +755,9 @@ class UI:
                 self.open_menus[0].conseq_choice_idx = int(
                     str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
                 )
+            elif "SUMMARY" in next_event and len(self.open_menus) == 1:
+                # TODO: implement this by appending `SummaryMenu`
+                print("UI HANDLING SUMMARY BUTTON CLICK")
 
             match next_event:
                 case "Dice":
@@ -1385,6 +1389,67 @@ class EffectTileDisplayButton(Button):
         return ""
 
 
+class SummaryButton(Button):
+    def __init__(
+        self,
+        players: list,
+        player_index: int,
+        right: float,
+        top: float,
+        height: float,
+        width: float,
+        *args,
+        **kwargs,
+    ):
+        self.right = right
+        self.top = top
+        self.height = height
+        self.width = width
+        self.button_rect = pygame.rect.Rect(
+            self.right - self.width,
+            self.top,
+            self.width,
+            self.height,
+        )
+
+        self.players = players
+        self.player_index = player_index
+
+        self.visible = True
+        self.enabled = True
+
+    def display(self, screen):
+        # render button on screen
+        pygame.draw.rect(screen, EVENT_BUTTONS_FILL_ENABLED_COLOUR, self.button_rect)
+        # render border
+        pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, self.button_rect, 3)
+
+        # find font size
+        font_size = get_font_size_to_fit_all(
+            screen,
+            self.button_rect,
+            END_GAME_SUMMARY_BUTTON_TEXT,
+            EVENT_FONT_COLOUR,
+            END_GAME_TEXT_FONT_SIZE,
+        )
+        # font obj with fitting font-size
+        button_font = pygame.font.Font(None, font_size)
+        # render font on top
+        draw_text_with_wrap_centery_increment(
+            screen,
+            END_GAME_SUMMARY_BUTTON_TEXT,
+            EVENT_FONT_COLOUR,
+            self.button_rect,
+            button_font,
+        )
+
+    def handle_click(self, screen, pos):
+        if self.button_rect.collidepoint(pos) and self.enabled:
+            return f"SUMMARY|{self.player_index}"
+
+        return ""
+
+
 class EventChoiceButton(Button):
     def __init__(
         self,
@@ -1660,8 +1725,6 @@ class EndScreen(Menu):
         self.background_img.convert()
 
     def draw(self, screen) -> None:
-        super().draw(screen)
-
         # DRY
         screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
@@ -1686,8 +1749,6 @@ class EndScreen(Menu):
             (screen.get_width(), screen.get_height()),
         )
         screen.blit(bg_img, (0, 0))
-        for each_b in self.buttons:
-            each_b.display(screen)
 
         # title font
         title_font_fitting_size: int = get_font_size_to_fit_all(
@@ -1718,7 +1779,7 @@ class EndScreen(Menu):
 
         cursor_top = title_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE
 
-        for each_player in self.players:
+        for i, each_player in enumerate(self.players):
             portrait_rect = pygame.Rect(
                 cursor_left,
                 cursor_top,
@@ -1734,7 +1795,8 @@ class EndScreen(Menu):
 
             # scale img to fit into rect
             each_portrait_img_rect_resized: pygame.Surface = pygame.transform.scale(
-                each_player.get_portrait(), each_portrait_img_rect_adjusted.size
+                each_player.get_portrait(),
+                each_portrait_img_rect_adjusted.size,
             )
             # zoom in the resulting img
             each_portrait_img_rect_resized: pygame.Surface = pygame.transform.rotozoom(
@@ -1754,10 +1816,22 @@ class EndScreen(Menu):
                 screen_height * END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE,
             )
             # reposition rect to be below the portrait
-            text_rect.right = cursor_left + (each_portrait_img_rect_adjusted.width + screen_width * END_GAME_LR_MARGIN_PERCENTAGE) + screen_height * 2
+            each_player_right = (
+                cursor_left
+                + (
+                    each_portrait_img_rect_adjusted.width
+                    + screen_width * END_GAME_LR_MARGIN_PERCENTAGE
+                )
+                + screen_height * 2
+            )
+            text_rect.right = each_player_right
             # calc font size that can fit
             font_size = get_font_size_to_fit_all(
-                screen, text_rect, each_player.end_text, EVENT_FONT_COLOUR, END_GAME_TEXT_FONT_SIZE,
+                screen,
+                text_rect,
+                each_player.end_text,
+                EVENT_FONT_COLOUR,
+                END_GAME_TEXT_FONT_SIZE,
             )
             text_font = pygame.font.Font(None, font_size)
 
@@ -1773,6 +1847,22 @@ class EndScreen(Menu):
                 text_rect,
                 text_font,
             )
+
+            # create summary button for each player
+            each_summary_button = SummaryButton(
+                players=self.players,
+                player_index=i,
+                right=each_player_right,
+                top=text_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE,
+                height=screen_height * END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE,
+                width=text_rect.width,
+                _type="summary",
+                centre=None,
+                size=None,
+            )
+            self.buttons.append(each_summary_button)
+            # render it on screen
+            each_summary_button.display(screen)
 
             # increment cursor (width of current portrait + margin)
             cursor_left += each_portrait_img_rect_adjusted.width
