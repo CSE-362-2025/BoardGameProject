@@ -291,11 +291,11 @@ class UI:
             (self.screen.get_width(), self.screen.get_width() * (41 / 59)),
         )
         self.font = pygame.font.Font(None, 16)
-        new_game = os.path.join(tmp, "NEW_GAME.jpg")
-        load_game = os.path.join(tmp, "LOAD_GAME.jpg")
-        custom_char = os.path.join(tmp, "LOAD_GAME.jpg")
-        settings = os.path.join(tmp, "SETTINGS.jpg")
-
+        new_game = os.path.join(tmp, "New_Game.png")
+        load_game = os.path.join(tmp, "load_game.png")
+        custom_char = os.path.join(tmp, "customize.png")
+        settings = os.path.join(tmp, "settings.png")
+        pause = os.path.join(tmp, "pause.png")
         # check if saved game exists
         is_game_loadable: bool = False
         if os.path.exists(os.path.join("database", "game_data.db")):
@@ -315,28 +315,9 @@ class UI:
                 False,
             ),
             Button(MAIN4, MAINSIZE, "Settings", False, settings, False),
-            Button(PAUSE, PAUSESIZE, "Pause", True),
-        ]
-        self.Buttons.insert(
-            0,
-            CardDisplays(
-                CARD1IN,
-                CARD1OUT,
-                CARDSIZE,
-                "Player Stats",
-                image="Resources/rmc_card.png",
-            ),
-        )
-        self.Buttons.insert(
-            1,
-            CardDisplays(
-                CARD2IN,
-                CARD2OUT,
-                CARDSIZE,
-                "Leaderboard",
-                image="Resources/rmc_card.png",
-            ),
-        )
+            Button(PAUSE, PAUSESIZE, "Pause", True,pause),]
+        self.Buttons.insert(0,CardDisplays(CARD1IN,CARD1OUT,CARDSIZE,"Player Stats",image="Resources/rmc_card.png",),)
+        self.Buttons.insert(1,CardDisplays(CARD2IN,CARD2OUT,CARDSIZE,"Leaderboard",image="Resources/rmc_card.png",),)
         self.buttonPaused = []
         self.buttonevents = []
         self.open_menus = []
@@ -718,9 +699,30 @@ class UI:
                         player_sort[player] = hold
                         next = player_sort[player]
             playerlist = {}
+            score_list = []
             for player in player_sort:
-                playerlist.update({player.name: random.randint(1, 10)})
-            info = ("Leaderboard", playerlist, self.the_meeple)
+                stats = player.stats
+                score = 0
+                score = sum(stats.values())
+                score_list.append(score)
+                playerlist.update({player.name: score})
+            
+            curr_best = 0
+            portrait = self.player.portrait
+            for each in score_list:
+                if each > curr_best:
+                    curr_best = each
+
+            orderedlist = {}
+            for each in sorted(playerlist, key=playerlist.get, reverse=True): 
+                orderedlist[each] = playerlist[each]
+
+            first = list(orderedlist.keys())[0]
+            for player in player_sort:
+                if player.name == first:
+                    portrait =  player.portrait
+
+            info = ("Leaderboard", orderedlist, portrait)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
@@ -878,13 +880,20 @@ class Menu:
 
 
 class PauseMenu(Menu):
+
+
     def __init__(self, name, image=None):
         super().__init__(name, image)
+        tmp: str = "Resources"
+        return_to_game = os.path.join(tmp, "return.png")
+        saving = os.path.join(tmp, "save.png")
+        quitting = os.path.join(tmp, "quit.png")
+        settings = os.path.join(tmp, "settings.png")
         self.buttons = [
-            Button(MAIN1, MAINSIZE, "Return"),
-            Button(MAIN2, MAINSIZE, "Save"),
-            Button(MAIN3, MAINSIZE, "Settings"),
-            Button(MAIN4, MAINSIZE, "Quit to Title"),
+            Button(MAIN1, MAINSIZE, "Return", True, return_to_game),
+            Button(MAIN2, MAINSIZE, "Save", True, saving),
+            Button(MAIN3, MAINSIZE, "Settings", True, settings, False),
+            Button(MAIN4, MAINSIZE, "Quit to Title", True , quitting),
         ]
 
 

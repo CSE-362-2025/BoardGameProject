@@ -865,4 +865,3 @@ class GameManager:
         ret = db.load_game(self)
         db.close_connection()
         return ret
-
