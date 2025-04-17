@@ -43,7 +43,7 @@ END_GAME_TB_MARGIN_PERCENTAGE: int = 2
 END_GAME_LR_MARGIN_PERCENTAGE: int = 2
 END_GAME_PORTRAIT_RECT_WIDTH_PERCENTAGE: int = 20
 END_GAME_PORTRAIT_RECT_HEIGHT_PERCENTAGE: int = 36
-END_GAME_TEXT_RECT_HEIGH_PERCENTAGE: int = 20
+END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE: int = 20
 END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE: int = 60
 END_GAME_TEXT_FONT_SIZE: int = 30
 
@@ -1739,7 +1739,7 @@ class EndScreen(Menu):
                 cursor_left_box,
                 screen_height * END_GAME_TEXT_RECT_POSITION_Y_PERCENTAGE,
                 each_portrait_img_rect_resized.get_width() * 0.60,
-                screen_height * END_GAME_TEXT_RECT_HEIGH_PERCENTAGE,
+                screen_height * END_GAME_TEXT_RECT_HEIGHT_PERCENTAGE,
             )
             # reposition rect to be below the portrait
             text_rect.right = cursor_left + (each_portrait_img_rect_adjusted.width + screen_width * END_GAME_LR_MARGIN_PERCENTAGE) + screen_height * 2
