@@ -51,6 +51,7 @@ END_GAME_SUMMARY_BUTTON_TEXT: str = "SUMMARY"
 END_GAME_SUMMARY_POPUP_WIDTH_PERCENTAGE: int = 80
 END_GAME_SUMMARY_POPUP_HEIGHT_PERCENTAGE: int = 70
 END_GAME_SUMMARY_POPUP_VERTICAL_PADDING_PERCENTAGE: int = 10
+END_GAME_SUMMARY_FONT_SIZE: int = 30
 
 ## constants for event popup screen
 
@@ -764,6 +765,8 @@ class UI:
                     str(next_event).split(EVENT_BUTTON_RET_STR_DELIMITER)[1]
                 )
                 self.save_state()
+                # disable all buttons in EndScreen menu
+                self.open_menus[0].enable_buttons = False
                 self.open_menus.append(
                     SummaryMenu(
                         name="summary",
@@ -820,6 +823,12 @@ class UI:
                     self.open_menus.pop()
                     self.return_state()
                     self.game_manager.switch_turn()
+                case "summary_done":
+                    self.open_menus.pop()
+                    self.return_state()
+                    # enable all buttons in EndScreen menu
+                    for menu in self.open_menus:
+                        menu.enable_buttons = True
                 case "Quit":
                     pygame.event.Event(quit)
                 case "Quit to Title":
@@ -1253,9 +1262,12 @@ class SummaryMenu(Menu):
         super().__init__(*args, **kwargs)
         self.player_index = player_index
         self.players = players
+        self.enable_buttons: bool = True
+        self.buttons = []
 
     def draw(self, screen):
         super().draw(screen)
+        self.buttons = []
 
         # DRY
         screen_width = screen.get_width() / 100
@@ -1275,6 +1287,46 @@ class SummaryMenu(Menu):
         # render rect and border
         pygame.draw.rect(screen, EVENT_RECT_TSS_BG_COLOUR, summary_rect)
         pygame.draw.rect(screen, EVENT_BUTTONS_BORDER_COLOUR, summary_rect, 3)
+
+        # text placeholder if ai_text is empty
+        curr_player = self.players[self.player_index]
+        summary_text: str = (
+            "NO SUMMARY AVAILABLE."
+            if len(curr_player.ai_summary) == 0
+            else curr_player.ai_summary
+        )
+
+        # get font size to fit all
+        font_size = get_font_size_to_fit_all(
+            screen,
+            summary_rect,
+            summary_text,
+            EVENT_FONT_COLOUR,
+            END_GAME_SUMMARY_FONT_SIZE,
+        )
+        # render font on top of rect
+        summary_font = pygame.font.Font(None, font_size)
+        draw_text_with_wrap_centery_increment(
+            screen,
+            summary_text,
+            EVENT_FONT_COLOUR,
+            summary_rect,
+            summary_font,
+        )
+
+        # add close button on bottom right?
+        close_button = SummaryButton(
+            players=self.players,
+            player_index=self.player_index,
+            right=summary_rect.right,
+            top=summary_rect.bottom + screen_height * END_GAME_TB_MARGIN_PERCENTAGE,
+            height=screen_height * END_GAME_SUMMARY_BUTTON_HEIGHT_PERCENTAGE,
+            width=screen_width * EVENT_BUTTONS_CHOICE_SIZE[0],
+            is_for_popup=True,
+        )
+        close_button.display(screen)
+        close_button.enabled = self.enable_buttons
+        self.buttons.append(close_button)
 
 
 class Button(object):
@@ -1439,6 +1491,7 @@ class SummaryButton(Button):
         top: float,
         height: float,
         width: float,
+        is_for_popup: bool = False,
         *args,
         **kwargs,
     ):
@@ -1455,11 +1508,15 @@ class SummaryButton(Button):
 
         self.players = players
         self.player_index = player_index
+        self.is_for_popup = is_for_popup
 
         self.visible = True
         self.enabled = True
 
     def display(self, screen):
+        if not self.visible:
+            return
+
         # render button on screen
         pygame.draw.rect(screen, EVENT_BUTTONS_FILL_ENABLED_COLOUR, self.button_rect)
         # render border
@@ -1478,15 +1535,22 @@ class SummaryButton(Button):
         # render font on top
         draw_text_with_wrap_centery_increment(
             screen,
-            END_GAME_SUMMARY_BUTTON_TEXT,
+            END_GAME_SUMMARY_BUTTON_TEXT if not self.is_for_popup else "CLOSE",
             EVENT_FONT_COLOUR,
             self.button_rect,
             button_font,
         )
 
     def handle_click(self, screen, pos):
-        if self.button_rect.collidepoint(pos) and self.enabled:
-            return f"SUMMARY|{self.player_index}"
+        if not self.enabled:
+            return ""
+
+        if self.button_rect.collidepoint(pos):
+            return (
+                f"SUMMARY|{self.player_index}"
+                if not self.is_for_popup
+                else "summary_done"
+            )
 
         return ""
 
@@ -1758,14 +1822,18 @@ class EndScreen(Menu):
 
         self.players = players
 
-        self.buttons = [
-            Button((85, 90), MAINSIZE, "Quit to Title"),
-        ]
+        self.enable_buttons: bool = True
 
         self.background_img = pygame.image.load(END_GAME_BACKGROUND_IMAGE_PATH)
         self.background_img.convert()
 
     def draw(self, screen) -> None:
+        # reset
+        self.buttons = [
+            Button((85, 90), MAINSIZE, "Quit to Title"),
+        ]
+        self.buttons[0].enabled = self.enable_buttons
+
         # DRY
         screen_width = screen.get_width() / 100
         screen_height = screen.get_height() / 100
@@ -1810,6 +1878,10 @@ class EndScreen(Menu):
             title_rect,
             title_font,
         )
+
+        # draw quit to title button
+        if len(self.buttons) == 1:
+            self.buttons[0].display(screen)
 
         # draw player portrait / summary boxes
 
@@ -1901,6 +1973,7 @@ class EndScreen(Menu):
                 centre=None,
                 size=None,
             )
+            each_summary_button.enabled = self.enable_buttons
             self.buttons.append(each_summary_button)
             # render it on screen
             each_summary_button.display(screen)
