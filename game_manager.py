@@ -30,7 +30,7 @@ class GameManager:
         self.current_player = None
         self.turn_count = 0
 
-        self.has_gpu = True
+        self.has_gpu = False
 
     # plays all logic for playing human turn
     def play_turn(self, dice_value):
