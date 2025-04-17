@@ -665,10 +665,17 @@ class UI:
             for each in score_list:
                 if each > curr_best:
                     curr_best = each
+
+            orderedlist = {}
+            for each in sorted(playerlist, key=playerlist.get, reverse=True): 
+                orderedlist[each] = playerlist[each]
+
+            first = list(orderedlist.keys())[0]
             for player in player_sort:
-                if sum(player.stats.values())  == curr_best:
+                if player.name == first:
                     portrait =  player.portrait
-            info = ("Leaderboard", playerlist, portrait)
+
+            info = ("Leaderboard", orderedlist, portrait)
             self.Buttons[1].update_info(info)
 
     def change_current_player(self, player):
